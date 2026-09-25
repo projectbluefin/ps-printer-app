@@ -4,3 +4,4 @@
 .bst/
 .build-out/
 ps-printer-app.spdx.json
+__pycache__/

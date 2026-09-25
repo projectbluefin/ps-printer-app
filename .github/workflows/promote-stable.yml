@@ -14,8 +14,26 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
+  # FSDK is pinned through the fsdk-containers junction, and the image states
+  # that pin in hand-written io.projectbluefin.fsdk.* labels; moving the junction
+  # can leave them behind. Refuse that before spending a build on it.
+  metadata:
+    name: Reject mismatched FSDK metadata
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ inputs.testing_sha }}
+          persist-credentials: false
+      - name: Compare the nested FSDK pin with the OCI element labels
+        run: python3 scripts/verify-fsdk-metadata.py
+
   verify:
     name: Verify OCI image (${{ matrix.arch }})
+    needs: metadata
     strategy:
       fail-fast: false
       matrix:
@@ -40,11 +58,15 @@ jobs:
           tool: just
       - name: Install host dependencies
         run: sudo apt-get update && sudo apt-get install --yes fuse3 podman
-      - name: Build and verify real OCI printer image
-        run: just build && just verify
+      - name: Build real OCI printer image
+        run: just build
+      - name: Compare the nested FSDK pin with the built image labels
+        run: python3 scripts/verify-fsdk-metadata.py --image ghcr.io/projectbluefin/ps-printer-app:build
+      - name: Verify real OCI printer image
+        run: just verify
 
   promote:
-    needs: verify
+    needs: [metadata, verify]
     runs-on: ubuntu-24.04
     permissions:
       contents: write

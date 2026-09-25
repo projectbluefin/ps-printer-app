@@ -1,18 +1,17 @@
 """Exercise the real metadata checker against fixtures that disagree.
 
-These are metadata tests. They run ``scripts/verify-fsdk-metadata.py`` exactly
-as promotion runs it, over committed fixture trees and committed index
-documents. They say nothing about OCI printing or about physical paper output.
+These run ``scripts/verify-fsdk-metadata.py`` as a separate process, the way
+CI runs it, over committed fixture trees and a vendored copy of fsdk-containers'
+``elements/freedesktop-sdk.bst``. They are metadata tests: they say nothing about
+OCI printing or physical paper output.
 
-The case that matters is ``stale-labels``: a commit bumps the pinned
-freedesktop-sdk junction and leaves the OCI FSDK labels naming the previous
-release. That tree must be refused, with a diagnostic that names both sides, so
-a promotion that would advance ``stable`` onto inconsistent metadata stops
-before it writes anything.
+The case that matters is ``stale-labels``: the fsdk-containers junction moved
+(update-base.yml does that daily), FSDK moved with it, and the OCI FSDK labels
+still name the previous release. That tree must be refused with a diagnostic
+naming both values, so a promotion stops before it writes ``stable``.
 """
 import json
 import os
-import re
 from pathlib import Path
 import subprocess
 import sys
@@ -22,331 +21,278 @@ import unittest
 REPO = Path(__file__).resolve().parents[1]
 SCRIPT = REPO / "scripts/verify-fsdk-metadata.py"
 FIXTURES = REPO / "tests/fixtures/fsdk-metadata"
-WORKFLOW = REPO / ".github/workflows/promote-stable.yml"
+FSDK_JUNCTION = FIXTURES / "fsdk-containers/freedesktop-sdk.bst"
 
-FSDK_VERSION = "26.08rc.1"
-FSDK_REF = "e076d4978ee6945763486f6ebd755d189460e4e7"
-BUMPED_VERSION = "26.08rc.2"
-BUMPED_REF = "3b1c9f0a2d4e5b6c7d8e9f0a1b2c3d4e5f607182"
+CONTAINERS_REF = "8a02f5e18b6d89c5558d2371212a5489e86c3ea2"
+FSDK_VERSION = "26.08.1"
+FSDK_REF = "b02b59ffe19a49a402f357fd5fcb1d552ebc50d7"
+OLD_VERSION = "26.08.0"
+OLD_REF = "db97cce32cecadc7a3e98f06d557ebfa6ba9ad46"
 
 
-def run(*args, stdin=None, env=None):
-    """Run the checker the way CI does, as a separate process."""
-    environment = {**os.environ, "SKOPEO": "skopeo-not-installed"}
-    environment.update(env or {})
-    result = subprocess.run(
+def run(*args, env=None):
+    environment = {**os.environ, **(env or {})}
+    return subprocess.run(
         [sys.executable, str(SCRIPT), *args],
-        input=stdin,
         env=environment,
         text=True,
         capture_output=True,
     )
-    return result
 
 
-def graph_root(name):
-    return str(FIXTURES / name)
+def offline(tree, *args, junction=FSDK_JUNCTION, env=None):
+    """Check a fixture tree against a local fsdk-containers junction copy."""
+    return run(
+        "--graph-root", str(FIXTURES / tree), "--fsdk-junction", str(junction), *args, env=env
+    )
 
 
-def fixture(name):
-    return str(FIXTURES / name)
+# The fake upstream must not depend on the user's git configuration (signing, hooks).
+GIT_ENV = {
+    **os.environ,
+    "GIT_CONFIG_GLOBAL": os.devnull,
+    "GIT_CONFIG_NOSYSTEM": "1",
+    "GIT_AUTHOR_NAME": "fixture",
+    "GIT_AUTHOR_EMAIL": "fixture@example.invalid",
+    "GIT_COMMITTER_NAME": "fixture",
+    "GIT_COMMITTER_EMAIL": "fixture@example.invalid",
+}
 
 
-class SourceConsistencyTest(unittest.TestCase):
-    """The graph against itself: the junction pin and the image labels."""
+def git(*args, cwd):
+    return subprocess.run(
+        ["git", *args], cwd=cwd, env=GIT_ENV, check=True, capture_output=True, text=True
+    ).stdout.strip()
+
+
+class GraphTest(unittest.TestCase):
+    """The nested FSDK pin against the labels the OCI element writes."""
 
     def test_a_consistent_graph_passes(self):
-        result = run("--graph-root", graph_root("consistent"))
+        result = offline("consistent")
         self.assertEqual(result.returncode, 0, result.stderr)
-        self.assertIn("OK:", result.stdout)
-        self.assertIn(FSDK_VERSION, result.stdout)
-        self.assertIn(FSDK_REF, result.stdout)
+        self.assertIn(CONTAINERS_REF, result.stdout)
+        self.assertIn("'%s' '%s'" % (FSDK_VERSION, FSDK_REF), result.stdout)
         self.assertEqual(result.stderr, "")
 
-    def test_stale_labels_fail_with_a_diagnostic(self):
-        # The fixture for this issue: the junction moved, the labels did not.
-        result = run("--graph-root", graph_root("stale-labels"))
+    def test_stale_labels_fail_naming_both_values(self):
+        result = offline("stale-labels")
         self.assertEqual(result.returncode, 1)
-        self.assertIn("FAIL:", result.stderr)
-        # Both sides of the disagreement are named, so the diagnostic is
-        # actionable without re-reading the files by hand.
-        self.assertIn("io.projectbluefin.fsdk.version", result.stderr)
-        self.assertIn(BUMPED_VERSION, result.stderr)
-        self.assertIn(FSDK_VERSION, result.stderr)
-        self.assertIn("io.projectbluefin.fsdk.ref", result.stderr)
-        self.assertIn(BUMPED_REF, result.stderr)
-        self.assertIn(FSDK_REF, result.stderr)
-        self.assertIn("elements/oci/ps-printer-app.bst", result.stderr)
         self.assertEqual(result.stdout, "")
+        self.assertIn("FAIL: FSDK metadata mismatch", result.stderr)
+        self.assertIn(
+            "io.projectbluefin.fsdk.version is '%s' in elements/oci/ps-printer-app.bst "
+            "but the graph pins '%s'" % (OLD_VERSION, FSDK_VERSION),
+            result.stderr,
+        )
+        self.assertIn(
+            "io.projectbluefin.fsdk.ref is '%s' in elements/oci/ps-printer-app.bst "
+            "but the graph pins '%s'" % (OLD_REF, FSDK_REF),
+            result.stderr,
+        )
 
-    def test_a_repin_on_the_same_release_line_is_caught(self):
-        # Same point release, different commit. A comparison that only looked at
-        # the version would pass this tree.
-        other = "9a8b7c6d5e4f30211fee0dd9cc8bb7aa6699a5b4"
-        result = run("--graph-root", graph_root("mismatched-ref"))
+    def test_a_ref_mismatch_is_caught_when_the_version_agrees(self):
+        result = offline("mismatched-ref")
         self.assertEqual(result.returncode, 1)
-        self.assertIn("io.projectbluefin.fsdk.ref", result.stderr)
-        self.assertIn(other, result.stderr)
-        self.assertNotIn("io.projectbluefin.fsdk.version", result.stderr)
+        self.assertIn("io.projectbluefin.fsdk.ref is '%s'" % OLD_REF, result.stderr)
+        self.assertNotIn("io.projectbluefin.fsdk.version is", result.stderr)
 
-    def test_an_unpinned_junction_fails_closed(self):
-        result = run("--graph-root", graph_root("unpinned"))
+    def test_an_unpinned_fsdk_containers_junction_fails_closed(self):
+        result = offline("unpinned")
         self.assertEqual(result.returncode, 1)
-        self.assertIn("no 'ref: freedesktop-sdk-", result.stderr)
+        self.assertIn("carries no 'ref:' line", result.stderr)
 
     def test_a_missing_junction_fails_closed(self):
-        result = run("--graph-root", graph_root("missing-junction"))
+        result = offline("missing-junction")
         self.assertEqual(result.returncode, 1)
-        self.assertIn("elements/freedesktop-sdk.bst does not exist", result.stderr)
+        self.assertIn("elements/fsdk-containers.bst does not exist", result.stderr)
 
     def test_a_missing_oci_element_fails_closed(self):
-        result = run("--graph-root", graph_root("missing-oci"))
+        result = offline("missing-oci")
         self.assertEqual(result.returncode, 1)
         self.assertIn("elements/oci/ps-printer-app.bst does not exist", result.stderr)
 
-    def test_a_graph_that_omits_the_labels_fails_closed(self):
+    def test_a_missing_fsdk_junction_copy_fails_closed(self):
+        result = offline("consistent", junction=FIXTURES / "no-such-file.bst")
+        self.assertEqual(result.returncode, 1)
+        self.assertIn("no-such-file.bst does not exist", result.stderr)
+
+    def edited_tree(self, temp, junction=None, oci=None):
+        root = Path(temp) / "tree"
+        for name, text in (("fsdk-containers.bst", junction), ("oci/ps-printer-app.bst", oci)):
+            source = FIXTURES / "consistent/elements" / name
+            target = root / "elements" / name
+            target.parent.mkdir(parents=True, exist_ok=True)
+            target.write_text(text(source.read_text()) if text else source.read_text())
+        return root
+
+    def test_a_non_commit_fsdk_containers_ref_fails_closed(self):
         with tempfile.TemporaryDirectory() as temp:
-            root = Path(temp)
-            (root / "elements/oci").mkdir(parents=True)
-            (root / "elements/freedesktop-sdk.bst").write_text(
-                (FIXTURES / "consistent/elements/freedesktop-sdk.bst").read_text()
-            )
-            (root / "elements/oci/ps-printer-app.bst").write_text(
-                "kind: script\nconfig:\n  commands:\n    - build-oci\n"
-            )
-            result = run("--graph-root", str(root))
-            self.assertEqual(result.returncode, 1)
-            self.assertIn("does not set the io.projectbluefin.fsdk.version label", result.stderr)
-
-
-class IndexMetadataTest(unittest.TestCase):
-    """The graph against the metadata the published index carries."""
-
-    def test_matching_index_metadata_passes(self):
-        result = run("--graph-root", graph_root("consistent"), "--index", fixture("index-consistent.json"))
-        self.assertEqual(result.returncode, 0, result.stderr)
-        self.assertIn("index annotations", result.stdout)
-
-    def test_mismatched_index_metadata_fails_with_a_diagnostic(self):
-        # The graph was bumped; the published index still describes the old pin.
-        result = run(
-            "--graph-root", graph_root("stale-labels"), "--index", fixture("index-stale-labels.json")
-        )
+            root = self.edited_tree(temp, junction=lambda t: t.replace(CONTAINERS_REF, "main"))
+            result = run("--graph-root", str(root), "--fsdk-junction", str(FSDK_JUNCTION))
         self.assertEqual(result.returncode, 1)
-        self.assertIn("FAIL: FSDK metadata mismatch", result.stderr)
-        self.assertIn("io.projectbluefin.fsdk.version", result.stderr)
-        self.assertIn("io.projectbluefin.fsdk.ref", result.stderr)
-        self.assertIn(fixture("index-stale-labels.json"), result.stderr)
+        self.assertIn("pins fsdk-containers to 'main', which is not a 40-hex commit", result.stderr)
 
-    def test_an_index_without_annotations_fails_closed(self):
-        result = run(
-            "--graph-root", graph_root("consistent"), "--index", fixture("index-no-annotations.json")
-        )
-        self.assertEqual(result.returncode, 1)
-        self.assertIn("carries no 'annotations' object", result.stderr)
-
-    def test_an_index_that_drops_one_fsdk_label_fails_closed(self):
-        result = run(
-            "--graph-root",
-            graph_root("consistent"),
-            "--index",
-            fixture("index-missing-fsdk-ref.json"),
-        )
-        self.assertEqual(result.returncode, 1)
-        self.assertIn("io.projectbluefin.fsdk.ref is absent", result.stderr)
-
-    def test_an_image_manifest_is_not_accepted_as_an_index(self):
-        # An image manifest also carries annotations. Accepting it would skip
-        # the index, which is where the FSDK labels are easiest to drop.
-        result = run(
-            "--graph-root", graph_root("consistent"), "--index", fixture("index-manifest.json")
-        )
-        self.assertEqual(result.returncode, 1)
-        self.assertIn("no 'manifests' list", result.stderr)
-
-    def test_index_metadata_is_read_from_standard_input(self):
-        result = run(
-            "--graph-root",
-            graph_root("consistent"),
-            "--index",
-            "-",
-            stdin=Path(fixture("index-consistent.json")).read_text(),
-        )
-        self.assertEqual(result.returncode, 0, result.stderr)
-        self.assertIn("standard input", result.stdout)
-
-    def test_multiarch_is_required_only_when_asked(self):
-        single = fixture("index-single-arch.json")
-        permissive = run("--graph-root", graph_root("consistent"), "--index", single)
-        self.assertEqual(permissive.returncode, 0, permissive.stderr)
-
-        strict = run(
-            "--graph-root", graph_root("consistent"), "--index", single, "--require-multiarch"
-        )
-        self.assertEqual(strict.returncode, 1)
-        self.assertIn("missing arm64", strict.stderr)
-
-    def test_a_matching_multiarch_index_passes_the_strict_check(self):
-        result = run(
-            "--graph-root",
-            graph_root("consistent"),
-            "--index",
-            fixture("index-consistent.json"),
-            "--require-multiarch",
-        )
-        self.assertEqual(result.returncode, 0, result.stderr)
-
-    def test_the_application_version_is_compared_when_given(self):
-        matching = run(
-            "--graph-root",
-            graph_root("consistent"),
-            "--index",
-            fixture("index-consistent.json"),
-            "--app-version",
-            "20240504-20",
-        )
-        self.assertEqual(matching.returncode, 0, matching.stderr)
-
-        stale = run(
-            "--graph-root",
-            graph_root("consistent"),
-            "--index",
-            fixture("index-consistent.json"),
-            "--app-version",
-            "20240504-21",
-        )
-        self.assertEqual(stale.returncode, 1)
-        self.assertIn("org.opencontainers.image.version", stale.stderr)
-
-    def test_index_and_index_ref_are_mutually_exclusive(self):
-        result = run(
-            "--graph-root",
-            graph_root("consistent"),
-            "--index",
-            fixture("index-consistent.json"),
-            "--index-ref",
-            "docker://example.invalid/ps-printer-app:test",
-        )
-        self.assertEqual(result.returncode, 1)
-        self.assertIn("mutually exclusive", result.stderr)
-
-
-class RegistryTest(unittest.TestCase):
-    """A registry lookup that fails must never be read as agreement."""
-
-    def stub_skopeo(self, directory, body, exit_code=0):
-        stub = Path(directory) / "skopeo"
-        stub.write_text("#!/bin/sh\ncat <<'EOF'\n%s\nEOF\nexit %d\n" % (body, exit_code))
-        stub.chmod(0o755)
-        return str(stub)
-
-    def test_an_unreachable_registry_is_fatal(self):
+    def test_a_label_the_element_omits_fails_closed(self):
         with tempfile.TemporaryDirectory() as temp:
-            # A lookup that fails with a network error, not a missing manifest.
-            stub = self.stub_skopeo(temp, "dial tcp: lookup example.invalid: no such host", 1)
-            result = run(
-                "--graph-root",
-                graph_root("consistent"),
-                "--index-ref",
-                "docker://example.invalid/ps-printer-app:test",
-                env={"SKOPEO": stub},
+            root = self.edited_tree(
+                temp, oci=lambda t: "".join(l for l in t.splitlines(True) if "fsdk.ref" not in l)
             )
-            self.assertEqual(result.returncode, 1)
-            self.assertIn("cannot read index metadata", result.stderr)
-            self.assertIn("no such host", result.stderr)
-
-    def test_a_missing_subject_never_passes(self):
-        with tempfile.TemporaryDirectory() as temp:
-            stub = self.stub_skopeo(temp, "manifest unknown", 1)
-            result = run(
-                "--graph-root",
-                graph_root("consistent"),
-                "--index-ref",
-                "docker://example.invalid/ps-printer-app:test",
-                env={"SKOPEO": stub},
-            )
-            self.assertEqual(result.returncode, 1)
-
-    def test_registry_metadata_is_compared_when_it_resolves(self):
-        with tempfile.TemporaryDirectory() as temp:
-            stub = self.stub_skopeo(temp, Path(fixture("index-consistent.json")).read_text())
-            result = run(
-                "--graph-root",
-                graph_root("consistent"),
-                "--index-ref",
-                "docker://example.invalid/ps-printer-app:test",
-                env={"SKOPEO": stub},
-            )
-            self.assertEqual(result.returncode, 0, result.stderr)
-
-            # The same resolver, now serving an index published before the graph
-            # was bumped. The comparison is what refuses it, not the lookup.
-            mismatched = self.stub_skopeo(
-                temp, Path(fixture("index-stale-labels.json")).read_text()
-            )
-            refused = run(
-                "--graph-root",
-                graph_root("stale-labels"),
-                "--index-ref",
-                "docker://example.invalid/ps-printer-app:test",
-                env={"SKOPEO": mismatched},
-            )
-            self.assertEqual(refused.returncode, 1)
-            self.assertIn("io.projectbluefin.fsdk.version", refused.stderr)
-
-    def test_a_registry_tool_that_is_absent_is_fatal(self):
-        result = run(
-            "--graph-root",
-            graph_root("consistent"),
-            "--index-ref",
-            "docker://example.invalid/ps-printer-app:test",
-            env={"SKOPEO": str(Path(tempfile.gettempdir()) / "definitely-not-skopeo")},
-        )
+            result = run("--graph-root", str(root), "--fsdk-junction", str(FSDK_JUNCTION))
         self.assertEqual(result.returncode, 1)
-        self.assertIn("is not installed", result.stderr)
+        self.assertIn("does not set the io.projectbluefin.fsdk.ref label", result.stderr)
+
+    def fsdk_junction(self, temp, text):
+        path = Path(temp) / "freedesktop-sdk.bst"
+        path.write_text(text(FSDK_JUNCTION.read_text()))
+        return path
+
+    def test_an_fsdk_ref_past_its_release_tag_fails_closed(self):
+        # The version label names a point release; a commit after the tag is not it.
+        with tempfile.TemporaryDirectory() as temp:
+            junction = self.fsdk_junction(
+                temp, lambda t: t.replace("26.08.1-0-g" + FSDK_REF, "26.08.1-3-g" + OLD_REF)
+            )
+            result = offline("consistent", junction=junction)
+        self.assertEqual(result.returncode, 1)
+        self.assertIn("3 commits past freedesktop-sdk-26.08.1", result.stderr)
+
+    def test_an_unpinned_fsdk_junction_fails_closed(self):
+        with tempfile.TemporaryDirectory() as temp:
+            junction = self.fsdk_junction(
+                temp, lambda t: t.replace("-0-g" + FSDK_REF, "")
+            )
+            result = offline("consistent", junction=junction)
+        self.assertEqual(result.returncode, 1)
+        self.assertIn("carries no 'ref: freedesktop-sdk-<version>-<n>-g<sha>' line", result.stderr)
+        self.assertIn("'ref: freedesktop-sdk-26.08.1'", result.stderr)
 
 
-class PromotionGateTest(unittest.TestCase):
-    """Promotion must not be able to advance stable without the comparison."""
+class FetchTest(unittest.TestCase):
+    """Without --fsdk-junction the pinned fsdk-containers commit is fetched."""
 
     def setUp(self):
-        self.assertTrue(WORKFLOW.is_file(), f"{WORKFLOW} is missing")
-        self.text = WORKFLOW.read_text()
+        self.temp = tempfile.TemporaryDirectory()
+        self.addCleanup(self.temp.cleanup)
+        upstream = Path(self.temp.name) / "fsdk-containers"
+        (upstream / "elements").mkdir(parents=True)
+        git("init", "-q", cwd=upstream)
+        git("config", "uploadpack.allowAnySHA1InWant", "true", cwd=upstream)
+        (upstream / "elements/freedesktop-sdk.bst").write_text(FSDK_JUNCTION.read_text())
+        git("add", ".", cwd=upstream)
+        git("commit", "-qm", "pin", cwd=upstream)
+        self.pinned = git("rev-parse", "HEAD", cwd=upstream)
+        # A later commit moves FSDK, so fetching the wrong commit would be visible.
+        (upstream / "elements/freedesktop-sdk.bst").write_text(
+            FSDK_JUNCTION.read_text().replace(
+                "26.08.1-0-g" + FSDK_REF, "26.08.0-0-g" + OLD_REF
+            )
+        )
+        git("commit", "-qam", "move", cwd=upstream)
+        self.url = upstream.as_uri()
 
-    def job_block(self, job):
-        lines = self.text.splitlines()
-        start = next(i for i, line in enumerate(lines) if line == f"  {job}:")
-        block = [lines[start]]
-        for line in lines[start + 1:]:
-            if line and not line.startswith(" ") and not line.startswith("\t"):
-                break
-            if re.match(r"^  \S", line):
-                break
-            block.append(line)
-        return "\n".join(block)
+    def tree(self, commit):
+        root = Path(self.temp.name) / "tree"
+        (root / "elements/oci").mkdir(parents=True, exist_ok=True)
+        (root / "elements/fsdk-containers.bst").write_text(
+            (FIXTURES / "consistent/elements/fsdk-containers.bst")
+            .read_text()
+            .replace(CONTAINERS_REF, commit)
+        )
+        (root / "elements/oci/ps-printer-app.bst").write_text(
+            (FIXTURES / "consistent/elements/oci/ps-printer-app.bst").read_text()
+        )
+        return str(root)
 
-    def test_the_stable_write_needs_the_metadata_comparison(self):
-        promote = self.job_block("promote")
-        self.assertIn("needs: [metadata, verify]", promote)
+    def test_the_pinned_commit_is_what_gets_compared(self):
+        result = run("--graph-root", self.tree(self.pinned), "--fsdk-containers-url", self.url)
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertIn(self.pinned, result.stdout)
 
-    def test_the_check_lives_outside_the_write_job(self):
-        # The job that pushes stable must not be the job that decides whether it
-        # may; a skip or a failure in that same job would still reach the push.
-        self.assertIn("verify-fsdk-metadata.py", self.job_block("metadata"))
-        self.assertNotIn("verify-fsdk-metadata.py", self.job_block("promote"))
+    def test_a_commit_the_remote_does_not_have_fails_closed(self):
+        missing = "0" * 40
+        result = run("--graph-root", self.tree(missing), "--fsdk-containers-url", self.url)
+        self.assertEqual(result.returncode, 1)
+        self.assertIn("cannot read elements/freedesktop-sdk.bst of fsdk-containers %s" % missing, result.stderr)
+        self.assertIn("git fetch exited", result.stderr)
 
-    def test_stable_is_written_exactly_once(self):
-        self.assertEqual(self.text.count("refs/heads/stable"), 1)
-        self.assertIn("refs/heads/stable", self.job_block("promote"))
+    def test_an_unreachable_remote_fails_closed(self):
+        result = run(
+            "--graph-root",
+            self.tree(self.pinned),
+            "--fsdk-containers-url",
+            (Path(self.temp.name) / "absent").as_uri(),
+        )
+        self.assertEqual(result.returncode, 1)
+        self.assertIn("git fetch exited", result.stderr)
 
-    def test_no_job_holds_write_permission_while_reading_metadata(self):
-        metadata = self.job_block("metadata")
-        self.assertIn("contents: read", metadata)
-        self.assertNotIn("contents: write", metadata)
 
-    def test_the_workflow_never_runs_on_a_pull_request(self):
-        self.assertNotIn("pull_request_target", self.text)
-        self.assertNotIn("\n  pull_request:", self.text)
+class ImageTest(unittest.TestCase):
+    """--image compares the labels a built image actually carries."""
+
+    def podman(self, temp, labels, exit_code=0):
+        # Stands in for `podman image inspect --format '{{json .Labels}}' IMAGE`.
+        stub = Path(temp) / "podman"
+        body = labels if isinstance(labels, str) else json.dumps(labels)
+        stub.write_text("#!/bin/sh\ncat <<'EOF'\n%s\nEOF\nexit %d\n" % (body, exit_code))
+        stub.chmod(0o755)
+        return {"PODMAN": str(stub)}
+
+    def built(self, version=FSDK_VERSION, ref=FSDK_REF):
+        return {
+            "org.opencontainers.image.version": "20240504-20",
+            "io.projectbluefin.fsdk.version": version,
+            "io.projectbluefin.fsdk.ref": ref,
+        }
+
+    def test_a_matching_image_passes(self):
+        with tempfile.TemporaryDirectory() as temp:
+            result = offline("consistent", "--image", "ps:build", env=self.podman(temp, self.built()))
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertIn("and image ps:build", result.stdout)
+
+    def test_an_image_built_from_stale_labels_fails_naming_both_values(self):
+        with tempfile.TemporaryDirectory() as temp:
+            env = self.podman(temp, self.built(OLD_VERSION, OLD_REF))
+            result = offline("consistent", "--image", "ps:build", env=env)
+        self.assertEqual(result.returncode, 1)
+        self.assertIn(
+            "io.projectbluefin.fsdk.version is '%s' in image ps:build but the graph pins '%s'"
+            % (OLD_VERSION, FSDK_VERSION),
+            result.stderr,
+        )
+        self.assertIn(
+            "io.projectbluefin.fsdk.ref is '%s' in image ps:build but the graph pins '%s'"
+            % (OLD_REF, FSDK_REF),
+            result.stderr,
+        )
+
+    def test_an_image_without_an_fsdk_label_fails_closed(self):
+        labels = self.built()
+        del labels["io.projectbluefin.fsdk.ref"]
+        with tempfile.TemporaryDirectory() as temp:
+            result = offline("consistent", "--image", "ps:build", env=self.podman(temp, labels))
+        self.assertEqual(result.returncode, 1)
+        self.assertIn("io.projectbluefin.fsdk.ref is absent from image ps:build", result.stderr)
+
+    def test_an_image_without_labels_fails_closed(self):
+        with tempfile.TemporaryDirectory() as temp:
+            result = offline("consistent", "--image", "ps:build", env=self.podman(temp, "null"))
+        self.assertEqual(result.returncode, 1)
+        self.assertIn("image ps:build carries no labels", result.stderr)
+
+    def test_a_failed_inspect_fails_closed(self):
+        with tempfile.TemporaryDirectory() as temp:
+            env = self.podman(temp, "Error: ps:build: image not known", exit_code=125)
+            result = offline("consistent", "--image", "ps:build", env=env)
+        self.assertEqual(result.returncode, 1)
+        self.assertIn("cannot inspect ps:build (exit 125): Error: ps:build: image not known", result.stderr)
+
+    def test_an_absent_podman_fails_closed(self):
+        env = {"PODMAN": str(Path(tempfile.gettempdir()) / "definitely-not-podman")}
+        result = offline("consistent", "--image", "ps:build", env=env)
+        self.assertEqual(result.returncode, 1)
+        self.assertIn("is not installed", result.stderr)
 
 
 if __name__ == "__main__":

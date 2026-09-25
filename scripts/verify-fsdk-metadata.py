@@ -1,31 +1,34 @@
 #!/usr/bin/env python3
 """Reject FSDK metadata that does not describe the graph it was built from.
 
-The appliance is built against a pinned freedesktop-sdk junction, and the OCI
-artifact advertises that pin as labels on every architecture image and as
-annotations on the multi-architecture index:
+FSDK is reached only through the fsdk-containers junction. The pin is nested:
+
+    elements/fsdk-containers.bst             pins fsdk-containers by commit
+    fsdk-containers elements/freedesktop-sdk.bst at that commit
+                                             pins FSDK as
+                                             freedesktop-sdk-<version>-0-g<ref>
+
+The image advertises that pin as two labels, written by hand into the
+``build-oci`` block of ``elements/oci/ps-printer-app.bst``:
 
     io.projectbluefin.fsdk.version   the freedesktop-sdk point release
     io.projectbluefin.fsdk.ref       the freedesktop-sdk commit
 
-Those two facts are written in three independent places — the junction source
-in ``elements/freedesktop-sdk.bst``, the ``build-oci`` label block in
-``elements/oci/ps-printer-app.bst``, and whatever the published index carries.
-A commit can bump one without touching the others, and the drift is invisible
-until something reads the metadata back. This checker reads all of them and
-refuses to pass when they disagree.
+Moving the fsdk-containers junction (update-base.yml does it daily) can move
+FSDK without anyone touching those labels. This checker resolves the nested pin
+and refuses to pass when the labels disagree with it. With ``--image`` it also
+reads the labels of a built image with ``podman image inspect`` and compares
+those, so a promotion can check the image it actually built and verified.
 
-With no arguments it compares the graph against itself, which is a source-only
-check and needs no registry, no build and no credentials. Pass ``--index`` (a
-file, or ``-`` for stdin) or ``--index-ref`` (anything ``skopeo inspect --raw``
-accepts, e.g. ``docker://ghcr.io/projectbluefin/ps-printer-app:20240504-20``) to
-also compare against real index metadata.
+fsdk-containers' ``elements/freedesktop-sdk.bst`` is fetched from
+``--fsdk-containers-url`` at the pinned commit. ``--fsdk-junction FILE`` reads it
+from a local file instead (tests, offline use); the caller then vouches that the
+file is that commit's copy.
 
-Every path fails closed. A missing file, an unpinned junction, an index without
-annotations, an unreachable registry or a registry authentication failure all
-exit non-zero with a diagnostic naming what could not be proven, because a
-promotion gate that treats "could not read the metadata" as "metadata agrees"
-is worse than no gate at all.
+Every path fails closed: a missing file, an unpinned or ambiguous junction, an
+FSDK ref that is not exactly a release tag, a failed fetch, a failed
+``podman image inspect`` or an image without the labels all exit non-zero,
+because "could not read the metadata" is never "the metadata agrees".
 """
 
 from __future__ import annotations
@@ -36,315 +39,240 @@ import os
 import re
 import subprocess
 import sys
+import tempfile
 from pathlib import Path
-from typing import Any, Sequence
+from typing import Sequence
 
-# The FSDK facts, and where each of them is written down.
 LABEL_VERSION = "io.projectbluefin.fsdk.version"
 LABEL_REF = "io.projectbluefin.fsdk.ref"
-LABEL_APP_VERSION = "org.opencontainers.image.version"
+LABELS = (LABEL_VERSION, LABEL_REF)
 
-JUNCTION = "elements/freedesktop-sdk.bst"
+JUNCTION = "elements/fsdk-containers.bst"
 OCI_ELEMENT = "elements/oci/ps-printer-app.bst"
-VERSION_FILE = "VERSION"
+FSDK_JUNCTION = "elements/freedesktop-sdk.bst"
+FSDK_CONTAINERS_URL = "https://github.com/projectbluefin/fsdk-containers.git"
 
-# project.conf sets `ref-format: git-describe`, so the junction ref carries both
-# facts: the point release and the commit, as `freedesktop-sdk-<version>-<n>-g<sha>`.
-JUNCTION_REF = re.compile(
+# elements/fsdk-containers.bst keeps a plain commit (update-base.yml restores it
+# after tracking), and that is what the release job reads too.
+CONTAINERS_REF = re.compile(r"^[ \t]*ref:[ \t]*(?P<value>\S+)[ \t]*$", re.MULTILINE)
+COMMIT = re.compile(r"^[0-9a-f]{40}$")
+
+# fsdk-containers sets `ref-format: git-describe`, so the FSDK junction ref
+# carries the point release, the distance from its tag, and the commit.
+FSDK_REF = re.compile(
     r"^[ \t]*ref:[ \t]*freedesktop-sdk-(?P<version>\S+?)-(?P<count>[0-9]+)-g(?P<ref>[0-9a-f]{40})[ \t]*$",
     re.MULTILINE,
 )
-
-# How many architecture manifests a promotable index must carry.
-REQUIRED_PLATFORMS = ("amd64", "arm64")
+ANY_REF = re.compile(r"^[ \t]*ref:.*$", re.MULTILINE)
 
 
 class Failure(Exception):
     """A condition that must stop the caller rather than be worked around."""
 
 
-def quote(value: str) -> str:
-    return "'%s'" % value
-
-
-def label_pattern(label: str) -> re.Pattern[str]:
-    key = re.escape(label)
-    return re.compile(
-        r"""^[ \t]*['"]""" + key + r"""['"][ \t]*:[ \t]*['"](?P<value>[^'"]*)['"][ \t]*$""",
-        re.MULTILINE,
-    )
-
-
 def read_text(path: Path, describes: str) -> str:
     try:
         return path.read_text(encoding="utf-8")
     except FileNotFoundError:
-        raise Failure(
-            "%s does not exist, so %s cannot be compared" % (path, describes)
-        ) from None
+        raise Failure("%s does not exist, so %s cannot be read" % (path, describes)) from None
     except OSError as error:
         raise Failure("cannot read %s: %s" % (path, error)) from None
 
 
-def read_pin(graph_root: Path) -> tuple[str, str]:
-    """Return the (version, ref) the junction is pinned to."""
+def read_containers_ref(graph_root: Path) -> str:
+    """Return the fsdk-containers commit the junction pins."""
     path = graph_root / JUNCTION
-    text = read_text(path, "the pinned FSDK junction")
-
-    matches = list(JUNCTION_REF.finditer(text))
-    if not matches:
+    text = read_text(path, "the fsdk-containers pin")
+    refs = [match.group("value") for match in CONTAINERS_REF.finditer(text)]
+    if not refs:
+        raise Failure("%s carries no 'ref:' line, so fsdk-containers is not pinned" % path)
+    if len(refs) > 1:
         raise Failure(
-            "%s carries no 'ref: freedesktop-sdk-<version>-<n>-g<sha>' line, so the "
-            "FSDK pin cannot be read" % path
+            "%s pins more than one ref (%s); the fsdk-containers pin is ambiguous"
+            % (path, ", ".join("'%s'" % ref for ref in refs))
+        )
+    if not COMMIT.match(refs[0]):
+        raise Failure(
+            "%s pins fsdk-containers to '%s', which is not a 40-hex commit" % (path, refs[0])
+        )
+    return refs[0]
+
+
+def fetch_fsdk_junction(url: str, commit: str) -> str:
+    """Return fsdk-containers' elements/freedesktop-sdk.bst at ``commit``."""
+    git = os.environ.get("GIT", "git")
+    with tempfile.TemporaryDirectory() as scratch:
+        steps = (
+            ("init", [git, "init", "-q", scratch]),
+            ("fetch", [git, "-C", scratch, "fetch", "-q", "--depth=1", url, commit]),
+            ("show", [git, "-C", scratch, "show", "FETCH_HEAD:" + FSDK_JUNCTION]),
+        )
+        for name, step in steps:
+            try:
+                result = subprocess.run(step, check=False, capture_output=True, text=True)
+            except FileNotFoundError:
+                raise Failure("cannot fetch %s: %s is not installed" % (url, git)) from None
+            if result.returncode != 0:
+                detail = (result.stderr or result.stdout).strip() or "no diagnostic"
+                raise Failure(
+                    "cannot read %s of fsdk-containers %s from %s (git %s exited %d): %s"
+                    % (FSDK_JUNCTION, commit, url, name, result.returncode, detail)
+                )
+    return result.stdout
+
+
+def read_fsdk_pin(text: str, origin: str) -> tuple[str, str]:
+    """Return the (version, ref) the FSDK junction pins."""
+    matches = list(FSDK_REF.finditer(text))
+    if not matches:
+        found = [match.group(0).strip() for match in ANY_REF.finditer(text)]
+        raise Failure(
+            "%s carries no 'ref: freedesktop-sdk-<version>-<n>-g<sha>' line (found %s), "
+            "so the FSDK pin cannot be read"
+            % (origin, ", ".join("'%s'" % line for line in found) or "no ref")
         )
     if len(matches) > 1:
-        found = ", ".join(quote(match.group(0).strip()) for match in matches)
         raise Failure(
             "%s pins more than one freedesktop-sdk ref (%s); the FSDK pin is ambiguous"
-            % (path, found)
+            % (origin, ", ".join("'%s'" % match.group(0).strip() for match in matches))
         )
+    match = matches[0]
+    if match.group("count") != "0":
+        raise Failure(
+            "%s pins FSDK %s commits past freedesktop-sdk-%s (%s), so no point release "
+            "describes it" % (origin, match.group("count"), match.group("version"), match.group("ref"))
+        )
+    return match.group("version"), match.group("ref")
 
-    return matches[0].group("version"), matches[0].group("ref")
+
+def label_pattern(label: str) -> re.Pattern[str]:
+    return re.compile(
+        r"""^[ \t]*['"]""" + re.escape(label) + r"""['"][ \t]*:[ \t]*['"](?P<value>[^'"]*)['"][ \t]*$""",
+        re.MULTILINE,
+    )
 
 
-def read_labels(graph_root: Path) -> dict[str, str]:
+def read_element_labels(graph_root: Path) -> dict[str, str]:
     """Return the FSDK labels the OCI element writes into the image."""
     path = graph_root / OCI_ELEMENT
     text = read_text(path, "the FSDK labels written into the image")
-
     labels = {}
-    for label in (LABEL_VERSION, LABEL_REF):
+    for label in LABELS:
         matches = list(label_pattern(label).finditer(text))
         if not matches:
-            raise Failure(
-                "%s does not set the %s label, so the image would ship without it"
-                % (path, label)
-            )
+            raise Failure("%s does not set the %s label" % (path, label))
         if len(matches) > 1:
             raise Failure(
                 "%s sets the %s label %d times; the value to compare is ambiguous"
                 % (path, label, len(matches))
             )
         labels[label] = matches[0].group("value")
-
     return labels
 
 
-def read_index_json(index: str) -> tuple[Any, str]:
-    """Read index metadata from a file, stdin, or the registry."""
-    if index == "-":
-        raw = sys.stdin.read()
-        origin = "standard input"
-    elif index.startswith("docker://") or index.startswith("oci:"):
-        raw = skopeo_inspect_raw(index)
-        origin = index
-    else:
-        path = Path(index)
-        try:
-            raw = path.read_text(encoding="utf-8")
-        except OSError as error:
-            raise Failure(
-                "cannot read index metadata from %s: %s" % (index, error)
-            ) from None
-        origin = str(path)
-
-    try:
-        return json.loads(raw), origin
-    except json.JSONDecodeError as error:
-        raise Failure(
-            "index metadata from %s is not JSON: %s" % (origin, error)
-        ) from None
-
-
-def skopeo_inspect_raw(reference: str) -> str:
-    """Return the raw index document for a registry reference.
-
-    A failed lookup is fatal. ``skopeo inspect`` also exits non-zero when the
-    registry is unreachable or the credentials are wrong, so a non-zero exit is
-    never read as "the metadata is absent".
-    """
-    skopeo = os.environ.get("SKOPEO", "skopeo")
+def read_image_labels(image: str) -> dict[str, str]:
+    """Return the labels of a built image, via ``podman image inspect``."""
+    podman = os.environ.get("PODMAN", "podman")
     try:
         result = subprocess.run(
-            [skopeo, "inspect", "--raw", reference],
+            [podman, "image", "inspect", "--format", "{{json .Labels}}", image],
             check=False,
             capture_output=True,
             text=True,
         )
     except FileNotFoundError:
-        raise Failure(
-            "cannot read index metadata for %s: %s is not installed" % (reference, skopeo)
-        ) from None
-
+        raise Failure("cannot inspect %s: %s is not installed" % (image, podman)) from None
     if result.returncode != 0:
         detail = (result.stderr or result.stdout).strip() or "no diagnostic"
-        raise Failure(
-            "cannot read index metadata for %s (exit %d): %s"
-            % (reference, result.returncode, detail)
-        )
-
-    return result.stdout
-
-
-def index_annotations(document: Any, origin: str) -> dict[str, str]:
-    """Return the index annotations, refusing anything that is not an index.
-
-    An OCI image manifest also has an ``annotations`` key, so the ``manifests``
-    list is what separates the multi-architecture index from a single
-    architecture image. Comparing against a manifest would silently skip the
-    index entirely, which is where the FSDK labels are most easily dropped.
-    """
-    if not isinstance(document, dict):
-        raise Failure("index metadata from %s is not a JSON object" % origin)
-
-    manifests = document.get("manifests")
-    if not isinstance(manifests, list) or not manifests:
-        raise Failure(
-            "index metadata from %s has no 'manifests' list, so it is an image "
-            "manifest rather than the multi-architecture index" % origin
-        )
-
-    annotations = document.get("annotations")
-    if not isinstance(annotations, dict):
-        raise Failure(
-            "index metadata from %s carries no 'annotations' object, so it declares "
-            "no FSDK version or ref" % origin
-        )
-
-    return {str(key): str(value) for key, value in annotations.items()}
+        raise Failure("cannot inspect %s (exit %d): %s" % (image, result.returncode, detail))
+    try:
+        labels = json.loads(result.stdout)
+    except json.JSONDecodeError as error:
+        raise Failure("labels of %s are not JSON: %s" % (image, error)) from None
+    if not isinstance(labels, dict):
+        raise Failure("image %s carries no labels" % image)
+    return {str(key): str(value) for key, value in labels.items()}
 
 
-def index_platforms(document: dict[str, Any]) -> list[str]:
-    platforms = []
-    for manifest in document.get("manifests", []):
-        if not isinstance(manifest, dict):
-            continue
-        platform = manifest.get("platform")
-        if isinstance(platform, dict) and platform.get("architecture"):
-            platforms.append(str(platform["architecture"]))
-    return platforms
-
-
-def compare(
-    expected: str,
-    label: str,
-    actual: str | None,
-    where: str,
-    mismatches: list[str],
-) -> None:
-    if actual is None:
-        mismatches.append(
-            "%s is absent from %s; the graph pins %s" % (label, where, quote(expected))
-        )
-    elif actual != expected:
-        mismatches.append(
-            "%s is %s in %s but the graph pins %s"
-            % (label, quote(actual), where, quote(expected))
-        )
+def compare(pin: dict[str, str], labels: dict[str, str], where: str, mismatches: list[str]) -> None:
+    for label in LABELS:
+        actual = labels.get(label)
+        if actual is None:
+            mismatches.append("%s is absent from %s; the graph pins '%s'" % (label, where, pin[label]))
+        elif actual != pin[label]:
+            mismatches.append(
+                "%s is '%s' in %s but the graph pins '%s'" % (label, actual, where, pin[label])
+            )
 
 
 def parse_args(argv: Sequence[str]) -> argparse.Namespace:
     parser = argparse.ArgumentParser(
-        description="Compare the pinned FSDK junction with the metadata that ships with the image.",
+        description="Compare the nested FSDK pin with the FSDK labels of the OCI element and, "
+        "optionally, a built image.",
     )
     parser.add_argument(
         "--graph-root",
-        default=None,
-        help="tree holding elements/ and VERSION (default: the repository root)",
+        type=Path,
+        default=Path(__file__).resolve().parent.parent,
+        help="tree holding elements/ (default: the repository root)",
     )
     parser.add_argument(
-        "--index",
-        default=None,
-        help="index metadata as a JSON file, or - for standard input",
+        "--fsdk-containers-url",
+        default=FSDK_CONTAINERS_URL,
+        help="fsdk-containers repository to fetch the pinned commit from (default: %(default)s)",
     )
     parser.add_argument(
-        "--index-ref",
-        default=None,
-        help="registry reference whose raw index metadata is read with skopeo",
+        "--fsdk-junction",
+        type=Path,
+        help="local copy of fsdk-containers' %s at the pinned commit; skips the fetch" % FSDK_JUNCTION,
     )
     parser.add_argument(
-        "--app-version",
-        default=None,
-        help="application version the index metadata must also declare",
-    )
-    parser.add_argument(
-        "--require-multiarch",
-        action="store_true",
-        help="require the index to carry every architecture in %s"
-        % (", ".join(REQUIRED_PLATFORMS),),
+        "--image",
+        action="append",
+        default=[],
+        help="built image whose labels must also match (podman image inspect); repeatable",
     )
     return parser.parse_args(argv)
 
 
 def main(argv: Sequence[str]) -> int:
     args = parse_args(argv)
-    graph_root = (
-        Path(args.graph_root)
-        if args.graph_root
-        else Path(__file__).resolve().parent.parent
-    )
-
     try:
-        version, ref = read_pin(graph_root)
-        labels = read_labels(graph_root)
+        commit = read_containers_ref(args.graph_root)
+        if args.fsdk_junction:
+            origin = str(args.fsdk_junction)
+            text = read_text(args.fsdk_junction, "the FSDK pin of fsdk-containers %s" % commit)
+        else:
+            origin = "fsdk-containers %s:%s" % (commit, FSDK_JUNCTION)
+            text = fetch_fsdk_junction(args.fsdk_containers_url, commit)
+        version, ref = read_fsdk_pin(text, origin)
+        pin = {LABEL_VERSION: version, LABEL_REF: ref}
 
-        compared: list[str] = []
         mismatches: list[str] = []
-
-        # The graph against itself: the junction pin and the labels the image is
-        # built with are two separate copies of the same fact.
-        compare(version, LABEL_VERSION, labels[LABEL_VERSION], OCI_ELEMENT, mismatches)
-        compare(ref, LABEL_REF, labels[LABEL_REF], OCI_ELEMENT, mismatches)
-        compared.append("%s in %s" % ("the FSDK labels", OCI_ELEMENT))
-
-        if args.index and args.index_ref:
-            raise Failure("--index and --index-ref are mutually exclusive")
-
-        index_sources = [source for source in (args.index, args.index_ref) if source]
-        for source in index_sources:
-            document, origin = read_index_json(source)
-            annotations = index_annotations(document, origin)
-
-            compare(version, LABEL_VERSION, annotations.get(LABEL_VERSION), origin, mismatches)
-            compare(ref, LABEL_REF, annotations.get(LABEL_REF), origin, mismatches)
-            compared.append("the index annotations of %s" % origin)
-
-            if args.app_version:
-                compare(
-                    args.app_version,
-                    LABEL_APP_VERSION,
-                    annotations.get(LABEL_APP_VERSION),
-                    origin,
-                    mismatches,
-                )
-
-            if args.require_multiarch:
-                platforms = index_platforms(document)
-                missing = [arch for arch in REQUIRED_PLATFORMS if arch not in platforms]
-                if missing:
-                    mismatches.append(
-                        "the index at %s carries platforms [%s] and is missing %s"
-                        % (origin, ", ".join(platforms) or "none", ", ".join(missing))
-                    )
-
-        if mismatches:
-            print("FAIL: FSDK metadata mismatch", file=sys.stderr)
-            print(
-                "  the graph pins FSDK %s %s" % (quote(version), quote(ref)),
-                file=sys.stderr,
-            )
-            for mismatch in mismatches:
-                print("  %s" % mismatch, file=sys.stderr)
-            return 1
-
-        print(
-            "OK: FSDK %s %s matches %s"
-            % (quote(version), quote(ref), " and ".join(compared))
-        )
-        return 0
+        compare(pin, read_element_labels(args.graph_root), OCI_ELEMENT, mismatches)
+        compared = [OCI_ELEMENT]
+        for image in args.image:
+            compare(pin, read_image_labels(image), "image %s" % image, mismatches)
+            compared.append("image %s" % image)
     except Failure as failure:
         print("FAIL: %s" % failure, file=sys.stderr)
         return 1
+
+    if mismatches:
+        print("FAIL: FSDK metadata mismatch", file=sys.stderr)
+        print(
+            "  %s (fsdk-containers %s) pins FSDK '%s' '%s'" % (JUNCTION, commit, version, ref),
+            file=sys.stderr,
+        )
+        for mismatch in mismatches:
+            print("  %s" % mismatch, file=sys.stderr)
+        return 1
+
+    print(
+        "OK: fsdk-containers %s pins FSDK '%s' '%s', matching %s"
+        % (commit, version, ref, " and ".join(compared))
+    )
+    return 0
 
 
 if __name__ == "__main__":

@@ -24,9 +24,12 @@ workflow.
 ## Release
 
 `.github/workflows/promote-stable.yml` (manual dispatch with `testing_sha`)
-rebuilds and verifies that exact commit natively on x86_64 and AArch64 with
-`just build && just verify`, then fast-forwards `stable` to it only if it is
-still the `testing` HEAD and `stable` is its ancestor.
+first compares the nested FSDK pin with the `io.projectbluefin.fsdk.*` labels
+(`metadata` job), then rebuilds that exact commit natively on x86_64 and AArch64
+with `just build`, compares the pin with the built image's labels, and runs
+`just verify`. Only then does it fast-forward `stable` to the commit, and only if
+it is still the `testing` HEAD and `stable` is its ancestor. See
+`docs/fsdk-metadata.md`.
 
 `.github/workflows/registry-actions.yml` runs only on `v*` tag pushes. It
 requires the tag to be `v$(cat VERSION)` on the `stable` HEAD, the

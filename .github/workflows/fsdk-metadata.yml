@@ -1,14 +1,13 @@
 name: FSDK metadata consistency
 
-# Cheap, credential-free guard for the FSDK pin. The junction in
-# `elements/freedesktop-sdk.bst` and the `io.projectbluefin.fsdk.*` labels in
-# `elements/oci/ps-printer-app.bst` are two copies of the same fact, and a
-# commit can bump one and leave the other behind. Promotion refuses that state,
-# but a promotion attempt is a late and expensive place to find out, so this
-# runs on every change to `testing`.
+# FSDK is reached only through the fsdk-containers junction, and the image
+# states that nested pin in the hand-written io.projectbluefin.fsdk.* labels of
+# elements/oci/ps-printer-app.bst. A junction bump (update-base.yml opens one
+# daily) moves FSDK without touching those labels, and `just validate` does not
+# compare them. Promotion refuses that state; this finds it on the pull request.
 #
-# This workflow reads files and runs unit tests. It builds nothing, needs no
-# registry credentials, and grants nothing beyond `contents: read`.
+# It reads files, fetches the pinned fsdk-containers commit and runs unit tests.
+# It builds nothing and holds no credentials.
 
 on:
   pull_request:
@@ -30,7 +29,7 @@ jobs:
   metadata:
     name: Check the FSDK pin
     runs-on: ubuntu-24.04
-    timeout-minutes: 15
+    timeout-minutes: 10
     permissions:
       contents: read
     steps:
@@ -41,16 +40,5 @@ jobs:
       - name: Exercise the checker against mismatched metadata fixtures
         run: python3 -m unittest discover -s tests -p 'test_fsdk_metadata*.py' -v
 
-      - name: Compare the pinned FSDK ref/version with the OCI labels it builds with
-        run: |
-          set -euo pipefail
-          graph=elements/freedesktop-sdk.bst
-          oci=elements/oci/ps-printer-app.bst
-          if [[ ! -e "$graph" && ! -e "$oci" ]]; then
-            # Reporting a skip is honest here: there is no pin in this tree to
-            # disagree with anything. A *partial* graph falls through to the
-            # checker, which fails closed.
-            echo "::notice::No FSDK graph in this tree, so there is no pin to compare. Skipped."
-            exit 0
-          fi
-          python3 scripts/verify-fsdk-metadata.py
+      - name: Compare the nested FSDK pin with the OCI element labels
+        run: python3 scripts/verify-fsdk-metadata.py

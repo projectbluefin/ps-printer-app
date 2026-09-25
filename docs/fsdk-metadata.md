@@ -1,84 +1,79 @@
 # The FSDK metadata gate
 
-The appliance is built against a pinned freedesktop-sdk junction, and the OCI
-artifact advertises that pin:
+FSDK is reached only through the fsdk-containers junction, so its pin is nested:
 
-| Label or annotation | Meaning |
+1. `elements/fsdk-containers.bst` pins fsdk-containers to a commit (`ref:`, a
+   plain 40-hex commit; `update-base.yml` moves it).
+2. fsdk-containers' `elements/freedesktop-sdk.bst` at that commit pins FSDK as
+   `ref: freedesktop-sdk-<version>-0-g<commit>` (fsdk-containers uses
+   `ref-format: git-describe`).
+
+The image states that pin in two labels, written by hand into the `build-oci`
+block of `elements/oci/ps-printer-app.bst`:
+
+| Label | Meaning |
 | --- | --- |
 | `io.projectbluefin.fsdk.version` | the freedesktop-sdk point release |
 | `io.projectbluefin.fsdk.ref` | the freedesktop-sdk commit |
-| `org.opencontainers.image.version` | the application release |
 
-The same two facts are written in three independent places:
-
-- the junction source in `elements/freedesktop-sdk.bst`, where
-  `project.conf`'s `ref-format: git-describe` makes the ref carry both the point
-  release and the commit;
-- the `build-oci` label block in `elements/oci/ps-printer-app.bst`, which is
-  what every architecture image config carries;
-- the annotations on the published multi-architecture index, which GHCR renders
-  and which nothing inherits from the child manifests.
-
-A commit can bump one of those and leave the others behind. The image still
-builds, still prints, and still passes `just verify` — the drift surfaces only
-when something reads the metadata back, which today is the release job. This
-gate reads all three and refuses the state in between.
+Moving the fsdk-containers junction can move FSDK without touching those labels.
+The image still builds, prints and passes `just verify`; only a reader of the
+metadata notices. `scripts/verify-fsdk-metadata.py` resolves the nested pin and
+refuses labels that disagree with it.
 
 ## Running it
 
 ```sh
-# The graph against itself. No registry, no build, no credentials.
+# The nested pin against the OCI element labels. Fetches the pinned
+# fsdk-containers commit from GitHub; no build, no credentials.
 python3 scripts/verify-fsdk-metadata.py
 
-# Also against published index metadata.
-python3 scripts/verify-fsdk-metadata.py \
-    --index-ref docker://ghcr.io/projectbluefin/ps-printer-app:20240504-20 \
-    --app-version "$(< VERSION)" \
-    --require-multiarch
+# Also against the labels of a built image (podman image inspect).
+python3 scripts/verify-fsdk-metadata.py --image ghcr.io/projectbluefin/ps-printer-app:build
+
+# Offline: supply fsdk-containers' elements/freedesktop-sdk.bst at the pinned
+# commit yourself. You vouch that the file is that commit's copy.
+python3 scripts/verify-fsdk-metadata.py --fsdk-junction path/to/freedesktop-sdk.bst
 ```
 
-`--index` takes a JSON file or `-` for standard input, which is what the
-fixtures use. `--index-ref` accepts anything `skopeo inspect --raw` accepts.
-`--require-multiarch` additionally insists the index carries an amd64 and an
-arm64 manifest, so a single-architecture manifest is never mistaken for the
-index.
+`--fsdk-containers-url` fetches from another fsdk-containers repository;
+`--image` may be repeated. `GIT` and `PODMAN` override the tools used.
 
 ## Where it runs
 
-- `.github/workflows/fsdk-metadata.yml` runs the unit tests and the source-only
-  comparison on every pull request and push to `testing`. It reads files and
-  runs tests; it builds nothing and needs no credentials.
-- `.github/workflows/promote-stable.yml` runs both comparisons in its
-  `metadata` job, and the `promote` job that writes `stable` needs that job. A
-  mismatch — or an index that cannot be read — stops the promotion with `stable`
+- `.github/workflows/fsdk-metadata.yml` runs the unit tests and the comparison
+  against the OCI element on every pull request and push to `testing`, so an
+  fsdk-containers bump that moves FSDK fails on its own pull request. It builds
+  nothing and holds no credentials.
+- `.github/workflows/promote-stable.yml` runs the comparison in its `metadata`
+  job before any build, and again in each native `verify` job against the labels
+  of the image `just build` produced, before `just verify`. The `promote` job,
+  the only one with `contents: write`, needs both. A mismatch leaves `stable`
   untouched.
+- `.github/workflows/registry-actions.yml` repeats the element comparison when
+  a `v*` tag is released and stamps the same values onto the published images.
+
+Promotion compares the image it builds and verifies, not a published index:
+images are published only from `v*` tags on `stable`, after promotion, so no
+index exists for a candidate yet.
 
 ## What it refuses
 
-Every failure mode exits non-zero with a diagnostic that names the field, both
-values, and the file or index the wrong one came from:
+Every case exits non-zero with a diagnostic:
 
-- the junction and the image labels disagree;
-- the junction and the index annotations disagree;
-- the junction carries no `ref: freedesktop-sdk-<version>-<n>-g<sha>` line, or
-  pins more than one;
-- the OCI element writes no FSDK label, or writes one twice;
-- the index has no `annotations`, or drops one of the two FSDK labels, or is an
-  image manifest rather than an index;
-- the registry cannot be reached, the credentials are wrong, or `skopeo` is not
-  installed.
-
-The last group matters as much as the first. `skopeo inspect` exits non-zero for
-a missing tag *and* for a network or authentication failure, so a lookup that
-fails is never read as agreement.
+- the labels in the OCI element, or of a built image, disagree with the pin (the
+  diagnostic names the label, both values and where the wrong one came from);
+- `elements/fsdk-containers.bst` or the OCI element is missing, the junction has
+  no `ref:`, more than one, or one that is not a 40-hex commit;
+- fsdk-containers' `elements/freedesktop-sdk.bst` cannot be fetched or read, has
+  no `ref: freedesktop-sdk-<version>-<n>-g<commit>` line or more than one, or
+  pins a commit past its release tag (`<n>` is not 0), which no point release
+  describes;
+- the OCI element or the image omits a label, the element sets one twice, or
+  `podman image inspect` fails.
 
 ## What it does not claim
 
 This is a metadata comparison. It says nothing about whether the image runs,
-what it prints, or whether the pinned freedesktop-sdk line is a good one. Those
-are `just verify` and the appliance suites. Nothing here prints on paper, and
-physical output remains unverified without printer hardware.
-
-The gate also cannot compare index metadata that does not exist yet. Before the
-release pipeline publishes an index for a version, `promote-stable.yml` fails
-closed rather than promoting on the graph alone.
+what it prints, or whether the pinned FSDK is a good one; that is `just verify`.
+Physical paper output remains unverified without printer hardware.
