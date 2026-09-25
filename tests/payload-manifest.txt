@@ -1,0 +1,63 @@
+# Payload inventory for the ps-printer-app OCI image.
+#
+# This file is the machine-checked claim of issue
+# projectbluefin/ps-printer-app#4: every driver, filter, backend and PPD
+# provider that the upstream ps-printer-app source promises, minus the features
+# the source itself excludes.  tests/core-payload.sh reads it inside the image
+# and fails when an entry is missing or unusable.
+#
+# Format: KIND PATH PROVENANCE
+#   KIND       executable  exists, is executable, and resolves its ELF or script closure
+#              ppd         exists and carries a *PPD-Adobe: header
+#              file        exists and is not empty
+#              archive     pyppd self-extracting PPD archive that lists PostScript PPDs
+#   PATH       absolute path inside the image
+#   PROVENANCE where the promise comes from, so the entry can be re-justified
+#
+# Update this file, not the test script, when the payload contract changes.
+
+# The application itself.
+executable /usr/bin/ps-printer-app ps-printer-app Makefile install target
+
+# Interpreters the payload needs at runtime: the PostScript interpreter that
+# performs the PDF to PostScript conversion, plus the Python and xz the pyppd
+# self-extracting PPD archives are built around.
+executable /usr/bin/gs rockcraft.yaml ghostscript part, built with --with-drivers=ps2write
+executable /usr/bin/python3 pyppd archives require a packaged Python 3
+executable /usr/bin/xz pyppd archives require a packaged xz
+
+# CUPS backends.  The application declares PR_COPTIONS_CUPS_BACKENDS and
+# resolves them from /usr/lib/ps-printer-app/backend, which is what
+# pappl-retrofit derives from the system package name.
+executable /usr/lib/ps-printer-app/backend/dnssd rockcraft.yaml cups part
+executable /usr/lib/ps-printer-app/backend/ipp rockcraft.yaml cups part
+executable /usr/lib/ps-printer-app/backend/ipps rockcraft.yaml cups part
+executable /usr/lib/ps-printer-app/backend/lpd rockcraft.yaml cups part
+executable /usr/lib/ps-printer-app/backend/snmp rockcraft.yaml cups part
+executable /usr/lib/ps-printer-app/backend/socket rockcraft.yaml cups part, the real print path target
+executable /usr/lib/ps-printer-app/backend/usb rockcraft.yaml cups part
+file /usr/lib/ps-printer-app/backend/org.cups.usb-quirks rockcraft.yaml cups part, USB quirk database
+file /usr/lib/ps-printer-app/backend/snmp.conf rockcraft.yaml cups part, SNMP backend configuration
+
+# Filters.  foomatic-rip and pdftops come from cups-filters, hpps from HPLIP;
+# ps-printer-app converts the incoming job with the PDF to PostScript path and
+# uses the others for PIN-protected and OEM PostScript queues.
+executable /usr/lib/ps-printer-app/filter/foomatic-rip rockcraft.yaml cups-filters part
+executable /usr/lib/ps-printer-app/filter/pdftops rockcraft.yaml cups-filters part
+executable /usr/lib/ps-printer-app/filter/hpps rockcraft.yaml hplip part
+
+# PPD providers.  The generic PPD is the driver the real print job below
+# selects; the two archives are the manufacturer PPD collections the README
+# promises ("all PostScript PPD files from Foomatic and HPLIP").
+ppd /usr/share/ppd/generic-ps-printer.ppd ps-printer-app Makefile install target
+archive /usr/share/ppd/foomatic-ps-ppds rockcraft.yaml foomatic-db part, PostScript-only manufacturer PPDs
+archive /usr/share/ppd/hplip-ps-ppds rockcraft.yaml hplip part, HPLIP PostScript PPDs
+
+# Test pages.  testpage.pdf is the one the application submits (TESTPAGE in
+# ps-printer-app.c), testpage.ps is the same page pre-converted.
+file /usr/share/ps-printer-app/testpage.pdf pappl-retrofit testpage.pdf, relocated by the rockcraft pappl-retrofit part
+file /usr/share/ps-printer-app/testpage.ps ps-printer-app Makefile install target
+
+# Container entry scripts.
+executable /scripts/start-server.sh rockcraft.yaml scripts part
+executable /scripts/run-avahi.sh rockcraft.yaml scripts part
