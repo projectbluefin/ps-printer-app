@@ -1,0 +1,56 @@
+name: FSDK metadata consistency
+
+# Cheap, credential-free guard for the FSDK pin. The junction in
+# `elements/freedesktop-sdk.bst` and the `io.projectbluefin.fsdk.*` labels in
+# `elements/oci/ps-printer-app.bst` are two copies of the same fact, and a
+# commit can bump one and leave the other behind. Promotion refuses that state,
+# but a promotion attempt is a late and expensive place to find out, so this
+# runs on every change to `testing`.
+#
+# This workflow reads files and runs unit tests. It builds nothing, needs no
+# registry credentials, and grants nothing beyond `contents: read`.
+
+on:
+  pull_request:
+    branches:
+      - testing
+  push:
+    branches:
+      - testing
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: fsdk-metadata-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  metadata:
+    name: Check the FSDK pin
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Exercise the checker against mismatched metadata fixtures
+        run: python3 -m unittest discover -s tests -p 'test_fsdk_metadata*.py' -v
+
+      - name: Compare the pinned FSDK ref/version with the OCI labels it builds with
+        run: |
+          set -euo pipefail
+          graph=elements/freedesktop-sdk.bst
+          oci=elements/oci/ps-printer-app.bst
+          if [[ ! -e "$graph" && ! -e "$oci" ]]; then
+            # Reporting a skip is honest here: there is no pin in this tree to
+            # disagree with anything. A *partial* graph falls through to the
+            # checker, which fails closed.
+            echo "::notice::No FSDK graph in this tree, so there is no pin to compare. Skipped."
+            exit 0
+          fi
+          python3 scripts/verify-fsdk-metadata.py
