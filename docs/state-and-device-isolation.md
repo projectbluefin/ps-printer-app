@@ -1,110 +1,113 @@
 # Persistent state, instance isolation and USB access
 
-The appliance keeps everything it persists in one writable volume, advertises
-itself under a name that identifies the instance, and reaches a USB printer
-through the host's device nodes. This document is the contract for all three,
-and it says plainly which parts have been verified and which have not.
+The FSDK OCI image (`ghcr.io/projectbluefin/ps-printer-app`) keeps everything
+it persists in one writable volume, advertises itself under a name that
+identifies the instance, and reaches a USB printer through the host's device
+nodes. This document is the contract for all three, and it says plainly which
+parts have been verified and which have not.
+
+The launcher is `files/container-entrypoint.sh`, installed by
+`elements/printer-app/runtime-files.bst` as
+`/usr/libexec/ps-printer-app/container-entrypoint` and started by `catatonit`
+(`elements/oci/ps-printer-app.bst`). It rejects a bad configuration with exit
+status 64 before any daemon starts.
 
 ## The state volume
 
-The container runs as the unprivileged numeric user `_daemon_` (UID/GID
-584792). `/var/lib/ps-printer-app` is the only place it writes, and
-`/scripts/prepare-state.sh` prepares it before the application starts:
+The container runs as `nonroot` (UID/GID 65532). `/var/lib/ps-printer-app` is
+the only place it writes, and the entrypoint prepares it before the
+application starts:
 
 | Path | Holds |
 | --- | --- |
-| `/var/lib/ps-printer-app/ps-printer-app.state` | The configured printers and their settings |
-| `/var/lib/ps-printer-app/ppd/` | PPD files uploaded through the web interface |
-| `/var/lib/ps-printer-app/cups/` | CUPS backend configuration (`snmp.conf`) and the CUPS SSL directory |
-| `/var/lib/ps-printer-app/ps-printer-app.log` | The application log |
-| `/var/spool/ps-printer-app/` | The job spool |
+| `ps-printer-app.state` | The configured printers, their settings and the advertised names |
+| `ppd/` | PPD files uploaded through the web interface |
+| `spool/` | The job spool |
+| `cups/` | `CUPS_SERVERROOT`: the CUPS SNMP backend's `snmp.conf` and the SSL directory |
+| `usb/org.cups.usb-quirks` | The USB backend's quirks database (`USB_QUIRK_DIR`) |
+| `ps-printer-app.log` | The application log |
 
-Mount it to keep that state across container replacement:
+Mount it to keep that state across container replacement, and give it to the
+image user first:
 
 ```sh
-mkdir -p .state/ps-printer-app
-podman unshare chown -R 584792:584792 .state/ps-printer-app
-podman run --rm --name ps-printer-app \
+mkdir -p state-a
+podman unshare chown -R 65532:65532 state-a
+podman run -d --name ps-printer-app-a \
   --network host \
   -e PORT=18080 \
-  -v "$PWD/.state/ps-printer-app:/var/lib/ps-printer-app:Z" \
-  ps-printer-app:latest
+  -v "$PWD/state-a:/var/lib/ps-printer-app:Z" \
+  ghcr.io/projectbluefin/ps-printer-app:<version>
 ```
 
-The spool at `/var/spool/ps-printer-app` sits outside the state volume, so
-queued jobs do not survive container replacement unless you mount that path
-too. The configured printers and their settings do, because they live in the
-state file.
+A bind mount owned by the invoking user belongs to root inside a rootless
+container, so UID 65532 cannot write it: the application would start, fail to
+save its state, and lose every configured printer at the next restart. The
+entrypoint refuses to start instead when the volume, any directory of the
+layout above, or an existing state or log file is not writable, and prints the
+`podman unshare chown -R 65532:65532 <state-dir>` that fixes it.
 
-The mount has to be writable by UID 584792. A fresh `docker volume create`
-volume, and a bind mount owned by another host user, are not: the application
-would start, fail to save its state, and lose every configured printer at the
-next restart. The launcher refuses to start instead and prints the `chown` that
-fixes it, so the failure is visible at boot rather than at the next restart.
+Nothing in the entrypoint replaces a value that is already in the volume. The
+layout is created only where it is missing, and `cups/snmp.conf` and the USB
+quirks are seeded from the image once, so an edit survives a restart and an
+image upgrade. `PPD_PATHS` may be set to change the PPD search path; the other
+paths are fixed.
 
-Nothing in the launcher replaces a value that is already in the volume. The
-layout is created only when it is missing, and `cups/snmp.conf` is seeded from
-the image once. An edit - including an empty file - survives a restart and an
-image upgrade.
+## Several instances on one host
 
-Each path can be pointed somewhere else with `STATE_DIR`, `STATE_FILE`,
-`SPOOL_DIR`, `USER_PPD_DIR`, `CUPS_SERVERROOT` and `PPD_PATHS`; the launcher
-honours any of them that is already set.
+Each Printer Application on one host or LAN needs its own **port**, its own
+**state volume** and its own **advertised name**, or one of them becomes
+unreachable.
 
-## Two instances on one network
+**The port.** `PORT` selects the listening port on the host network. It must
+be a number from 1 to 65535. Without it the application starts on 8000, or the
+next free port.
 
-Two Printer Applications on the same LAN have to differ in two things, or one
-of them becomes unreachable.
+**The state volume.** Two instances sharing one volume would overwrite each
+other's state file. Give each its own directory.
 
-**The port.** `PORT` selects the listening port. Without it the application
-starts on 8000, or the next free port. Give each instance its own:
+**The advertised name.** The system name is the DNS-SD service instance name
+the appliance registers (`_ipps-system._tcp` and `_http._tcp`) and the title
+of its web interface. With two instances advertising the same name, only the
+first registration is visible; the second is not advertised at all (observed
+with two containers on one host). `PRINTER_APP_INSTANCE` gives an instance a
+name of its own:
 
 ```sh
--e PORT=18080   # first instance
--e PORT=18081   # second instance
+-e PORT=18080 -e PRINTER_APP_INSTANCE=lab-a   # "PostScript Printer Application (lab-a)"
+-e PORT=18081 -e PRINTER_APP_INSTANCE=lab-b   # "PostScript Printer Application (lab-b)"
 ```
 
-**The advertised name.** PAPPL registers the system name as the DNS-SD service
-instance name and registers it with no auto-rename, so two instances that
-advertise the same name cannot coexist: the first registration wins, the second
-is refused, and the printers behind it stop being discoverable. Set
-`PRINTER_APP_INSTANCE` to give an instance an advertisement of its own:
-
-```sh
--e PRINTER_APP_INSTANCE=lab-a   # advertises "PostScript Printer Application (lab-a)"
--e PRINTER_APP_INSTANCE=lab-b   # advertises "PostScript Printer Application (lab-b)"
-```
-
-The value is reduced to letters, digits, hyphens and underscores, capped at 24
-characters (Avahi rejects a service name of 63 bytes or more, and the
-advertisement wraps the identity), and rejected if nothing usable is left.
-Leaving it unset advertises exactly the name the image has always used, so a
-single-instance deployment is unaffected.
+Anything but letters, digits, `-` and `_` becomes `-`, runs of `-` collapse,
+the ends are trimmed and the identity is capped at 24 characters, which keeps
+the advertised name well below Avahi's 63-byte label limit. A value with
+nothing usable left is refused with 64. Leaving it unset keeps the built-in
+name, `PostScript Printer Application`.
 
 Two consequences worth knowing:
 
-- The system name also titles the web interface, so each instance shows its own
-  name in the browser tab. That is how you tell two open tabs apart.
-- The name is saved in the state file and restored from it on the next start,
-  so an instance that already has a state volume keeps the name it had. To
-  rename an existing instance, start it from a fresh volume or remove the
-  `DNSSDName` line from the state file.
+- PAPPL saves the advertised name as `DNSSDName` in the state file and
+  restores it on the next start. Changing `PRINTER_APP_INSTANCE` on an existing
+  volume changes the web interface title and the IPP `system-name`, but the
+  instance keeps advertising the name it had. To rename it for DNS-SD, start
+  from a fresh volume or remove the system's `DNSSDName` line from the state
+  file while the container is stopped.
+- Printers are advertised (`_ipp._tcp`) under their own names, which are also
+  saved in each state file. Give printers in different instances different
+  names too.
 
-Browsing is already narrowed so that one printer is not discovered once per
+Browsing is narrowed separately, so that one printer is not discovered once per
 service type: `patches/cups-dnssd-backend-socket-only.patch` restricts the CUPS
 DNS-SD backend to `_pdl-datastream._tcp`. That is about what the appliance
 *looks for*; `PRINTER_APP_INSTANCE` is about what it *advertises*.
 
 ## USB access without root
 
-The CUPS USB backend opens `/dev/bus/usb/<bus>/<device>` for reading **and
-writing**, so the device node has to exist in the container and the container
-user has to be able to open it for writing.
-
-The image sets the setuid bit on the USB backend. That grants nothing here: the
-container has no privilege for it to elevate to, and under rootless Podman or
-Docker the setuid bit does not reach the host's device permissions. Device
-access comes from the host.
+The CUPS USB backend (`/usr/lib/cups/backend/usb`, reached through
+`/usr/lib/ps-printer-app/backend`) opens `/dev/bus/usb/<bus>/<device>` for
+reading **and writing**, so the device node has to exist in the container and
+UID 65532 has to be able to open it for writing. The backend is not setuid,
+and the image has no privilege to grant: device access comes from the host.
 
 On the host, check what the node allows:
 
@@ -112,52 +115,55 @@ On the host, check what the node allows:
 ls -l /dev/bus/usb/*/*
 ```
 
-Printer-class nodes are normally mode `0666`, which is enough. If the node is
-not world-writable, add a udev rule that grants the group and add that group to
-the container, rather than widening the node or running privileged.
+If the node is not writable by everyone, add a udev rule that grants a group
+access to that printer, and keep that group in the container, rather than
+widening every node or running privileged.
 
-In the container, pass the device through **writable**. A read-only mount of
-`/dev/bus/usb` cannot be claimed or written to, so `-v /dev/bus/usb:/dev/bus/usb:ro`
-does not give a working USB printer:
+In the container, pass the device through **writable**, either the one device
+with `--device` or the whole bus directory with `-v /dev/bus/usb:/dev/bus/usb`.
+The upstream Rock examples mount `/dev/bus/usb:ro`; that has not been tried
+with this image, so do not rely on it:
 
 ```sh
-podman run --rm --name ps-printer-app \
+podman run -d --name ps-printer-app-a \
   --network host \
   -e PORT=18080 \
-  -v "$PWD/.state/ps-printer-app:/var/lib/ps-printer-app:Z" \
-  --device /dev/bus/usb \
+  -e PRINTER_APP_INSTANCE=lab-a \
+  -v "$PWD/state-a:/var/lib/ps-printer-app:Z" \
+  --device /dev/bus/usb/001/004 \
   --group-add keep-groups \
-  ps-printer-app:latest
+  ghcr.io/projectbluefin/ps-printer-app:<version>
 ```
 
-Do not validate USB printing with `--privileged` or `sudo docker`. Both hide
+`--group-add keep-groups` (Podman with crun) keeps the invoking user's
+supplementary groups, so a group that udev grants on the host also applies in
+the container. Give each device to one instance only: two instances that both
+see a printer would both try to claim it.
+
+Do not validate USB printing with `--privileged` or `sudo podman`. Both hide
 the access model the image actually ships, so a success there says nothing
 about a rootless deployment.
 
-USB quirk tables are read from `$USB_QUIRK_DIR/usb`, falling back to the CUPS
-data directory in the image.
-
 ## Verification status
 
-**Verified here.** `python3 -m unittest discover -s tests -v` runs the shipped
-scripts against a temporary state tree and a stub application. It covers the
-state layout and its export, that an existing state file and an edited
-`snmp.conf` survive a restart, that an unwritable volume is refused with the
-fix, that the default advertisement is the string compiled into the
-application, that two instances get different advertised names and ports, that
-an identity is sanitized into a legal DNS label, that a port that is not a
-number or is outside 1-65535 is refused before the application starts, and that
-the image ships the launcher helpers and the state layout the launcher expects.
-`shellcheck scripts/*.sh` runs over the launcher.
+**Verified against the built image.** `tests/instance-isolation.sh` (run by
+`just verify`) starts two instances on the host network with distinct `PORT`,
+state volume and `PRINTER_APP_INSTANCE`, and checks that both serve, report
+distinct sanitized names over IPP Get-System-Attributes and in the web
+interface, and each advertise their own name as `_ipps-system._tcp` on their
+own port; that an instance without `PRINTER_APP_INSTANCE` keeps the built-in
+name; and that an instance name with nothing usable, a `PORT` outside 1-65535
+and an unwritable state volume (or part of its layout) are refused with 64.
+`tests/core-appliance.sh` covers the state layout, seeding, preservation of
+edited state across runs, and a non-numeric `PORT`; `tests/core-payload.sh`
+covers a configured printer surviving a restart.
 
-**Not verified here.** This work was written without a container runtime and
-without printer hardware. None of the following has been observed:
+**Not verified.** No printer hardware is available. None of the following has
+been observed:
 
-- The OCI image building or running, on either architecture.
-- Two containers actually advertising on one LAN, and how the two
-  `avahi-daemon` processes in host-network containers interact.
-- DNS-SD discovery of an appliance from another host.
-- A USB device being enumerated, claimed, or printed to.
+- DNS-SD discovery of an appliance from another host on the LAN.
+- A USB device being enumerated, claimed, or printed to, with `--device`,
+  a writable or read-only `/dev/bus/usb` mount, or `--group-add keep-groups`.
 - Physical paper output, and anything about a specific printer's firmware,
   media handling or colour.
 

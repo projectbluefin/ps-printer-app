@@ -83,10 +83,12 @@ The workflow follows the Ghostscript appliance's build interface:
   never runs `bst source fetch --deps all`.
 - `just build` exports the complete local OCI image.
 - `just verify` runs full appliance and payload verification, including executable
-  `tests/core-appliance.sh` and `tests/core-payload.sh`. The payload test must send
-  a real IPP job through the driver/filter/socket backend, check format-specific
-  output bytes, and require job completion. It must also cover the persistence
-  and coexistence contracts from #4 and #5. Synthetic echoes are not sufficient.
+  `tests/core-appliance.sh`, `tests/core-payload.sh` and
+  `tests/instance-isolation.sh`. The payload test must send a real IPP job through
+  the driver/filter/socket backend, check format-specific output bytes, and require
+  job completion. It must also cover the persistence and coexistence contracts from
+  #4 and #5; `tests/instance-isolation.sh` runs two instances side by side. Synthetic
+  echoes are not sufficient.
   `tests/foomatic-pin.sh` additionally sends a PIN-protected job to an OEM
   PostScript queue and requires the PPD's locked print JCL on the socket sink (#14).
 

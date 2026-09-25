@@ -74,6 +74,11 @@ verify-payload:
 verify-pin:
     IMAGE="{{ image_ref }}" tests/foomatic-pin.sh
 
+# Two named instances side by side, the default name, and the entrypoint's
+# refusals of a bad instance name, PORT or state volume.
+verify-instances:
+    IMAGE="{{ image_ref }}" tests/instance-isolation.sh
+
 # The image is composed from runtime domains only: the printing base it builds
 # on is a devel stack, so headers, static libraries and pkg-config/CMake files
 # must not leak into it (fsdk-containers docs/skills/printing-base.md, rule 5).
@@ -98,6 +103,7 @@ verify:
     just verify-core
     just verify-payload
     just verify-pin
+    just verify-instances
 
 # SPDX SBOM of the image graph for releases (run `just fetch` first).
 sbom:

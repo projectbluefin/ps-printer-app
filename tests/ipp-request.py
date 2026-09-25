@@ -11,6 +11,7 @@ Usage:
     ipp-request.py PRINTER_URI get-printer-attributes
     ipp-request.py PRINTER_URI print-job FILE MIME_TYPE
     ipp-request.py PRINTER_URI get-job-attributes JOB_ID
+    ipp-request.py SYSTEM_URI get-system-attributes
 
 ipp:// maps to http:// on the same host and port (RFC 8010, section 4).
 """
@@ -22,6 +23,7 @@ OPERATIONS = {
     "print-job": 0x0002,
     "get-job-attributes": 0x0009,
     "get-printer-attributes": 0x000B,
+    "get-system-attributes": 0x005B,
 }
 TEXT_TAGS = range(0x40, 0x50)
 INTEGER_TAGS = (0x21, 0x23)
@@ -89,7 +91,9 @@ def main() -> int:
     request = struct.pack(">BBHI", 2, 0, OPERATIONS[operation], 1) + bytes([0x01])
     request += attribute(0x47, "attributes-charset", "utf-8")
     request += attribute(0x48, "attributes-natural-language", "en")
-    request += attribute(0x45, "printer-uri", uri)
+    # System operations address the system object (PWG 5100.22, section 4).
+    target = "system-uri" if operation == "get-system-attributes" else "printer-uri"
+    request += attribute(0x45, target, uri)
     request += attribute(0x42, "requesting-user-name", "appliance-test")
     document = b""
     if operation == "print-job":

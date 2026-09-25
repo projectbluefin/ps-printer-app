@@ -47,7 +47,7 @@ and run the full verification:
 
 ```sh
 just build     # tags ghcr.io/projectbluefin/ps-printer-app:build
-just verify    # validate, no-devel check, core-appliance.sh, core-payload.sh, foomatic-pin.sh
+just verify    # validate, no-devel check, core-appliance.sh, core-payload.sh, foomatic-pin.sh, instance-isolation.sh
 ```
 
 `just verify` runs the suites against the `:build` tag (see `docs/fsdk-ci.md`).
@@ -83,6 +83,22 @@ captured bytes, the job to reach `completed`, and neither secret in the
 application log or the container log. It proves the JCL reaches the device URI,
 not that a printer honours it. `IMAGE`, `NAME` and `PORT` (default 18040, sink
 `PORT + 1000`) select the image, container name and port.
+
+## Instance isolation
+
+`instance-isolation.sh` starts two instances of the image on the host network,
+each with its own `PORT`, state volume and `PRINTER_APP_INSTANCE`, and one without
+`PRINTER_APP_INSTANCE`. The named instances must both serve, report their distinct,
+sanitized names over IPP Get-System-Attributes (`ipp-request.py`) and in the web
+interface title, and advertise them as `_ipps-system._tcp` on their own port with
+their avahi-daemon; the unnamed one must keep `PostScript Printer Application`. The
+entrypoint must refuse with 64 an instance name with nothing usable, `PORT` 0, 65536
+and an overlong number, and a state volume, or a directory of its layout, that UID
+65532 cannot write, printing the `podman unshare chown` that fixes it. Discovery
+from another host and USB access are not verified (see
+[docs/state-and-device-isolation.md](../docs/state-and-device-isolation.md)).
+`IMAGE`, `PORT` (default 18080; `PORT`..`PORT+2` are used) and `NAME_PREFIX`
+(container names, default `ps-printer-app-inst`) select the image, ports and names.
 
 ## The manifest
 
