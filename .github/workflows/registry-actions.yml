@@ -23,7 +23,7 @@ on:
 
 jobs:
   build-rock:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-26.04
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -41,7 +41,7 @@ jobs:
   publish-rock:
     needs: build-rock
     if: github.ref_name == 'main' || github.ref_name == 'master'
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-26.04
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -84,7 +84,8 @@ jobs:
         run: |
           IMAGE="$(yq '.name' rockcraft.yaml)"
           VERSION="$(yq '.version' rockcraft.yaml)"
-          ROCK="$(ls *.rock | tail -n 1)"
+          ROCKS=(./*.rock)
+          ROCK="${ROCKS[-1]}"
           ORG_NAME=$(echo "${ORG}" | tr '[:upper:]' '[:lower:]')
           sudo rockcraft.skopeo --insecure-policy copy oci-archive:"${ROCK}" docker-daemon:"${ORG_NAME}/${IMAGE}:${VERSION}-edge"
           # Push to Docker Hub
@@ -94,10 +95,10 @@ jobs:
           # docker push ${USERNAME}/${IMAGE}:latest
           # Push to GitHub Packages
           GITHUB_IMAGE="ghcr.io/${ORG_NAME}/${IMAGE}"
-          docker tag ${ORG_NAME}/${IMAGE}:${VERSION}-edge ${GITHUB_IMAGE}:${VERSION}-edge
-          docker push ${GITHUB_IMAGE}:${VERSION}-edge
-          docker tag ${GITHUB_IMAGE}:${VERSION}-edge ${GITHUB_IMAGE}:latest
-          docker push ${GITHUB_IMAGE}:latest
+          docker tag "${ORG_NAME}/${IMAGE}:${VERSION}-edge" "${GITHUB_IMAGE}:${VERSION}-edge"
+          docker push "${GITHUB_IMAGE}:${VERSION}-edge"
+          docker tag "${GITHUB_IMAGE}:${VERSION}-edge" "${GITHUB_IMAGE}:latest"
+          docker push "${GITHUB_IMAGE}:latest"
 
       - name: Build and Push Docker Image (Stable Channel)
         if: github.event.inputs.workflow_choice == 'stable' || github.event.inputs.workflow_choice == 'both'
@@ -107,7 +108,8 @@ jobs:
         run: |
             IMAGE="$(yq '.name' rockcraft.yaml)"
             VERSION="$(yq '.version' rockcraft.yaml)"
-            ROCK="$(ls *.rock | tail -n 1)"
+            ROCKS=(./*.rock)
+            ROCK="${ROCKS[-1]}"
             ORG_NAME=$(echo "${ORG}" | tr '[:upper:]' '[:lower:]')
             sudo rockcraft.skopeo --insecure-policy copy oci-archive:"${ROCK}" docker-daemon:"${ORG_NAME}/${IMAGE}:${VERSION}-stable"
             # Push to Docker Hub
@@ -115,5 +117,5 @@ jobs:
             # docker push ${USERNAME}/${IMAGE}:${VERSION}-stable
             # Push to GitHub Packages
             GITHUB_IMAGE="ghcr.io/${ORG_NAME}/${IMAGE}"
-            docker tag ${ORG_NAME}/${IMAGE}:${VERSION}-stable ${GITHUB_IMAGE}:${VERSION}-stable
-            docker push ${GITHUB_IMAGE}:${VERSION}-stable
+            docker tag "${ORG_NAME}/${IMAGE}:${VERSION}-stable" "${GITHUB_IMAGE}:${VERSION}-stable"
+            docker push "${GITHUB_IMAGE}:${VERSION}-stable"

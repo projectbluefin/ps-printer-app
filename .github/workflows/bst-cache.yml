@@ -1,18 +1,30 @@
-name: FSDK image CI
+name: BuildStream cache refill
 
 on:
-  pull_request:
+  push:
     branches: [testing]
-  merge_group:
-    branches: [testing]
+    paths:
+      - project.conf
+      - elements/**
+      - include/**
+      - patches/**
+      - files/**
+      - Makefile
+      - ps-printer-app.c
+      - ps-printer-app.1
+      - ps-printer-app.service
+      - generic-ps-printer.ppd
+      - testpage.ps
+      - VERSION
+      - ci/buildstream.conf
+      - .github/workflows/bst-cache.yml
+  schedule:
+    - cron: '41 3 * * *'
   workflow_dispatch:
 
 permissions:
   contents: read
-
-concurrency:
-  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
-  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+  actions: write
 
 jobs:
   prerequisites:
@@ -43,9 +55,10 @@ jobs:
           test -x tests/core-payload.sh
           echo 'available=true' >> "$GITHUB_OUTPUT"
 
-  build-fsdk:
-    name: FSDK (${{ matrix.arch }})
+  refill:
+    name: Refill (${{ matrix.arch }})
     needs: prerequisites
+    if: needs.prerequisites.outputs.available == 'true'
     strategy:
       fail-fast: false
       matrix:
@@ -56,36 +69,26 @@ jobs:
             runner: ubuntu-26.04-arm
     runs-on: ${{ matrix.runner }}
     timeout-minutes: 360
-    env:
-      FULL_BUILD: ${{ github.event_name != 'pull_request' }}
+    # Never cancel: a running refill must reach its save step. A burst of
+    # pushes collapses to one running plus one pending refill per arch.
+    concurrency:
+      group: bst-cache-${{ matrix.arch }}
+      cancel-in-progress: false
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
-      - name: Report bootstrap status
-        if: needs.prerequisites.outputs.available != 'true'
-        run: |
-          echo "FSDK image build skipped: bootstrap prerequisites pending."
       - uses: taiki-e/install-action@d438492cf8a250514fa2d34b30bc3c0dc37c65ff # v2
-        if: needs.prerequisites.outputs.available == 'true'
         with:
           tool: just
       - name: Install host dependencies
-        if: needs.prerequisites.outputs.available == 'true'
         run: sudo apt-get update && sudo apt-get install --yes fuse3 podman
-      - name: Validate BuildStream graph
-        if: env.FULL_BUILD != 'true' && needs.prerequisites.outputs.available == 'true'
-        run: just validate
       - name: Compute BuildStream cache key
         id: bst-key
-        if: env.FULL_BUILD == 'true' && needs.prerequisites.outputs.available == 'true'
         env:
           INPUTS_HASH: ${{ hashFiles('project.conf', 'elements/**', 'include/**', 'patches/**', 'files/**', 'Makefile', 'ps-printer-app.c', 'ps-printer-app.1', 'ps-printer-app.service', 'generic-ps-printer.ppd', 'testpage.ps', 'VERSION') }}
         run: echo "hash=${INPUTS_HASH}" >> "$GITHUB_OUTPUT"
-      # Restore only: pull_request and merge_group caches are not reusable by
-      # other runs, so bst-cache.yml refills the cache from testing instead.
       - name: Restore BuildStream cache
-        if: env.FULL_BUILD == 'true' && needs.prerequisites.outputs.available == 'true'
         uses: actions/cache/restore@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6
         with:
           path: |
@@ -97,11 +100,32 @@ jobs:
             bst-v1-${{ matrix.arch }}-${{ steps.bst-key.outputs.hash }}-
             bst-v1-${{ matrix.arch }}-
       - name: Build image
-        if: env.FULL_BUILD == 'true' && needs.prerequisites.outputs.available == 'true'
         run: just bst --config /src/ci/buildstream.conf --network-retries 5 build oci/ps-printer-app.bst
-      - name: Build the full FSDK image
-        if: env.FULL_BUILD == 'true' && needs.prerequisites.outputs.available == 'true'
-        run: just build
-      - name: Verify the appliance and real print-to-socket output
-        if: env.FULL_BUILD == 'true' && needs.prerequisites.outputs.available == 'true'
-        run: just verify
+      - name: Report cache size
+        run: |
+          {
+            echo '### BuildStream cache (${{ matrix.arch }})'
+            echo '```'
+            du -sh ~/.cache/buildstream/cas ~/.cache/buildstream/artifacts ~/.cache/buildstream/source_protos
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"
+      - name: Save BuildStream cache
+        uses: actions/cache/save@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6
+        with:
+          path: |
+            ~/.cache/buildstream/cas
+            ~/.cache/buildstream/artifacts
+            ~/.cache/buildstream/source_protos
+          key: bst-v1-${{ matrix.arch }}-${{ steps.bst-key.outputs.hash }}-${{ github.run_id }}
+      - name: Prune older BuildStream caches
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+          PREFIX: bst-v1-${{ matrix.arch }}-
+          KEEP: bst-v1-${{ matrix.arch }}-${{ steps.bst-key.outputs.hash }}-${{ github.run_id }}
+        run: |
+          gh cache list --key "$PREFIX" --ref "$GITHUB_REF" --limit 100 --json id,key \
+            --jq '.[] | select(.key != env.KEEP) | .id' |
+            while read -r id; do
+              gh cache delete "$id"
+            done

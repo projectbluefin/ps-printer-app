@@ -17,10 +17,10 @@ on:
 
 jobs:
   update-yamls:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-26.04
     steps:
       - name: Checkout this repo
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Run desktop-snaps action (Snapcraft)
         if: ${{ github.event_name == 'schedule' || github.event.inputs.workflow_choice == 'snapcraft' || github.event.inputs.workflow_choice == 'both' }}
