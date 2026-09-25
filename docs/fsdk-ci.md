@@ -1,20 +1,17 @@
 # Native FSDK image validation
 
-`.github/workflows/fsdk-ci.yml` validates image changes on pull requests to
-`testing`, pushes to `testing`, and manual dispatch. It uses native x86_64 and
-AArch64 runners with independent six-hour limits. A new commit to a pull request
-cancels that pull request's previous run; pushes are not cancelled.
+`.github/workflows/fsdk-ci.yml` runs on every pull request to `testing`, in the
+merge queue, and on manual dispatch. Pull requests only validate the BuildStream
+graph (`just validate`); no image is built. The merge queue and
+`workflow_dispatch` run the full native x86_64 and AArch64 build and verification,
+each with a six-hour limit. A new commit to a pull request cancels that pull
+request's previous run; merge-queue and dispatch runs are not cancelled.
 
 Both jobs inherit only `contents: read`. Checkout does not persist credentials,
 and the workflow has no registry login, secrets, publishing step, or privileged
 `pull_request_target` trigger. Public builder images and sources must be readable
 without registry credentials. Legacy Snap/Rock packaging and registry workflows
 remain separate; FSDK validation does not trigger a release workflow.
-
-Image inputs include the BuildStream graph and refs, Justfile, source, patches,
-runtime files, scripts, and tests. Documentation-only and Snap/Rock-only changes
-do not schedule native builds. Update the path list when adding another image
-input outside these locations. Both architectures use the same image inputs.
 
 ## Prerequisite integration
 
@@ -27,9 +24,12 @@ Remove the bootstrap skip once the graph is integrated.
 The workflow follows the Ghostscript appliance's build interface:
 
 - `project.conf` and `elements/oci/ps-printer-app.bst` define the image graph.
-- `Justfile` (or `justfile`) provides `fetch`, `build`, and `verify` recipes.
-- `just fetch` fetches immutable sources with bounded retries.
-- `just build` builds and exports the complete local OCI image.
+- `Justfile` (or `justfile`) provides `bst`, `validate`, `build`, and `verify`
+  recipes; `build` and `verify` must not depend on a `fetch` recipe.
+- `just validate` runs `bst show --deps all oci/ps-printer-app.bst` (pull requests).
+- `just bst --network-retries 5 build oci/ps-printer-app.bst` builds the image,
+  fetching only uncached sources. CI never runs `bst source fetch --deps all`.
+- `just build` exports the complete local OCI image.
 - `just verify` runs full appliance and payload verification, including executable
   `tests/core-appliance.sh` and `tests/core-payload.sh`. The payload test must send
   a real IPP job through the driver/filter/socket backend, check format-specific
