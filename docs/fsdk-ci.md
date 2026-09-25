@@ -84,6 +84,8 @@ The workflow follows the Ghostscript appliance's build interface:
   a real IPP job through the driver/filter/socket backend, check format-specific
   output bytes, and require job completion. It must also cover the persistence
   and coexistence contracts from #4 and #5. Synthetic echoes are not sufficient.
+  `tests/foomatic-pin.sh` additionally sends a PIN-protected job to an OEM
+  PostScript queue and requires the PPD's locked print JCL on the socket sink (#14).
 
 A partial graph fails the prerequisite check instead of skipping native builds.
 The prerequisite check only checks interface files; the recipes and tests must

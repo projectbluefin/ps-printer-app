@@ -70,6 +70,10 @@ verify-core:
 verify-payload:
     IMAGE="{{ image_ref }}" tests/core-payload.sh
 
+# Foomatic-RIP PIN jobs: an OEM PostScript queue turns a PIN into its locked print JCL.
+verify-pin:
+    IMAGE="{{ image_ref }}" tests/foomatic-pin.sh
+
 # The image is composed from runtime domains only: the printing base it builds
 # on is a devel stack, so headers, static libraries and pkg-config/CMake files
 # must not leak into it (fsdk-containers docs/skills/printing-base.md, rule 5).
@@ -93,6 +97,7 @@ verify:
     just verify-no-devel
     just verify-core
     just verify-payload
+    just verify-pin
 
 # SPDX SBOM of the image graph for releases (run `just fetch` first).
 sbom:

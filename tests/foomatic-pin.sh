@@ -29,6 +29,7 @@
 #   IMAGE       image reference to verify
 #               (default ghcr.io/projectbluefin/ps-printer-app:latest)
 #   RUNTIME     container runtime (default podman)
+#   NAME        container name (default ps-printer-app-foomatic-pin)
 #   PORT        printer application port (default 18040), the sink uses PORT+1000
 #   IMAGE_PULL  set to 1 to pull IMAGE even when it already exists locally
 #
@@ -45,11 +46,17 @@ script_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 # database, which is the family the PIN support in the PPD files exists for.
 # It declares a locked print job type, a numeric PIN and a numeric user code,
 # all of them Foomatic command line options, and the locked print job type
-# emits the "{secureprint}" and "{setuserinfo}" operators.
-ppd_member="Ricoh/PS/Ricoh-Aficio_2051_PS.ppd"
+# emits the "{secureprint}" and "{setuserinfo}" operators.  The Aficio 2045 is
+# used rather than, say, the Aficio 2051 because PAPPL refuses to create a
+# printer from PPDs whose full-bleed sizes have an imageable area larger than
+# the paper ("Invalid driver bottom/top margins value"), so such a PPD cannot
+# reach a real queue.
+ppd_member="Ricoh/PS/Ricoh-Aficio_2045_PS.ppd"
+driver_make_and_model="RICOH Aficio 2045 (en)"
 ppd_archive="/usr/share/ppd/foomatic-ps-ppds"
 filter_dir="/usr/lib/ps-printer-app/filter"
-log_file="/ps-printer-app.log"
+log_file="/var/lib/ps-printer-app/ps-printer-app.log"
+job_file="/usr/share/ps-printer-app/testpage.ps"
 
 # Option keywords and the values used for them, as they appear in the PPD.
 # The enumerated values are choices the PPD itself offers, so they are also
@@ -125,7 +132,7 @@ run_rip() {
 check_pin_filter_chain() {
   local tool uri ppd fragment
 
-  for tool in grep sed head cut sort cat mktemp; do
+  for tool in grep head cut cat mktemp rm; do
     if ! command -v "$tool" >/dev/null 2>&1; then
       fail "$tool is missing from the image, so the PIN filter chain cannot be checked"
     fi
@@ -261,17 +268,23 @@ sink_port=$(( port + 1000 ))
 printer="pin-test"
 
 state_dir="$(mktemp -d)"
-sink_dir="$(mktemp -d)"
 in_image_dir="$(mktemp -d)"
+sink_out="$(mktemp)"
+sink_log="$(mktemp)"
 diagnostics="$(mktemp)"
+sink_pid=""
 
 cleanup() {
   "$runtime" rm --force "$name" >/dev/null 2>&1 || true
+  if [[ -n "$sink_pid" ]]; then
+    kill "$sink_pid" >/dev/null 2>&1 || true
+    wait "$sink_pid" 2>/dev/null || true
+  fi
   if [[ "$runtime" == podman ]]; then
     "$runtime" unshare rm -rf "$state_dir" >/dev/null 2>&1 || true
   fi
-  rm -rf "$state_dir" "$sink_dir" "$in_image_dir" >/dev/null 2>&1 || true
-  rm -f "$diagnostics"
+  rm -rf "$state_dir" "$in_image_dir" >/dev/null 2>&1 || true
+  rm -f "$sink_out" "$sink_log" "$diagnostics"
 }
 trap cleanup EXIT
 
@@ -339,11 +352,12 @@ find_keyword_value() {
   return 1
 }
 
-for tool in "$runtime" curl; do
+for tool in "$runtime" curl python3 grep sed sort cut head wc; do
   if ! command -v "$tool" >/dev/null 2>&1; then
     fail "required tool not found: $tool"
   fi
 done
+[[ -r "$script_dir/socket-sink.py" ]] || fail "socket sink not found: $script_dir/socket-sink.py"
 
 if [[ "${IMAGE_PULL:-0}" == 1 ]] || ! "$runtime" image inspect "$image" >/dev/null 2>&1; then
   note "Pulling $image"
@@ -351,6 +365,8 @@ if [[ "${IMAGE_PULL:-0}" == 1 ]] || ! "$runtime" image inspect "$image" >/dev/nu
 fi
 
 note "== Filter chain proof inside $image =="
+# The image runs as nonroot, which cannot enter mktemp's 0700 directory.
+chmod 0755 "$in_image_dir"
 cp "$script_dir/foomatic-pin.sh" "$in_image_dir/"
 chmod 0755 "$in_image_dir/foomatic-pin.sh"
 "$runtime" run --rm --entrypoint /usr/bin/bash \
@@ -359,67 +375,17 @@ chmod 0755 "$in_image_dir/foomatic-pin.sh"
 
 note "== Real IPP job with a PIN through foomatic-rip into the socket sink =="
 
-# The sink runs inside the container on the same network namespace as the
-# application, so the device URI the application dials is loopback.  It lives
-# in a directory of its own, so that the application never sees it, and the
-# bytes it captures are read back from the host.
-cat > "$sink_dir/sink.py" <<'PY'
-import socket
-import sys
-import time
-
-port = int(sys.argv[1])
-out = sys.argv[2]
-received = 0
-idle = 0
-deadline = time.time() + 300
-
-server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-server.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-server.bind(("127.0.0.1", port))
-server.listen(4)
-server.settimeout(1.0)
-
-handle = open(out, "wb")
-try:
-    while time.time() < deadline:
-        try:
-            conn, _ = server.accept()
-        except socket.timeout:
-            # Stop once a job has arrived and the application has stopped
-            # talking to us; one job may use more than one connection because
-            # the backend keeps a back channel open, so a long quiet period is
-            # required before giving up on the job being finished.
-            if received and idle >= 30:
-                break
-            idle += 1
-            continue
-        idle = 0
-        with conn:
-            while True:
-                chunk = conn.recv(65536)
-                if not chunk:
-                    break
-                received += len(chunk)
-                handle.write(chunk)
-        handle.flush()
-finally:
-    handle.close()
-    server.close()
-PY
-printf '%s\n' \
-  "%!PS-Adobe-3.0" \
-  "%%Pages: 1" \
-  "%%Page: 1 1" \
-  "newpath 10 10 moveto 60 60 lineto stroke" \
-  "showpage" \
-  "%%EOF" > "$sink_dir/job.ps"
-chmod 0777 "$state_dir" "$sink_dir"
+# The sink stands in for the printer on the host; the container shares the
+# host network, so the device URI the application dials is loopback.  It takes
+# one connection and exits once the socket backend closes it.
+chmod 0777 "$state_dir"
+python3 "$script_dir/socket-sink.py" "$sink_port" "$sink_out" >"$sink_log" 2>&1 &
+sink_pid=$!
+sleep 1
 
 "$runtime" run --detach --name "$name" --network host \
   --env "PORT=$port" \
   --volume "$state_dir:/var/lib/ps-printer-app:Z" \
-  --volume "$sink_dir:/sink:Z" \
   "$image" >/dev/null
 
 if ! wait_ready; then
@@ -432,21 +398,19 @@ system_uri="ipp://127.0.0.1:${port}/ipp/system"
 printer_uri="ipp://127.0.0.1:${port}/ipp/print/${printer}"
 
 drivers="$("$runtime" exec "$name" /usr/bin/ps-printer-app drivers)"
-driver="$(printf '%s\n' "$drivers" | grep -iF -- "Aficio 2051" | head -n 1 | cut -d' ' -f1)"
+driver="$(printf '%s\n' "$drivers" | grep -F -- "\"$driver_make_and_model\"" | head -n 1 | cut -d' ' -f1)"
 if [[ -z "$driver" ]]; then
   printf '%s\n' "$drivers" >&2
-  fail "the application does not offer a Ricoh Aficio 2051 driver from $ppd_member"
+  fail "the application does not offer the $driver_make_and_model driver from $ppd_member"
 fi
 note "  ok: the application offers the OEM driver '$driver'"
-
-"$runtime" exec --detach "$name" python3 /sink/sink.py \
-  "$sink_port" /sink/sink.out >/dev/null
 
 if ! "$runtime" exec "$name" /usr/bin/ps-printer-app \
   -u "$system_uri" \
   -d "$printer" \
   -m "$driver" \
   -v "cups:socket://127.0.0.1:${sink_port}" add; then
+  "$runtime" exec "$name" cat "$log_file" >&2 || true
   fail "could not add printer $printer with the $driver driver"
 fi
 
@@ -476,23 +440,27 @@ if ! "$runtime" exec "$name" /usr/bin/ps-printer-app \
   -o "$pin_name=$pin_value" \
   -o "$usercode_name=$usercode_value" \
   -o "$jobtype_name=$jobtype_value" \
-  submit /sink/job.ps >/dev/null; then
+  submit "$job_file" >/dev/null; then
   fail "the application refused the PIN-protected job"
 fi
 note "  ok: the PIN-protected job was accepted over IPP"
 
-sink_out="$sink_dir/sink.out"
+# The sink exits once the socket backend closes its connection, so every byte
+# of the job is in the capture before it is checked.
 for _ in $(seq 1 120); do
-  if [[ -s "$sink_out" ]]; then
+  if ! kill -0 "$sink_pid" 2>/dev/null; then
     break
   fi
   sleep 0.5
 done
-if [[ ! -s "$sink_out" ]]; then
+if kill -0 "$sink_pid" 2>/dev/null || [[ ! -s "$sink_out" ]]; then
   "$runtime" exec "$name" /usr/bin/ps-printer-app -u "$printer_uri" jobs >&2 || true
   "$runtime" exec "$name" cat "$log_file" >&2 || true
-  fail "the PIN-protected job produced no output on the socket sink"
+  cat "$sink_log" >&2 || true
+  fail "the PIN-protected job did not arrive complete on the socket sink"
 fi
+wait "$sink_pid" || fail "the socket sink failed: $(cat "$sink_log")"
+sink_pid=""
 
 assert_output_has "$sink_out" "/lppswd($pin_value)def" \
   "the PIN did not survive the IPP, filter and backend chain"
@@ -522,10 +490,10 @@ note "  ok: the PIN-protected job reached the completed state"
 # diagnostics must not carry them.  The application logs at ERROR level by
 # default, which means this check guards the diagnostics that are on by default
 # against a change that starts writing job option values at that level or above.
-{
-  "$runtime" exec "$name" cat "$log_file" 2>/dev/null || true
-  "$runtime" logs "$name" 2>/dev/null || true
-} > "$diagnostics"
+"$runtime" exec "$name" cat "$log_file" >"$diagnostics" ||
+  fail "could not read the application log $log_file"
+"$runtime" logs "$name" >>"$diagnostics" 2>&1 ||
+  fail "could not read the container log of $name"
 for secret in "$pin_value" "$usercode_value"; do
   if grep -aFq -- "$secret" "$diagnostics"; then
     grep -anF -- "$secret" "$diagnostics" >&2 || true

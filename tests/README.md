@@ -47,10 +47,10 @@ and run the full verification:
 
 ```sh
 just build     # tags ghcr.io/projectbluefin/ps-printer-app:build
-just verify    # validate, no-devel check, core-appliance.sh, core-payload.sh
+just verify    # validate, no-devel check, core-appliance.sh, core-payload.sh, foomatic-pin.sh
 ```
 
-`just verify` runs both suites against the `:build` tag (see `docs/fsdk-ci.md`).
+`just verify` runs the suites against the `:build` tag (see `docs/fsdk-ci.md`).
 The manifest, not this script, is what has to be updated when the graph changes
 where the payload lands.
 
@@ -65,6 +65,24 @@ trusted) for a printer added with the generic PostScript driver; an IPP Print-Jo
 required child and an invalid `PORT` stop the appliance with 143, a failure and 64,
 while persisted state survives. `IMAGE` and `PORT` (default 18000) select the image
 and port.
+
+## PIN-protected printing
+
+`foomatic-pin.sh` ([#14](https://github.com/projectbluefin/ps-printer-app/issues/14))
+checks that an OEM PostScript queue turns a PIN into the job-level JCL of its PPD,
+using the Foomatic `Ricoh/PS/Ricoh-Aficio_2045_PS.ppd` from the shipped archive.
+Inside the image it asserts that the PPD routes PostScript through `foomatic-rip`
+and declares the PIN, user code and job type as command line options, then drives
+`foomatic-rip` directly: a custom and an enumerated PIN/user code must both reach
+the locked print JCL (`/lppswd(...)def`, `/usrcode(...)def`, `{setuserinfo}`,
+`{secureprint}`), while the PPD defaults must emit no secure print and a locked
+print without a PIN must not invent one. From the host it then adds a printer
+with that driver pointing at `socket-sink.py`, submits `testpage.ps` over IPP with
+the PIN, user code and `job-type=locked-print`, and requires the JCL in the
+captured bytes, the job to reach `completed`, and neither secret in the
+application log or the container log. It proves the JCL reaches the device URI,
+not that a printer honours it. `IMAGE`, `NAME` and `PORT` (default 18040, sink
+`PORT + 1000`) select the image, container name and port.
 
 ## The manifest
 
