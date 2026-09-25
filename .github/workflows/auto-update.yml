@@ -17,7 +17,7 @@ on:
 
 jobs:
   update-yamls:
-    runs-on: ubuntu-26.04
+    runs-on: ubuntu-24.04
     steps:
       - name: Checkout this repo
         uses: actions/checkout@v4

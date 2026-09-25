@@ -1,0 +1,95 @@
+# BuildStream runs in the pinned freedesktop-sdk builder image, the same one
+# fsdk-containers and the other printer applications build with.
+bst2_image := env("BST2_IMAGE", "registry.gitlab.com/freedesktop-sdk/infrastructure/freedesktop-sdk-docker-images/bst2:64eb0b4930d57a92710822898fb73af6cc1ae35d")
+image_ref := env("IMAGE_REF", "ghcr.io/projectbluefin/ps-printer-app:build")
+
+default:
+    @just --list
+
+# BST_FLAGS adds global bst options, e.g. CI's --config /src/ci/buildstream.conf.
+# BST_CACHE_DIR selects another local artifact cache (default ~/.cache/buildstream).
+bst *ARGS:
+    #!/usr/bin/env bash
+    set -euo pipefail
+    cache_dir="${BST_CACHE_DIR:-${HOME}/.cache/buildstream}"
+    mkdir -p "${cache_dir}"
+    podman run --rm \
+        --privileged \
+        --device /dev/fuse \
+        --network=host \
+        -v "{{ justfile_directory() }}:/src:rw" \
+        -v "${cache_dir}:/root/.cache/buildstream:rw" \
+        -w /src \
+        "{{ bst2_image }}" \
+        bash -c 'bst "$@"' -- --no-interactive ${BST_FLAGS:-} {{ ARGS }}
+
+# Resolve the complete graph without building it. The printing base already
+# stages avahi-printing's avahi-daemon; FSDK's components/avahi.bst installs
+# the same files, so the graph must never contain it.
+validate:
+    #!/usr/bin/env bash
+    set -euo pipefail
+    names="$(just bst show --deps all --format '%{name}' oci/ps-printer-app.bst)"
+    if grep -qx 'fsdk-containers.bst:freedesktop-sdk.bst:components/avahi.bst' <<<"$names"; then
+        echo 'FAIL: components/avahi.bst is staged next to the base avahi-printing.bst' >&2
+        exit 1
+    fi
+
+fetch:
+    #!/usr/bin/env bash
+    set -euo pipefail
+    for attempt in 1 2 3; do
+        if just bst source fetch --deps all oci/ps-printer-app.bst; then
+            exit 0
+        fi
+        echo "source fetch failed (attempt ${attempt}/3)" >&2
+        if [[ "$attempt" -lt 3 ]]; then sleep 15; fi
+    done
+    exit 1
+
+build:
+    #!/usr/bin/env bash
+    set -euo pipefail
+    just bst build oci/ps-printer-app.bst
+    just export
+
+export:
+    #!/usr/bin/env bash
+    set -euo pipefail
+    rm -rf .build-out
+    just bst artifact checkout oci/ps-printer-app.bst --directory /src/.build-out
+    IMAGE_ID=$(podman pull -q oci:.build-out)
+    rm -rf .build-out
+    podman tag "$IMAGE_ID" "{{ image_ref }}"
+
+# Appliance lifecycle, IPP and a job through to a socket sink.
+verify-core:
+    IMAGE="{{ image_ref }}" tests/core-appliance.sh
+
+# Driver and PPD payload, and the web-interface test page through the socket backend.
+verify-payload:
+    IMAGE="{{ image_ref }}" tests/core-payload.sh
+
+# The image is composed from runtime domains only: the printing base it builds
+# on is a devel stack, so headers, static libraries and pkg-config/CMake files
+# must not leak into it (fsdk-containers docs/skills/printing-base.md, rule 5).
+verify-no-devel:
+    #!/usr/bin/env bash
+    set -euo pipefail
+    IMAGE="{{ image_ref }}"
+    root="$(mktemp -d)"
+    ctr="$(podman create "${IMAGE}" /none)"
+    trap 'podman rm "${ctr}" >/dev/null; rm -rf "${root}"' EXIT
+    podman export "${ctr}" | tar -C "${root}" -xf -
+    # License notices under usr/share/licenses are kept and never count as devel content.
+    bad="$(cd "${root}" && find . -path ./usr/share/licenses -prune -o \( -path ./usr/include -o -name '*.a' -o -name '*.la' \
+          -o -type d -name pkgconfig -o -type d -name cmake \) -print -quit)"
+    [ -z "${bad}" ] || { echo "devel content in ${IMAGE}: ${bad}" >&2; exit 1; }
+    echo "OK: ${IMAGE} carries no devel content"
+
+# Verify a built image (run `just build` first).
+verify:
+    just validate
+    just verify-no-devel
+    just verify-core
+    just verify-payload

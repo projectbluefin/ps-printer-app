@@ -29,7 +29,7 @@ permissions:
 jobs:
   prerequisites:
     name: Check FSDK integration prerequisites
-    runs-on: ubuntu-26.04
+    runs-on: ubuntu-24.04
     outputs:
       available: ${{ steps.check.outputs.available }}
     steps:
@@ -64,9 +64,9 @@ jobs:
       matrix:
         include:
           - arch: x86_64
-            runner: ubuntu-26.04
+            runner: ubuntu-24.04
           - arch: aarch64
-            runner: ubuntu-26.04-arm
+            runner: ubuntu-24.04-arm
     runs-on: ${{ matrix.runner }}
     timeout-minutes: 360
     # Never cancel: a running refill must reach its save step. A burst of
@@ -74,6 +74,8 @@ jobs:
     concurrency:
       group: bst-cache-${{ matrix.arch }}
       cancel-in-progress: false
+    env:
+      BST_FLAGS: --config /src/ci/buildstream.conf
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
@@ -82,7 +84,7 @@ jobs:
         with:
           tool: just
       - name: Install host dependencies
-        run: sudo apt-get update && sudo apt-get install --yes fuse3 podman
+        run: sudo apt-get update && sudo apt-get install --yes fuse3 podman skopeo jq
       - name: Compute BuildStream cache key
         id: bst-key
         env:
@@ -99,17 +101,72 @@ jobs:
           restore-keys: |
             bst-v1-${{ matrix.arch }}-${{ steps.bst-key.outputs.hash }}-
             bst-v1-${{ matrix.arch }}-
+      - name: Install cosign
+        continue-on-error: true
+        uses: sigstore/cosign-installer@6f9f17788090df1f26f669e9d70d6ae9567deba6 # v4.1.2
+      # Seed printing/base.bst from the signed printing-base-devel bundle
+      # (fsdk-containers docs/skills/printing-base.md, rule 4). Never fails
+      # the job: any error falls through to a local build of the base.
+      - name: Seed printing base
+        continue-on-error: true
+        env:
+          ARCH: ${{ matrix.arch }}
+        run: |
+          set -uo pipefail
+          base=fsdk-containers.bst:printing/base.bst
+          show() {
+            just bst -o arch "$ARCH" show --deps none --format "$1" "$base" 2>/dev/null |
+              tail -n 1 | sed 's/\x1b\[[0-9;]*m//g'
+          }
+          KEY="$(show '%{full-key}')"
+          if [[ ! "$KEY" =~ ^[0-9a-f]{64}$ ]]; then
+            echo "::warning::printing base: cannot compute the ${ARCH} key; building it locally"
+            exit 0
+          fi
+          if [[ "$(show '%{state}')" == cached ]]; then
+            echo "printing base ${ARCH}-${KEY} is already cached"
+            exit 0
+          fi
+          if ! ARCH="$ARCH" KEY="$KEY" bash -euo pipefail <<'SEED'
+          REPO=ghcr.io/projectbluefin/printing-base-devel
+          DIGEST="$(skopeo inspect --format '{{.Digest}}' "docker://${REPO}:${ARCH}-${KEY}")"
+          cosign verify \
+            --certificate-identity-regexp '^https://github.com/projectbluefin/fsdk-containers/.github/workflows/' \
+            --certificate-oidc-issuer https://token.actions.githubusercontent.com \
+            "${REPO}@${DIGEST}" >/dev/null
+          # Copy exactly the verified digest; never touch podman storage.
+          bundle="$(mktemp -d)"
+          trap 'rm -rf "${bundle}"' EXIT
+          skopeo copy "docker://${REPO}@${DIGEST}" "dir:${bundle}"
+          layer="$(jq -r '.layers[0].digest' "${bundle}/manifest.json" | cut -d: -f2)"
+          tar -C ~/.cache/buildstream -xf "${bundle}/${layer}"
+          SEED
+          then
+            echo "::warning::printing base: seeding ${ARCH}-${KEY} failed; building it locally"
+          elif [[ "$(show '%{state}')" != cached ]]; then
+            echo "::warning::printing base: ${ARCH}-${KEY} not verified or not cached after seeding; building it locally"
+          else
+            echo "printing base seeded from ${ARCH}-${KEY}"
+          fi
       - name: Build image
         run: just bst --config /src/ci/buildstream.conf --network-retries 5 build oci/ps-printer-app.bst
-      - name: Report cache size
+      - name: Measure cache
+        id: size
         run: |
-          {
-            echo '### BuildStream cache (${{ matrix.arch }})'
-            echo '```'
-            du -sh ~/.cache/buildstream/cas ~/.cache/buildstream/artifacts ~/.cache/buildstream/source_protos
-            echo '```'
-          } >> "$GITHUB_STEP_SUMMARY"
+          mb="$(du -sm --total ~/.cache/buildstream/cas ~/.cache/buildstream/artifacts ~/.cache/buildstream/source_protos 2>/dev/null | tail -1 | cut -f1)"
+          echo "mb=${mb}" >> "$GITHUB_OUTPUT"
+          echo "### BuildStream cache (${{ matrix.arch }}): ${mb} MB" >> "$GITHUB_STEP_SUMMARY"
+          # Both arches must fit the 10 GB repo cache: save at most 9000 MB
+          # uncompressed per arch (about 4.3 GB once actions/cache compresses it).
+          if [ "${mb}" -le 9000 ]; then
+            echo "fits=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "::error::BuildStream cache is ${mb} MB (> 9000 MB); not saving"
+            exit 1
+          fi
       - name: Save BuildStream cache
+        id: save
+        if: steps.size.outputs.fits == 'true'
         uses: actions/cache/save@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6
         with:
           path: |
@@ -118,6 +175,7 @@ jobs:
             ~/.cache/buildstream/source_protos
           key: bst-v1-${{ matrix.arch }}-${{ steps.bst-key.outputs.hash }}-${{ github.run_id }}
       - name: Prune older BuildStream caches
+        if: steps.save.outcome == 'success'
         env:
           GH_TOKEN: ${{ github.token }}
           GH_REPO: ${{ github.repository }}
@@ -127,5 +185,17 @@ jobs:
           gh cache list --key "$PREFIX" --ref "$GITHUB_REF" --limit 100 --json id,key \
             --jq '.[] | select(.key != env.KEEP) | .id' |
             while read -r id; do
+              echo "Deleting cache ${id}"
               gh cache delete "$id"
             done
+      - name: Report saved cache
+        if: steps.save.outcome == 'success'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+        run: |
+          {
+            echo '### Saved BuildStream caches'
+            gh cache list --ref "$GITHUB_REF" --key bst-v1- --json key,sizeInBytes \
+              --jq '.[] | "- \(.key): \(.sizeInBytes / 1048576 | floor) MB"'
+          } >> "$GITHUB_STEP_SUMMARY"

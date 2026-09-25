@@ -1,0 +1,64 @@
+# Payload inventory for the ps-printer-app OCI image.
+#
+# This file is the machine-checked claim of issue
+# projectbluefin/ps-printer-app#4: every driver, filter, backend and PPD
+# provider that the upstream ps-printer-app source promises, minus the features
+# the source itself excludes.  tests/core-payload.sh reads it inside the image
+# and fails when an entry is missing or unusable.
+#
+# Format: KIND PATH PROVENANCE
+#   KIND       executable  exists, is executable, and resolves its ELF or script closure
+#              ppd         exists and carries a *PPD-Adobe: header
+#              file        exists and is not empty
+#              archive     pyppd self-extracting PPD archive that lists PostScript PPDs
+#   PATH       absolute path inside the image
+#   PROVENANCE where the promise comes from, so the entry can be re-justified
+#
+# Update this file, not the test script, when the payload contract changes.
+
+# The application itself.
+executable /usr/bin/ps-printer-app ps-printer-app Makefile install target
+
+# Interpreters the payload needs at runtime: the PostScript interpreter that
+# performs the PDF to PostScript conversion, plus the Python and xz the pyppd
+# self-extracting PPD archives are built around.
+executable /usr/bin/gs fsdk-containers printing/base.bst, FSDK components/ghostscript.bst
+executable /usr/bin/python3 pyppd archives require a packaged Python 3 (printer-app/core-stack.bst)
+executable /usr/bin/xz pyppd archives require a packaged xz (printer-app/core-stack.bst)
+
+# CUPS backends.  The application declares PR_COPTIONS_CUPS_BACKENDS and
+# resolves them from /usr/lib/ps-printer-app/backend, which is what
+# pappl-retrofit derives from the system package name.  The Makefile installs
+# /usr/lib/ps-printer-app as a symlink to the CUPS server binary directory of
+# the one CUPS the printing base provides.
+executable /usr/lib/ps-printer-app/backend/dnssd fsdk-containers printing/base.bst, FSDK components/cups-daemon-only.bst
+executable /usr/lib/ps-printer-app/backend/ipp fsdk-containers printing/base.bst, FSDK components/cups-daemon-only.bst
+executable /usr/lib/ps-printer-app/backend/ipps fsdk-containers printing/base.bst, FSDK components/cups-daemon-only.bst
+executable /usr/lib/ps-printer-app/backend/lpd fsdk-containers printing/base.bst, FSDK components/cups-daemon-only.bst
+executable /usr/lib/ps-printer-app/backend/snmp fsdk-containers printing/base.bst, FSDK components/cups-daemon-only.bst
+executable /usr/lib/ps-printer-app/backend/socket fsdk-containers printing/base.bst, FSDK components/cups-daemon-only.bst, the real print path target
+executable /usr/lib/ps-printer-app/backend/usb fsdk-containers printing/base.bst, FSDK components/cups-daemon-only.bst
+file /usr/share/cups/usb/org.cups.usb-quirks FSDK components/cups-daemon-only.bst, USB quirk database the entrypoint seeds into the state volume
+file /etc/cups/snmp.conf FSDK components/cups-daemon-only.bst, SNMP backend configuration the entrypoint seeds into CUPS_SERVERROOT
+
+# Filters.  foomatic-rip and pdftops come from cups-filters, hpps from HPLIP;
+# ps-printer-app converts the incoming job with the PDF to PostScript path and
+# uses the others for PIN-protected and OEM PostScript queues.
+executable /usr/lib/ps-printer-app/filter/foomatic-rip fsdk-containers printing/base.bst, FSDK components/cups-filters.bst
+executable /usr/lib/ps-printer-app/filter/pdftops fsdk-containers printing/base.bst, FSDK components/cups-filters.bst
+executable /usr/lib/ps-printer-app/filter/hpps printer-app/hplip-ps.bst, HPLIP hpps
+
+# PPD providers.  The generic PPD is the driver the real print job below
+# selects; the two archives are the manufacturer PPD collections the README
+# promises ("all PostScript PPD files from Foomatic and HPLIP").
+ppd /usr/share/ppd/generic-ps-printer.ppd ps-printer-app Makefile install target
+archive /usr/share/ppd/foomatic-ps-ppds printer-app/foomatic-ps-ppds.bst, PostScript-only Foomatic manufacturer PPDs
+archive /usr/share/ppd/hplip-ps-ppds printer-app/hplip-ps.bst, HPLIP PostScript PPDs
+
+# Test pages.  testpage.pdf is the one the application submits (TESTPAGE in
+# ps-printer-app.c), testpage.ps is the same page pre-converted.
+file /usr/share/ps-printer-app/testpage.pdf pappl-retrofit testpage.pdf, installed by printer-app/application.bst
+file /usr/share/ps-printer-app/testpage.ps ps-printer-app Makefile install target
+
+# Container entry point (the OCI Entrypoint runs it under catatonit).
+executable /usr/libexec/ps-printer-app/container-entrypoint printer-app/runtime-files.bst, files/container-entrypoint.sh
