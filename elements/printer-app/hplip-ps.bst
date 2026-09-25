@@ -16,12 +16,17 @@ build-depends:
 
 # Only hpps and the PostScript PPDs, as the Rockcraft hplip part does; the
 # rest of HPLIP is not part of this application.
+#
+# hppsfilter.c keeps "not in the PPD" as -1 in plain char and compares it with
+# -1 (GetPPDValues/WriteSecurePrinting). char is unsigned on AArch64, so there
+# the PIN job's @PJL SET HOLD/HOLDKEY lines were silently dropped; build it
+# with the signed char it assumes on every architecture.
 config:
   build-commands:
     - |
       cd prnt/hpps
       touch config.h
-      cc $CFLAGS -I. -o hpps *.c $LDFLAGS -lcups
+      cc $CFLAGS -fsigned-char -I. -o hpps *.c $LDFLAGS -lcups
       rm config.h
     - |
       mkdir -p PPD
