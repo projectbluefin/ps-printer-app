@@ -811,11 +811,16 @@ parts:
       chown 584792:584792 "$CUPS_SERVERROOT"
       chmod 770 "$CUPS_SERVERROOT"
 
-      # Set up the state directory and file for the printer app
+      # Set up the state directory for the printer app, with the layout the
+      # launcher (scripts/prepare-state.sh) expects. Mount a volume here to
+      # keep the configured printers across container replacement; the launcher
+      # creates the same layout, so an empty volume works too.
       STATE_DIR="$CRAFT_PRIME/var/lib/ps-printer-app"
-      mkdir -p "$STATE_DIR"
+      mkdir -p "$STATE_DIR/ppd" "$STATE_DIR/cups/ssl"
       chown 584792:584792 "$STATE_DIR"
+      chown 584792:584792 "$STATE_DIR/ppd" "$STATE_DIR/cups" "$STATE_DIR/cups/ssl"
       chmod 770 "$STATE_DIR"
+      chmod 770 "$STATE_DIR/ppd" "$STATE_DIR/cups" "$STATE_DIR/cups/ssl"
 
       # Create a state file inside the state directory
       STATE_FILE="$STATE_DIR/ps-printer-app.state"
@@ -829,11 +834,6 @@ parts:
       chown 584792:584792 "$SPOOL_DIR"
       chmod 770 "$SPOOL_DIR"
 
-      # Create and set permissions for the application log file
-      touch $CRAFT_PRIME/ps-printer-app.log
-      chown 584792:584792 $CRAFT_PRIME/ps-printer-app.log
-      chmod 644 $CRAFT_PRIME/ps-printer-app.log
-
       # Setting up permissions to USB backend
       USB_BACKEND="$CRAFT_PRIME/usr/lib/ps-printer-app/backend/usb"
       chmod u+s "$USB_BACKEND"
@@ -843,6 +843,8 @@ parts:
     plugin: dump
     source: scripts/
     organize:
+      instance-name.sh: /scripts/instance-name.sh
+      prepare-state.sh: /scripts/prepare-state.sh
       start-server.sh: /scripts/start-server.sh
       run-avahi.sh: /scripts/run-avahi.sh
     override-prime: |

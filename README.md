@@ -358,7 +358,7 @@ To run the container after pulling the image from the GitHub Container Registry,
       --network host \
       -e PORT=<port> \
       -v ps-printer-app:/var/lib/ps-printer-app \
-      -v /dev/bus/usb:/dev/bus/usb:ro \
+      -v /dev/bus/usb:/dev/bus/usb \
       --device-cgroup-rule='c 189:* rmw' \
       ghcr.io/openprinting/ps-printer-app:latest
 ```
@@ -381,18 +381,20 @@ To run the container after pulling the image from Docker Hub, use:
       --network host \
       -e PORT=<port> \
       -v ps-printer-app:/var/lib/ps-printer-app \
-      -v /dev/bus/usb:/dev/bus/usb:ro \
+      -v /dev/bus/usb:/dev/bus/usb \
       --device-cgroup-rule='c 189:* rmw' \
       openprinting/ps-printer-app:latest
 ```
 
 - `PORT` is an optional environment variable used to start the printer-app on a specified port. If not provided, it will start on the default port 8000 or, if port 8000 is busy, on 8001 and so on.
+- `PRINTER_APP_INSTANCE` is an optional environment variable that gives this instance its own DNS-SD advertisement. PAPPL registers the advertised name with no auto-rename, so two instances that advertise the same name cannot coexist on one network. Set it to a distinct value per instance; leaving it unset advertises the name the image has always used.
 - **The container must be started in `--network host` mode** to allow the Printer-Application instance inside the container to access and discover printers available in the local network where the host system is in.
 - Alternatively using the internal network of the Docker instance (`-p <port>:8000` instead of `--network host -e PORT=<port>`) only gives access to local printers running on the host system itself.
 - `-v ps-printer-app:/var/lib/ps-printer-app` maps a volume for persistent storage.
 - The following volume and device settings are crucial for USB printer access:
-  - `-v /dev/bus/usb:/dev/bus/usb:ro` mounts the host's USB device directory read-only inside the container for USB printer access.
+  - `-v /dev/bus/usb:/dev/bus/usb` mounts the host's USB device directory inside the container. It must be writable: a read-only device node cannot be claimed or written to, so a `:ro` mount does not give a working USB printer.
   - `--device-cgroup-rule='c 189:* rmw'` allows the container to read, write, and mknod to USB devices.
+- For a rootless Podman or Docker deployment, and for what the image's setuid bit on the USB backend does and does not grant, see [Persistent state, instance isolation and USB access](docs/state-and-device-isolation.md).
 
 ### Setting up and running a ps-printer-app container locally
 
@@ -441,17 +443,47 @@ Create a Docker volume:
       --network host \
       -e PORT=<port> \
       -v ps-printer-app:/var/lib/ps-printer-app \
-      -v /dev/bus/usb:/dev/bus/usb:ro \
+      -v /dev/bus/usb:/dev/bus/usb \
       --device-cgroup-rule='c 189:* rmw' \
       ps-printer-app:latest
 ```
 - `PORT` is an optional environment variable used to start the printer-app on a specified port. If not provided, it will start on the default port 8000 or, if port 8000 is busy, on 8001 and so on.
+- `PRINTER_APP_INSTANCE` is an optional environment variable that gives this instance its own DNS-SD advertisement. PAPPL registers the advertised name with no auto-rename, so two instances that advertise the same name cannot coexist on one network. Set it to a distinct value per instance; leaving it unset advertises the name the image has always used.
 - **The container must be started in `--network host` mode** to allow the Printer-Application instance inside the container to access and discover printers available in the local network where the host system is in.
 - Alternatively using the internal network of the Docker instance (`-p <port>:8000` instead of `--network host -e PORT=<port>`) only gives access to local printers running on the host system itself.
 - `-v ps-printer-app:/var/lib/ps-printer-app` maps a volume for persistent storage.
 - The following volume and device settings are crucial for USB printer access:
-  - `-v /dev/bus/usb:/dev/bus/usb:ro` mounts the host's USB device directory read-only inside the container for USB printer access.
+  - `-v /dev/bus/usb:/dev/bus/usb` mounts the host's USB device directory inside the container. It must be writable: a read-only device node cannot be claimed or written to, so a `:ro` mount does not give a working USB printer.
   - `--device-cgroup-rule='c 189:* rmw'` allows the container to read, write, and mknod to USB devices.
+- For a rootless Podman or Docker deployment, and for what the image's setuid bit on the USB backend does and does not grant, see [Persistent state, instance isolation and USB access](docs/state-and-device-isolation.md).
+
+### Persistent state, isolated discovery and USB access
+
+The container runs as the unprivileged user `_daemon_` and writes everything it
+persists under `/var/lib/ps-printer-app`. Mount that path as a volume to keep
+the configured printers across container replacement, and give the volume to
+UID 584792 - a volume it cannot write is refused at startup instead of losing
+the configuration at the next restart:
+
+```sh
+mkdir -p .state/ps-printer-app
+podman unshare chown -R 584792:584792 .state/ps-printer-app
+podman run --rm --name ps-printer-app \
+  --network host \
+  -e PORT=18080 \
+  -e PRINTER_APP_INSTANCE=lab-a \
+  -v "$PWD/.state/ps-printer-app:/var/lib/ps-printer-app:Z" \
+  ps-printer-app:latest
+```
+
+`PORT` and `PRINTER_APP_INSTANCE` are what let two Printer Applications share
+one network: separate ports, and separate DNS-SD advertisements. The full
+contract, including rootless USB permissions, is in
+[docs/state-and-device-isolation.md](docs/state-and-device-isolation.md).
+
+None of this has been verified against a running container or real hardware:
+the OCI image, LAN discovery, USB enumeration and physical output are all
+unverified. Do not record a synthetic pass as physical validation.
 
 #### Setting up
 

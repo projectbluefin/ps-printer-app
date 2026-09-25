@@ -1,5 +1,7 @@
 *.rock
 .DS_Store
+__pycache__/
+*.pyc
 
 .bst/
 .build-out/
