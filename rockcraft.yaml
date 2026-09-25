@@ -843,6 +843,7 @@ parts:
     plugin: dump
     source: scripts/
     organize:
+      seed-usb-quirks.sh: /scripts/seed-usb-quirks.sh
       start-server.sh: /scripts/start-server.sh
       run-avahi.sh: /scripts/run-avahi.sh
     override-prime: |

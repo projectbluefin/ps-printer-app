@@ -503,6 +503,30 @@ and LPD protocols, and SNMP printer discovery is configurable.
 USB Quirk rules in `/usr/share/cups/usb` and the `/etc/cups/snmp.conf`
 file can get edited if needed.
 
+### USB quirk rules in the OCI image
+
+The PPD files are not the only thing the image ships read-only: CUPS' USB
+quirk tables (`*.usb-quirks`) also live in the image, under
+`/usr/share/cups/usb/`. The launcher (`/scripts/seed-usb-quirks.sh`, sourced
+by `/scripts/start-server.sh`) copies them into the writable state volume,
+`/var/lib/ps-printer-app/usb/`, and exports `USB_QUIRK_DIR` as the state
+directory, which the patched CUPS USB backend appends `usb/` to.
+
+Mount the parent state directory as writable persistent storage to retain
+edits across container replacement. A table that already exists in the volume
+is never overwritten - including an empty file or a symlink - so an edit
+survives a restart and an image upgrade. To restore the image default, delete
+that table from the volume and restart. Tables staged next to the backends
+(`/usr/lib/ps-printer-app/backend/`, where the Rockcraft and Snap recipes put
+them) are accepted as well, and the CUPS data directory is preferred when both
+layouts are present. Override `CUPS_DATADIR` or `BACKEND_DIR` to point the
+seeder at another layout.
+
+Run `python3 -m unittest discover -s tests -v` to verify fresh seeding, the
+installed layouts and restart preservation. These filesystem tests do not
+verify OCI printing or physical USB output: IPP-to-socket-sink validation and
+real hardware remain unverified here.
+
 Make sure you have CUPS (at least its backends) installed.
 
 You also need Ghostscript to print PDF jobs.

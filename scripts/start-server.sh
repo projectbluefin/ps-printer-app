@@ -20,5 +20,9 @@ while true; do
     sleep 1
 done
 
+# Seed the USB quirk tables into the state volume and point the patched CUPS
+# USB backend at them, before the server and its backends start.
+. /scripts/seed-usb-quirks.sh
+
 # Start the ps-printer-app server
 ps-printer-app -o log-file="/ps-printer-app.log" ${PORT:+-o server-port="$PORT"} server
