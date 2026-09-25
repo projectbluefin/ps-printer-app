@@ -26,14 +26,15 @@ bst *ARGS:
 # Resolve the complete graph without building it. The printing base already
 # stages avahi-printing's avahi-daemon; FSDK's components/avahi.bst installs
 # the same files, so the graph must never contain it.
+#
+# tests/fsdk-contract.sh checks the fsdk-containers printing-base consumer
+# contract against the resolved graph: one CUPS artifact owner, one pinned
+# junction, no local CUPS source or patch copies, and a runtime-only compose.
 validate:
     #!/usr/bin/env bash
     set -euo pipefail
     names="$(just bst show --deps all --format '%{name}' oci/ps-printer-app.bst)"
-    if grep -qx 'fsdk-containers.bst:freedesktop-sdk.bst:components/avahi.bst' <<<"$names"; then
-        echo 'FAIL: components/avahi.bst is staged next to the base avahi-printing.bst' >&2
-        exit 1
-    fi
+    printf '%s\n' "$names" | tests/fsdk-contract.sh --graph -
 
 fetch:
     #!/usr/bin/env bash
@@ -96,9 +97,16 @@ verify-no-devel:
     [ -z "${bad}" ] || { echo "devel content in ${IMAGE}: ${bad}" >&2; exit 1; }
     echo "OK: ${IMAGE} carries no devel content"
 
+# The contract check above is only worth what it rejects. This breaks each
+# invariant it guards in a scratch copy of the graph and requires the check to
+# fail, so a check that stopped working cannot pass as a green validate.
+verify-contract:
+    tests/fsdk-contract-test.sh
+
 # Verify a built image (run `just build` first).
 verify:
     just validate
+    just verify-contract
     just verify-no-devel
     just verify-core
     just verify-payload

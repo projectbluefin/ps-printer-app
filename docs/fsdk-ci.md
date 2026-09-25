@@ -58,6 +58,13 @@ fsdk-containers' `docs/skills/printing-base.md`.
 - The base is a devel stack. `printer-app/core-runtime.bst` composes the image
   from runtime domains only, and `just verify-no-devel` fails on headers, static
   or libtool archives, and pkg-config or CMake directories in the image.
+- `just validate` checks the contract itself against the resolved graph:
+  `tests/fsdk-contract.sh` fails on a second FSDK junction, a CUPS stack
+  element outside the junction (a second CUPS owner), a patch staged by an
+  element, a source with no immutable pin, or a runtime compose that no longer
+  excludes the devel domains. `tests/fsdk-contract-test.sh`, run by `just
+  verify-contract`, breaks each of those invariants in a scratch copy of the
+  graph and requires the check to fail, so the gate cannot pass by going quiet.
 - Before the full build, both workflows run `Seed printing base`: when the base
   is not already cached it pulls
   `ghcr.io/projectbluefin/printing-base-devel:<arch>-<full-key>`, verifies its

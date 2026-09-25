@@ -155,3 +155,28 @@ by printing through a real image.
 Append to the `cases[]` table in `main()`: the device ID to pass in, what each
 stubbed helper answers for it, the driver `ps_autoadd()` must return (`NULL`
 for none), and how many PPD lookups it should make.
+
+## The graph contract
+
+`fsdk-contract.sh` checks this repository against fsdk-containers' printing-base
+consumer contract (`docs/skills/printing-base.md`) so that "one CUPS artifact
+owner" is enforced rather than assumed. It runs in `just validate`, on every pull
+request, where nothing is built.
+
+```sh
+tests/fsdk-contract.sh                        # declarations only, no BuildStream
+tests/fsdk-contract.sh --graph <names-file>   # plus the resolved graph, or -
+```
+
+The declaration checks need no BuildStream: one junction to fsdk-containers at a
+pinned commit with no patches, `overrides` or options of its own; FSDK referenced
+only as `fsdk-containers.bst:freedesktop-sdk.bst:...`; every remote source pinned
+to an immutable ref; no element of this repository owning a CUPS stack component;
+no patch staged by an element; and `core-runtime.bst` still composing runtime
+domains only. `--graph` takes what `just bst show --deps all --format '%{name}'
+oci/ps-printer-app.bst` prints, and requires `fsdk-containers.bst:printing/base.bst`
+to be the only CUPS provider in it.
+
+`fsdk-contract-test.sh` is the regression test for that check: it runs it against
+the real graph, then against a scratch copy with each invariant broken in turn, and
+fails if any of those broken graphs is accepted. `just verify-contract` runs it.
