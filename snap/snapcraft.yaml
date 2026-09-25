@@ -108,8 +108,11 @@ parts:
   pappl-retrofit:
     source: https://github.com/openprinting/pappl-retrofit
     source-type: git
+    # 1.0b2 (last tagged release) predates the current libcupsfilters API, so
+    # pin by immutable commit instead of floating on the upstream default
+    # branch.
     # source-tag: '1.0b2'
-    source-depth: 1
+    source-commit: 49ad525a3715a57aae24c715ef0767b55ffb1991
 # ext:updatesnap
 #   version-format:
 #     ignore: true
