@@ -295,6 +295,11 @@ for configuring SNMP network printer discovery.
 
 ## THE ROCK (OCI CONTAINER IMAGE)
 
+The freedesktop-sdk BuildStream graph that builds this appliance, including the
+single CUPS owner and the shared CUPS patch seam, is documented in
+[docs/buildstream.md](docs/buildstream.md). Build it with `just fetch`,
+`just build` and `just verify`.
+
 ### Install from DockerHub
 
 #### Prerequisites

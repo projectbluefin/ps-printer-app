@@ -1,2 +1,6 @@
 *.rock
 .DS_Store
+
+.bst/
+.build-out/
+.build-runtime/

@@ -1,0 +1,72 @@
+diff --git a/elements/components/_private/cups-base.bst b/elements/components/_private/cups-base.bst
+--- a/elements/components/_private/cups-base.bst
++++ b/elements/components/_private/cups-base.bst
+@@ -7,7 +7,7 @@ build-depends:
+ - public-stacks/buildsystem-autotools.bst
+ - components/avahi-libs.bst
+ - components/gzip.bst
+-- components/openssl.bst
++- components/gnutls.bst
+ - components/systemd.bst
+
+ variables:
+@@ -19,7 +19,7 @@ variables:
+     --enable-debug
+     --with-components=all
+     --with-dbusdir=/etc/dbus-1
+-    --with-tls=openssl
++    --with-tls=gnutls
+     --with-cups-group=lp
+     --with-pkgconfpath="%{libdir}/pkgconfig"
+     --with-system-groups="root wheel"
+@@ -78,6 +78,8 @@ sources:
+   - "*rc*"
+   - "*op*"
+   ref: v2.4.19-0-g6ba0487abb05afc93d639f37676add8fd65d3756
++- kind: patch_queue
++  path: patches/ps-printer-app/cups
+ - kind: local
+   path: files/cups/tmpfiles.conf
+ - kind: local
+diff --git a/elements/components/cups.bst b/elements/components/cups.bst
+--- a/elements/components/cups.bst
++++ b/elements/components/cups.bst
+@@ -9,7 +9,7 @@ build-depends:
+ runtime-depends:
+ - components/avahi-libs.bst
+ - components/cups-manifest.bst
+-- components/openssl.bst
++- components/gnutls.bst
+
+ config:
+   include:
+diff --git a/elements/components/_private/avahi-base.bst b/elements/components/_private/avahi-base.bst
+--- a/elements/components/_private/avahi-base.bst
++++ b/elements/components/_private/avahi-base.bst
+@@ -16,6 +16,8 @@ build-depends:
+
+ variables:
+   conf-local: >-
++    --with-avahi-user=nonroot
++    --with-avahi-group=nonroot
+     --with-distro=none
+     --disable-libevent
+     --disable-qt3
+diff --git a/elements/components/libcupsfilters.bst b/elements/components/libcupsfilters.bst
+--- a/elements/components/libcupsfilters.bst
++++ b/elements/components/libcupsfilters.bst
+@@ -34,3 +34,5 @@ sources:
+   exclude:
+   - '*rc*'
+   ref: 2.2.1-0-g2a00cf6aa4234e2e0ac91b9844ab8990d04c7089
++- kind: patch_queue
++  path: patches/ps-printer-app/libcupsfilters
+diff --git a/elements/components/cups-filters.bst b/elements/components/cups-filters.bst
+--- a/elements/components/cups-filters.bst
++++ b/elements/components/cups-filters.bst
+@@ -24,3 +24,5 @@ sources:
+   ref: 2.0.1-0-g5a73330fbd0cde494d984141f9add1565aef8171
+ - kind: patch_queue
+   path: patches/cups-filters
++- kind: patch_queue
++  path: patches/ps-printer-app/cups-filters
