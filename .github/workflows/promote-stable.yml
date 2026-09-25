@@ -19,7 +19,7 @@ jobs:
   # can leave them behind. Refuse that before spending a build on it.
   metadata:
     name: Reject mismatched FSDK metadata
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
     timeout-minutes: 10
     permissions:
       contents: read
@@ -67,7 +67,7 @@ jobs:
 
   promote:
     needs: [metadata, verify]
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
     permissions:
       contents: write
     steps:
