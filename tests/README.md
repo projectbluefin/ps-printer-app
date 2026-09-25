@@ -75,3 +75,49 @@ has to read to see what the image is expected to contain. The PostScript-only sc
 is the one exclusion the upstream source itself makes: the non-PostScript Foomatic
 manufacturer PPDs are removed before the archive is generated
 (`elements/printer-app/foomatic-ps-ppds.bst`).
+
+## Unit tests
+
+### Running
+
+```sh
+make test
+```
+
+The tests build with a plain C compiler only. PAPPL, CUPS, libppd,
+libcupsfilters and libpappl-retrofit do **not** need to be installed.
+
+### What is covered
+
+`tests/test_ps_autoadd.c` covers `ps_autoadd()` in `ps-printer-app.c`, the
+callback that decides whether a discovered printer is auto-added and which
+driver it gets.
+
+`ps_autoadd()` is compiled and linked from the real `ps-printer-app.c` - the
+`main()` in that file is skipped via `-DPS_PRINTER_APP_NO_MAIN` - so the
+control flow under test is the shipped one, not a copy of it.
+
+Regression under test: `prBestMatchingPPD()` returns `NULL` when it finds
+neither a matching driver nor a usable device ID. `ps_autoadd()` used to
+`strcmp()` that result unconditionally, which crashed the whole PAPPL service
+on an unsupported printer.
+
+### The test doubles
+
+`tests/stubs/pappl-retrofit.h` shadows the real `<pappl-retrofit.h>` for the
+test build only, and the test supplies its own `prBestMatchingPPD()` and
+`prSupportsPostScript()`. Both answer for the device ID of the scenario
+currently under test and refuse anything else, so a wrong device ID reaching
+them fails a case instead of passing silently.
+
+That means these tests pin `ps_autoadd()`'s own decision logic - including
+every route into the former crash - but they do **not** exercise the real PPD
+lookup or the real device ID parser. End-to-end behaviour, including the
+driver that a specific physical printer actually gets, still has to be proven
+by printing through a real image.
+
+### Adding cases
+
+Append to the `cases[]` table in `main()`: the device ID to pass in, what each
+stubbed helper answers for it, the driver `ps_autoadd()` must return (`NULL`
+for none), and how many PPD lookups it should make.

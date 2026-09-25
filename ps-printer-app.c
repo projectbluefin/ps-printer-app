@@ -58,7 +58,6 @@ ps_autoadd(const char *device_info,	// I - Device name (unused)
   pr_printer_app_global_data_t *global_data =
     (pr_printer_app_global_data_t *)data;
   const char	*ret = NULL;		// Return value
-  char          *p;
 
 
   (void)device_info;
@@ -84,9 +83,12 @@ ps_autoadd(const char *device_info,	// I - Device name (unused)
        strstr(device_id, ";COMMAND SET:") == NULL) ||
       prSupportsPostScript(device_id))
   {
-    // Printer supports PostScript, so find the best-matching PPD file
+    // Printer supports PostScript, so find the best-matching PPD file.
+    // prBestMatchingPPD() returns NULL when it finds neither a matching
+    // driver nor a usable device ID, so the result must be checked before
+    // it is compared - strcmp(NULL, ...) crashes the whole service.
     ret = prBestMatchingPPD(device_id, global_data);
-    if (strcmp(ret, "generic") == 0 && !prSupportsPostScript(device_id))
+    if (ret && strcmp(ret, "generic") == 0 && !prSupportsPostScript(device_id))
       ret = NULL;
   }
   else
@@ -98,8 +100,13 @@ ps_autoadd(const char *device_info,	// I - Device name (unused)
 }
 
 
+#ifndef PS_PRINTER_APP_NO_MAIN
+
 //
 // 'main()' - Main entry for the ps-printer-app.
+//
+// Skipped when building the unit tests, which link this file to exercise
+// ps_autoadd() and supply their own main().
 //
 
 int
@@ -152,3 +159,5 @@ main(int  argc,				// I - Number of command-line arguments
 
   return (prRetroFitPrinterApp(&printer_app_config, argc, argv));
 }
+
+#endif // !PS_PRINTER_APP_NO_MAIN

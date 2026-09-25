@@ -63,6 +63,15 @@ LIBS		+=	`pkg-config --libs pappl` `cups-config --image --libs` `pkg-config --li
 OBJS		=	ps-printer-app.o
 TARGETS		=	ps-printer-app
 
+# Unit tests.  These link the real ps-printer-app.c with the two
+# libpappl-retrofit helpers that ps_autoadd() calls replaced by test doubles,
+# so they build and run without PAPPL, CUPS, libppd, libcupsfilters or
+# libpappl-retrofit installed.  See tests/README.md.
+TEST_CFLAGS	=	-Itests/stubs -DPS_PRINTER_APP_NO_MAIN -Wall -Wextra
+TEST_TARGETS	=	tests/test_ps_autoadd
+
+.PHONY:		all clean install test
+
 
 # General build rules...
 .SUFFIXES:	.c .o
@@ -74,7 +83,14 @@ TARGETS		=	ps-printer-app
 all:		$(TARGETS)
 
 clean:
-	rm -f $(TARGETS) $(OBJS)
+	rm -f $(TARGETS) $(OBJS) $(TEST_TARGETS)
+
+test:		$(TEST_TARGETS)
+	for t in $(TEST_TARGETS); do ./$$t || exit 1; done
+
+tests/test_ps_autoadd:	tests/test_ps_autoadd.c ps-printer-app.c \
+			tests/stubs/pappl-retrofit.h
+	$(CC) $(TEST_CFLAGS) -o $@ tests/test_ps_autoadd.c ps-printer-app.c
 
 install:	$(TARGETS)
 	mkdir -p $(bindir)

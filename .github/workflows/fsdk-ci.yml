@@ -74,6 +74,10 @@ jobs:
       - name: Install host dependencies
         if: needs.prerequisites.outputs.available == 'true'
         run: sudo apt-get update && sudo apt-get install --yes fuse3 podman skopeo jq
+      # ps_autoadd() against test doubles; needs only the runner's C compiler.
+      - name: Unit tests
+        if: needs.prerequisites.outputs.available == 'true'
+        run: make test
       - name: Validate BuildStream graph
         if: env.FULL_BUILD != 'true' && needs.prerequisites.outputs.available == 'true'
         run: just validate
