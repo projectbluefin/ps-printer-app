@@ -18,8 +18,29 @@ Reset it with `gh cache delete --all -R projectbluefin/ps-printer-app`.
 Both jobs inherit only `contents: read`. Checkout does not persist credentials,
 and the workflow has no registry login, secrets, publishing step, or privileged
 `pull_request_target` trigger. Public builder images and sources must be readable
-without registry credentials. Legacy Snap/Rock packaging and registry workflows
-remain separate; FSDK validation does not trigger a release workflow.
+without registry credentials. FSDK validation does not trigger a release
+workflow.
+
+## Release
+
+`.github/workflows/promote-stable.yml` (manual dispatch with `testing_sha`)
+rebuilds and verifies that exact commit natively on x86_64 and AArch64 with
+`just build && just verify`, then fast-forwards `stable` to it only if it is
+still the `testing` HEAD and `stable` is its ancestor.
+
+`.github/workflows/registry-actions.yml` runs only on `v*` tag pushes. It
+requires the tag to be `v$(cat VERSION)` on the `stable` HEAD, the
+`io.projectbluefin.fsdk.*` labels in `elements/oci/ps-printer-app.bst` to match
+the freedesktop-sdk junction of the pinned fsdk-containers commit, and the
+version to be absent from `ghcr.io/projectbluefin/ps-printer-app`. It then
+rebuilds and verifies both architectures, stamps the revision and creation
+time, and publishes `<VERSION>-x86_64`, `<VERSION>-aarch64` and the
+`<VERSION>` index. The index and its `just sbom` SPDX SBOM are signed with
+keyless cosign, the index gets a build-provenance attestation, and the workflow
+verifies all of it from the registry. Tags are never overwritten.
+
+The upstream Snap/Rock CI, the scheduled manifest updater and the Rock registry
+workflow are removed; `snap/` and `rockcraft.yaml` stay only as references.
 
 ## The shared printing base
 
@@ -69,6 +90,6 @@ The prerequisite check only checks interface files; the recipes and tests must
 implement the behavior above. Physical paper output remains unverified without
 hardware.
 
-Validate workflow edits with `actionlint .github/workflows/fsdk-ci.yml
-.github/workflows/bst-cache.yml`. After prerequisites land, both native jobs must
+Validate workflow edits with `actionlint .github/workflows/*.yml`. After
+prerequisites land, both native jobs must
 pass before claiming #6 is complete.

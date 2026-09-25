@@ -93,3 +93,31 @@ verify:
     just verify-no-devel
     just verify-core
     just verify-payload
+
+# SPDX SBOM of the image graph for releases (run `just fetch` first).
+sbom:
+    #!/usr/bin/env bash
+    set -euo pipefail
+    cache_dir="${BST_CACHE_DIR:-${HOME}/.cache/buildstream}"
+    mkdir -p "${cache_dir}" "${HOME}/.cache/pip"
+    revision="$(git rev-parse HEAD)"
+    podman run --rm \
+        --privileged \
+        --device /dev/fuse \
+        --network=host \
+        -v "{{ justfile_directory() }}:/src:rw" \
+        -v "${cache_dir}:/root/.cache/buildstream:rw" \
+        -v "${HOME}/.cache/pip:/root/.cache/pip:rw" \
+        -w /src \
+        -e REVISION="$revision" \
+        "{{ bst2_image }}" \
+        bash -c '
+            pip install --quiet git+https://gitlab.com/BuildStream/buildstream-sbom.git@0706fec3bedf6f73bd9d2fed32c2aed585feef8d
+            buildstream-sbom oci/ps-printer-app.bst \
+                --spdx-name ps-printer-app \
+                --spdx-namespace "https://github.com/projectbluefin/ps-printer-app/sbom/${REVISION}" \
+                --spdx-creator "Tool: buildstream-sbom" \
+                --spdx-creator "Organization: projectbluefin" \
+                --deps all \
+                --output /src/ps-printer-app.spdx.json
+        '

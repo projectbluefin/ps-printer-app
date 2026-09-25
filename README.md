@@ -166,6 +166,35 @@ Further properties are:
   without libppd, the former will allow to create the Snap of this
   Printer Application without downloading and building QPDF
 
+## Project Bluefin FSDK OCI appliance
+
+Upstream `snap/` and `rockcraft.yaml` remain as source references, but this
+fork builds and releases only the BuildStream OCI image
+`ghcr.io/projectbluefin/ps-printer-app`, on the shared fsdk-containers printing
+base (see [docs/fsdk-ci.md](docs/fsdk-ci.md)). The Snap and Rock sections below
+describe upstream packaging, not this fork's releases.
+
+On native x86_64 or aarch64, with Podman, FUSE and `just` available:
+
+```sh
+just validate
+just build
+just verify
+```
+
+PRs target `testing`. `promote-stable.yml` rebuilds and verifies an exact
+`testing` commit on both architectures, then fast-forwards `stable` to it only
+if it is still the `testing` HEAD. After that, only the matching `v<VERSION>`
+tag on the `stable` HEAD (`VERSION` is the foomatic-db snapshot date plus a
+packaging revision, e.g. `v20240504-20`) makes `registry-actions.yml` publish an
+immutable amd64+arm64 GHCR index, keyless cosign-signed, with a signed SPDX
+SBOM and build provenance. It refuses a tag that does not match `VERSION` or
+the `stable` HEAD, FSDK image labels that disagree with the fsdk-containers
+pin, and any version already in the registry. There are no mutable OCI
+`latest`, `edge` or `stable` aliases, and no scheduled workflow writes to the
+repository. Failed image checks block release.
+
+
 
 ## THE SNAP
 
