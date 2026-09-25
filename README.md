@@ -192,7 +192,11 @@ SBOM and build provenance. It refuses a tag that does not match `VERSION` or
 the `stable` HEAD, FSDK image labels that disagree with the fsdk-containers
 pin, and any version already in the registry. There are no mutable OCI
 `latest`, `edge` or `stable` aliases, and no scheduled workflow writes to the
-repository. Failed image checks block release.
+repository. Failed image checks block release. The release workflow pushes,
+signs (index and both architecture manifests), attests and verifies everything
+by digest. It creates the `<VERSION>`, `<VERSION>-x86_64` and `<VERSION>-aarch64`
+tags only after every check passes, so a failed release leaves no tagged,
+unsigned image.
 
 
 

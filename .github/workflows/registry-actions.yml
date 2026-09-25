@@ -166,7 +166,10 @@ jobs:
       - uses: oras-project/setup-oras@1d808f7d7f6995cc68b7bf507bfe5c5446e1dc9d # v2.0.1
       - name: Generate BuildStream-native SPDX SBOM
         run: just fetch && just sbom
-      - name: Publish architecture manifests and immutable OCI index
+      # Everything is pushed, signed, attested and verified by digest; the
+      # human-readable version tags are created only in the final step, so a
+      # failed release never leaves a tagged, unsigned image behind.
+      - name: Publish architecture manifests and OCI index by digest
         id: image
         env:
           GH_TOKEN: ${{ github.token }}
@@ -189,13 +192,17 @@ jobs:
               exit 1
             fi
           done
+          sources=()
           for arch in x86_64 aarch64; do
-            skopeo copy --authfile "$authfile" \
-              "oci-archive:ps-${arch}.oci" "docker://${image}:${VERSION}-${arch}"
-          done
-          for arch in amd64 arm64; do
-            source="${image}:${VERSION}-$([[ "$arch" == amd64 ]] && echo x86_64 || echo aarch64)"
-            [[ "$(skopeo inspect --authfile "$authfile" "docker://${source}" | jq -r .Architecture)" == "$arch" ]]
+            platform="$([[ "$arch" == x86_64 ]] && echo amd64 || echo arm64)"
+            archive="ps-${arch}.oci"
+            layout="$(tar -xOf "$archive" index.json)"
+            jq -e '.manifests | length == 1' <<< "$layout" >/dev/null
+            digest="$(jq -r '.manifests[0].digest' <<< "$layout")"
+            [[ "$digest" =~ ^sha256:[0-9a-f]{64}$ ]]
+            oras copy --from-oci-layout "${archive}@${digest}" "${image}@${digest}"
+            source="${image}@${digest}"
+            [[ "$(skopeo inspect --no-tags --authfile "$authfile" "docker://${source}" | jq -r .Architecture)" == "$platform" ]]
             skopeo inspect --config --authfile "$authfile" "docker://${source}" | jq -e \
               --arg version "$VERSION" --arg revision "$REVISION" --arg created "$CREATED" \
               --arg fsdk_version "$FSDK_VERSION" --arg fsdk_ref "$FSDK_REF" \
@@ -206,8 +213,10 @@ jobs:
                .config.Labels["org.opencontainers.image.created"] == $created and
                .config.Labels["io.projectbluefin.fsdk.version"] == $fsdk_version and
                .config.Labels["io.projectbluefin.fsdk.ref"] == $fsdk_ref'
+            sources+=("$source")
+            echo "${arch}-digest=$digest" >> "$GITHUB_OUTPUT"
           done
-          docker buildx imagetools create \
+          docker buildx imagetools create --dry-run \
             --tag "${image}:${VERSION}" \
             --annotation 'index:org.opencontainers.image.title=ps-printer-app' \
             --annotation 'index:org.opencontainers.image.description=PostScript Printer Application built from freedesktop-sdk' \
@@ -218,19 +227,20 @@ jobs:
             --annotation "index:org.opencontainers.image.created=$CREATED" \
             --annotation "index:io.projectbluefin.fsdk.version=$FSDK_VERSION" \
             --annotation "index:io.projectbluefin.fsdk.ref=$FSDK_REF" \
-            "${image}:${VERSION}-x86_64" "${image}:${VERSION}-aarch64"
-          digest="$(skopeo inspect --authfile "$authfile" "docker://${image}:${VERSION}" | jq -r .Digest)"
-          [[ "$digest" == sha256:* ]]
+            "${sources[@]}" > index.json
+          digest="sha256:$(sha256sum index.json | cut -d' ' -f1)"
+          oras manifest push --media-type application/vnd.oci.image.index.v1+json "${image}@${digest}" index.json
+          [[ "$(skopeo inspect --raw --authfile "$authfile" "docker://${image}@${digest}" | sha256sum | cut -d' ' -f1)" == "${digest#sha256:}" ]]
           echo "name=$image" >> "$GITHUB_OUTPUT"
           echo "digest=$digest" >> "$GITHUB_OUTPUT"
-      - name: Sign immutable index and attach signed SPDX SBOM
+      - name: Sign index and architecture manifests and attach signed SPDX SBOM
         id: evidence
         env:
           IMAGE: ${{ steps.image.outputs.name }}
           DIGEST: ${{ steps.image.outputs.digest }}
         run: |
           set -euo pipefail
-          cosign sign --yes "${IMAGE}@${DIGEST}"
+          cosign sign --yes --recursive "${IMAGE}@${DIGEST}"
           sbom_digest="$(oras attach --format json --no-tty \
             --artifact-type application/vnd.spdx+json \
             --annotation org.opencontainers.image.title=ps-printer-app-sbom \
@@ -250,6 +260,8 @@ jobs:
           IMAGE: ${{ steps.image.outputs.name }}
           DIGEST: ${{ steps.image.outputs.digest }}
           SBOM_DIGEST: ${{ steps.evidence.outputs.sbom-digest }}
+          X86_64_DIGEST: ${{ steps.image.outputs.x86_64-digest }}
+          AARCH64_DIGEST: ${{ steps.image.outputs.aarch64-digest }}
           VERSION: ${{ needs.metadata.outputs.version }}
           REVISION: ${{ needs.metadata.outputs.revision }}
           CREATED: ${{ needs.metadata.outputs.created }}
@@ -262,12 +274,17 @@ jobs:
             --certificate-oidc-issuer https://token.actions.githubusercontent.com "${IMAGE}@${DIGEST}"
           cosign verify --certificate-identity "$identity" \
             --certificate-oidc-issuer https://token.actions.githubusercontent.com "${IMAGE}@${SBOM_DIGEST}"
+          for arch_digest in "$X86_64_DIGEST" "$AARCH64_DIGEST"; do
+            cosign verify --certificate-identity "$identity" \
+              --certificate-oidc-issuer https://token.actions.githubusercontent.com "${IMAGE}@${arch_digest}"
+          done
           gh attestation verify "oci://${IMAGE}@${DIGEST}" --repo "$GITHUB_REPOSITORY"
           oras discover --format json "${IMAGE}@${DIGEST}" | jq -e \
             --arg digest "$SBOM_DIGEST" \
             '.referrers[] | select(.digest == $digest and .artifactType == "application/vnd.spdx+json")'
           raw="$(skopeo inspect --raw "docker://${IMAGE}@${DIGEST}")"
           [[ "$(jq -r '[.manifests[].platform.architecture] | sort | join(" ")' <<< "$raw")" == 'amd64 arm64' ]]
+          [[ "$(jq -r '[.manifests[].digest] | sort | join(" ")' <<< "$raw")" == "$(printf '%s\n' "$X86_64_DIGEST" "$AARCH64_DIGEST" | sort | paste -sd ' ')" ]]
           jq -e --arg version "$VERSION" --arg revision "$REVISION" --arg created "$CREATED" \
             --arg fsdk_version "$FSDK_VERSION" --arg fsdk_ref "$FSDK_REF" \
             '.annotations["org.opencontainers.image.title"] == "ps-printer-app" and
@@ -276,3 +293,16 @@ jobs:
              .annotations["org.opencontainers.image.created"] == $created and
              .annotations["io.projectbluefin.fsdk.version"] == $fsdk_version and
              .annotations["io.projectbluefin.fsdk.ref"] == $fsdk_ref' <<< "$raw"
+      - name: Tag the verified release
+        env:
+          IMAGE: ${{ steps.image.outputs.name }}
+          DIGEST: ${{ steps.image.outputs.digest }}
+          X86_64_DIGEST: ${{ steps.image.outputs.x86_64-digest }}
+          AARCH64_DIGEST: ${{ steps.image.outputs.aarch64-digest }}
+          VERSION: ${{ needs.metadata.outputs.version }}
+        run: |
+          set -euo pipefail
+          oras tag "${IMAGE}@${X86_64_DIGEST}" "${VERSION}-x86_64"
+          oras tag "${IMAGE}@${AARCH64_DIGEST}" "${VERSION}-aarch64"
+          oras tag "${IMAGE}@${DIGEST}" "${VERSION}"
+          [[ "$(skopeo inspect --raw "docker://${IMAGE}:${VERSION}" | sha256sum | cut -d' ' -f1)" == "${DIGEST#sha256:}" ]]
