@@ -179,7 +179,10 @@ to be the only CUPS provider in it.
 
 `fsdk-contract-test.sh` is the regression test for that check: it runs it against
 the real graph, then against a scratch copy with each invariant broken in turn, and
-fails if any of those broken graphs is accepted. `just verify-contract` runs it.
+fails if any of those broken graphs is accepted. `just validate` runs it before it
+trusts the graph verdict, so a check that stopped rejecting cannot pass as a green
+pull request; `just verify-contract` runs it on its own. It needs no BuildStream,
+container runtime or network.
 
 ## Print-route verification
 
