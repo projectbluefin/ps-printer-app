@@ -30,9 +30,14 @@ bst *ARGS:
 # tests/fsdk-contract.sh checks the fsdk-containers printing-base consumer
 # contract against the resolved graph: one CUPS artifact owner, one pinned
 # junction, no local CUPS source or patch copies, and a runtime-only compose.
+#
+# tests/fsdk-contract-test.sh runs first: a green contract check is only worth
+# what the check still rejects, and this is the only contract gate a pull
+# request runs. It needs no BuildStream, container runtime or network.
 validate:
     #!/usr/bin/env bash
     set -euo pipefail
+    tests/fsdk-contract-test.sh
     names="$(just bst show --deps all --format '%{name}' oci/ps-printer-app.bst)"
     printf '%s\n' "$names" | tests/fsdk-contract.sh --graph -
 

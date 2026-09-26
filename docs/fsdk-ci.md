@@ -62,8 +62,9 @@ fsdk-containers' `docs/skills/printing-base.md`.
   `tests/fsdk-contract.sh` fails on a second FSDK junction, a CUPS stack
   element outside the junction (a second CUPS owner), a patch staged by an
   element, a source with no immutable pin, or a runtime compose that no longer
-  excludes the devel domains. `tests/fsdk-contract-test.sh`, run by `just
-  verify-contract`, breaks each of those invariants in a scratch copy of the
+  excludes the devel domains. `tests/fsdk-contract-test.sh`, which `just
+  validate` runs first (and `just verify-contract` runs on its own), breaks each
+  of those invariants in a scratch copy of the
   graph and requires the check to fail, so the gate cannot pass by going quiet.
 - Before the full build, both workflows run `Seed printing base`: when the base
   is not already cached it pulls
@@ -84,7 +85,8 @@ The workflow follows the Ghostscript appliance's build interface:
 - `project.conf` and `elements/oci/ps-printer-app.bst` define the image graph.
 - `Justfile` (or `justfile`) provides `bst`, `validate`, `build`, and `verify`
   recipes; `build` and `verify` must not depend on a `fetch` recipe.
-- `just validate` runs `bst show --deps all oci/ps-printer-app.bst` (pull requests).
+- `just validate` runs `tests/fsdk-contract-test.sh`, then `bst show --deps all
+  oci/ps-printer-app.bst` (pull requests).
 - `just bst --config /src/ci/buildstream.conf --network-retries 5 build
   oci/ps-printer-app.bst` builds the image, fetching only uncached sources. CI
   never runs `bst source fetch --deps all`.
