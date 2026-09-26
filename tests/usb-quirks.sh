@@ -113,6 +113,7 @@ echo "== Fresh state seeds the default table under USB_QUIRK_DIR/usb =="
 podman exec "$name" /usr/bin/bash -c 'printf "%s\n" "# preserved USB quirks" >> /var/lib/ps-printer-app/usb/org.cups.usb-quirks'
 podman stop --time 5 "$name" >/dev/null
 podman run -d \
+  --replace \
   --name "$name" \
   --network host \
   -e PORT="$port" \
