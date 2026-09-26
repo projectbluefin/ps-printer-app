@@ -1,13 +1,31 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
-  "extends": ["local>projectbluefin/renovate-config"],
+  "extends": [
+    "local>projectbluefin/renovate-config"
+  ],
   "forkProcessing": "enabled",
-  "baseBranchPatterns": ["testing"],
-  "enabledManagers": ["github-actions"],
+  "baseBranchPatterns": [
+    "testing"
+  ],
+  "enabledManagers": [
+    "github-actions"
+  ],
   "packageRules": [
     {
-      "matchManagers": ["github-actions"],
+      "matchManagers": [
+        "github-actions"
+      ],
       "automerge": false
+    },
+    {
+      "description": "BuildStream builds fail on ubuntu-26.04 runners (fsdk-containers#332); keep 24.04",
+      "matchDatasources": [
+        "github-runners"
+      ],
+      "matchPackageNames": [
+        "ubuntu"
+      ],
+      "allowedVersions": "<26"
     }
   ]
 }
