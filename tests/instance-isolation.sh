@@ -11,8 +11,11 @@
 #     (_ipps-system._tcp) with its avahi-daemon;
 #   - an instance without PRINTER_APP_INSTANCE keeps the built-in name;
 #   - the entrypoint refuses, with 64, a PRINTER_APP_INSTANCE that sanitizes
-#     to nothing, a PORT outside 1-65535, and a state volume the image user
-#     cannot write (printing the podman unshare chown that fixes it).
+#     to nothing, a PORT outside 1-65535, a state volume the image user
+#     cannot write (printing the podman unshare chown that fixes it), a
+#     malformed or unavailable PRINTER_APP_AUTH_SERVICE, a malformed or
+#     unresolvable PRINTER_APP_ADMIN_GROUP, and an unrecognized
+#     PRINTER_APP_SERVER_OPTIONS value.
 #
 # Discovery by another host and USB device ownership are not verified here.
 #
@@ -190,6 +193,22 @@ expect_refusal "a PRINTER_APP_INSTANCE without a usable character" \
 expect_refusal "PORT=0" 'PORT must be between 1 and 65535' -e PORT=0
 expect_refusal "PORT=65536" 'PORT must be between 1 and 65535' -e PORT=65536
 expect_refusal "an overlong PORT" 'PORT must be between 1 and 65535' -e PORT=18446744073709551617
+
+expect_refusal "a malformed PRINTER_APP_AUTH_SERVICE" \
+  'PRINTER_APP_AUTH_SERVICE must be 1-64 characters of letters, digits, "-" or "_"' \
+  -e 'PRINTER_APP_AUTH_SERVICE=not a service!'
+expect_refusal "a PRINTER_APP_AUTH_SERVICE with no matching PAM service" \
+  'has no /etc/pam.d/' \
+  -e PRINTER_APP_AUTH_SERVICE=no-such-pam-service
+expect_refusal "a malformed PRINTER_APP_ADMIN_GROUP" \
+  'PRINTER_APP_ADMIN_GROUP must be a valid Unix group name' \
+  -e 'PRINTER_APP_ADMIN_GROUP=Not Valid'
+expect_refusal "a PRINTER_APP_ADMIN_GROUP that does not exist" \
+  'PRINTER_APP_ADMIN_GROUP=no-such-group does not exist' \
+  -e PRINTER_APP_ADMIN_GROUP=no-such-group
+expect_refusal "an unrecognized PRINTER_APP_SERVER_OPTIONS value" \
+  'unrecognized option "bogus-option"' \
+  -e PRINTER_APP_SERVER_OPTIONS=bogus-option
 
 # A fresh bind mount owned by the invoking user is owned by root inside a
 # rootless container, so the image user cannot write it.
