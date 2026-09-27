@@ -197,15 +197,18 @@ expect_refusal "an overlong PORT" 'PORT must be between 1 and 65535' -e PORT=184
 expect_refusal "a malformed PRINTER_APP_AUTH_SERVICE" \
   'PRINTER_APP_AUTH_SERVICE must be 1-64 characters of letters, digits, "-" or "_"' \
   -e 'PRINTER_APP_AUTH_SERVICE=not a service!'
-expect_refusal "a PRINTER_APP_AUTH_SERVICE with no matching PAM service" \
-  'has no /etc/pam.d/' \
-  -e PRINTER_APP_AUTH_SERVICE=no-such-pam-service
+expect_refusal "PRINTER_APP_AUTH_SERVICE=cups" \
+  'PAPPL is built without PAM' \
+  -e PRINTER_APP_AUTH_SERVICE=cups
 expect_refusal "a malformed PRINTER_APP_ADMIN_GROUP" \
   'PRINTER_APP_ADMIN_GROUP must be a valid Unix group name' \
   -e 'PRINTER_APP_ADMIN_GROUP=Not Valid'
 expect_refusal "a PRINTER_APP_ADMIN_GROUP that does not exist" \
   'PRINTER_APP_ADMIN_GROUP=no-such-group does not exist' \
   -e PRINTER_APP_ADMIN_GROUP=no-such-group
+expect_refusal "PRINTER_APP_ADMIN_GROUP without auth service" \
+  'PRINTER_APP_ADMIN_GROUP requires PRINTER_APP_AUTH_SERVICE' \
+  -e PRINTER_APP_ADMIN_GROUP=root
 expect_refusal "an unrecognized PRINTER_APP_SERVER_OPTIONS value" \
   'unrecognized option "bogus-option"' \
   -e PRINTER_APP_SERVER_OPTIONS=bogus-option

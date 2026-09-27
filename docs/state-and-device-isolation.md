@@ -111,11 +111,11 @@ daemon starts, cover ChairLift ADR-0016's enable condition:
 - `PRINTER_APP_SERVER_OPTIONS=no-web-interface` turns the web interface off;
   IPP printing is unaffected. This image ships no configurable PAM stack, so
   it is the only option verified end to end today.
-- `PRINTER_APP_AUTH_SERVICE=<name>` sets PAPPL's `auth-service`, authenticating
-  admin requests against `/etc/pam.d/<name>`. The entrypoint refuses to start
-  if that file is missing rather than silently accepting every request.
+- `PRINTER_APP_AUTH_SERVICE=<name>` sets PAPPL's `auth-service`. Because PAPPL
+  is built without PAM in this image, any service name is refused at startup
+  until the base graph ships PAM support.
 - `PRINTER_APP_ADMIN_GROUP=<group>` sets PAPPL's `admin-group`; the entrypoint
-  refuses to start if the group does not resolve with `getent group`.
+  refuses to start if the group does not resolve or if auth-service is unset.
 
 `PRINTER_APP_SERVER_OPTIONS` also accepts any comma-separated combination of
 PAPPL's other server options (`none`, `dnssd-host`, `no-multi-queue`,

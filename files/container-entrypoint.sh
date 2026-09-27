@@ -45,7 +45,8 @@ fi
 # three (ChairLift ADR-0016 requires one of these before it enables this
 # family). Names are validated before they reach the server so a malformed or
 # unrecognized value fails closed instead of starting an unauthenticated web
-# admin interface.
+# admin interface. Because PAPPL is built without PAM in this image, any
+# auth-service is refused and no-web-interface is the supported way to secure it.
 auth_service=""
 if [[ -n "${PRINTER_APP_AUTH_SERVICE:-}" ]]; then
   auth_service="$PRINTER_APP_AUTH_SERVICE"
@@ -53,15 +54,12 @@ if [[ -n "${PRINTER_APP_AUTH_SERVICE:-}" ]]; then
     printf 'PRINTER_APP_AUTH_SERVICE must be 1-64 characters of letters, digits, "-" or "_"\n' >&2
     exit 64
   fi
-  # A PAM service name that resolves to no /etc/pam.d file authenticates
-  # nothing: PAM falls back to its "other" policy, which most distributions
-  # (and this image) deny by default, silently locking every admin request
-  # out instead of failing at startup where the mistake is visible.
-  if [[ ! -e "/etc/pam.d/$auth_service" ]]; then
-    printf 'PRINTER_APP_AUTH_SERVICE=%s has no /etc/pam.d/%s in this image\n' "$auth_service" "$auth_service" >&2
-    printf 'This image does not ship a configurable PAM stack; PRINTER_APP_SERVER_OPTIONS=no-web-interface is the only supported way to secure the web admin interface.\n' >&2
-    exit 64
-  fi
+  # The shared printing base builds PAPPL with --disable-libpam, so
+  # pappl_authenticate_user() always fails. Any auth-service would answer
+  # every admin request with 401 and lock every administrator out.
+  printf 'PRINTER_APP_AUTH_SERVICE=%s cannot be honoured: PAPPL is built without PAM in this image\n' "$auth_service" >&2
+  printf 'PRINTER_APP_SERVER_OPTIONS=no-web-interface is the only supported way to secure web administration.\n' >&2
+  exit 64
 fi
 
 admin_group=""
@@ -73,6 +71,10 @@ if [[ -n "${PRINTER_APP_ADMIN_GROUP:-}" ]]; then
   fi
   if ! getent group "$admin_group" >/dev/null 2>&1; then
     printf 'PRINTER_APP_ADMIN_GROUP=%s does not exist\n' "$admin_group" >&2
+    exit 64
+  fi
+  if [[ -z "$auth_service" ]]; then
+    printf 'PRINTER_APP_ADMIN_GROUP requires PRINTER_APP_AUTH_SERVICE\n' >&2
     exit 64
   fi
 fi

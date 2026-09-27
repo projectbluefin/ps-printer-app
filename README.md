@@ -227,12 +227,11 @@ environment variables before exposing the container beyond a trusted host:
   interface entirely; IPP printing keeps working. This image does not ship a
   configurable PAM stack, so it is the only supported way to secure the web
   admin interface today.
-- `PRINTER_APP_AUTH_SERVICE=<pam-service>` authenticates web admin requests
-  against the named PAM service (`/etc/pam.d/<pam-service>` in the image). The
-  entrypoint refuses to start if that file does not exist.
+- `PRINTER_APP_AUTH_SERVICE=<pam-service>` is reserved for authenticating web
+  admin requests once PAM is available. Because PAPPL is built without PAM in
+  this image, any service name is currently refused at startup.
 - `PRINTER_APP_ADMIN_GROUP=<group>` restricts administration to members of the
-  named Unix group (checked with `getent group`, so it must already resolve
-  inside the container). Use it together with `PRINTER_APP_AUTH_SERVICE`.
+  named Unix group (checked with `getent group`). Requires PRINTER_APP_AUTH_SERVICE.
 
 `PRINTER_APP_SERVER_OPTIONS` also accepts any other comma-separated PAPPL
 server option (`none`, `dnssd-host`, `no-multi-queue`, `raw-socket`,
