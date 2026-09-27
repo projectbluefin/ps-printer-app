@@ -101,6 +101,28 @@ service type: `patches/cups-dnssd-backend-socket-only.patch` restricts the CUPS
 DNS-SD backend to `_pdl-datastream._tcp`. That is about what the appliance
 *looks for*; `PRINTER_APP_INSTANCE` is about what it *advertises*.
 
+## Securing or disabling web administration
+
+The web admin interface shares the host-network port with IPP (see "Several
+instances on one host" above), so anything that can reach the port can reach
+it. Three environment variables, validated by the entrypoint before any
+daemon starts, cover ChairLift ADR-0016's enable condition:
+
+- `PRINTER_APP_SERVER_OPTIONS=no-web-interface` turns the web interface off;
+  IPP printing is unaffected. This image ships no configurable PAM stack, so
+  it is the only option verified end to end today.
+- `PRINTER_APP_AUTH_SERVICE=<name>` sets PAPPL's `auth-service`, authenticating
+  admin requests against `/etc/pam.d/<name>`. The entrypoint refuses to start
+  if that file is missing rather than silently accepting every request.
+- `PRINTER_APP_ADMIN_GROUP=<group>` sets PAPPL's `admin-group`; the entrypoint
+  refuses to start if the group does not resolve with `getent group`.
+
+`PRINTER_APP_SERVER_OPTIONS` also accepts any comma-separated combination of
+PAPPL's other server options (`none`, `dnssd-host`, `no-multi-queue`,
+`raw-socket`, `usb-printer`, `web-log`, `web-network`, `web-remote`,
+`web-security`, `no-tls`); anything else is refused with 64 instead of being
+silently ignored by the server.
+
 ## USB access without root
 
 The CUPS USB backend (`/usr/lib/cups/backend/usb`, reached through
@@ -153,7 +175,10 @@ distinct sanitized names over IPP Get-System-Attributes and in the web
 interface, and each advertise their own name as `_ipps-system._tcp` on their
 own port; that an instance without `PRINTER_APP_INSTANCE` keeps the built-in
 name; and that an instance name with nothing usable, a `PORT` outside 1-65535
-and an unwritable state volume (or part of its layout) are refused with 64.
+and an unwritable state volume (or part of its layout) are refused with 64;
+and that a malformed or unavailable `PRINTER_APP_AUTH_SERVICE`, a malformed
+or unresolvable `PRINTER_APP_ADMIN_GROUP`, and an unrecognized
+`PRINTER_APP_SERVER_OPTIONS` value are each refused with 64.
 `tests/core-appliance.sh` covers the state layout, seeding, preservation of
 edited state across runs, and a non-numeric `PORT`; `tests/core-payload.sh`
 covers a configured printer surviving a restart.
@@ -166,6 +191,8 @@ been observed:
   a writable or read-only `/dev/bus/usb` mount, or `--group-add keep-groups`.
 - Physical paper output, and anything about a specific printer's firmware,
   media handling or colour.
+- A successful authenticated admin request against a real PAM service (only
+  the refusal path is verified today; no PAM stack is shipped in the image).
 
 Record those only after testing them on real hardware, and never record a
 synthetic pass as physical validation.

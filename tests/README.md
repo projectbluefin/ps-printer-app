@@ -93,8 +93,10 @@ sanitized names over IPP Get-System-Attributes (`ipp-request.py`) and in the web
 interface title, and advertise them as `_ipps-system._tcp` on their own port with
 their avahi-daemon; the unnamed one must keep `PostScript Printer Application`. The
 entrypoint must refuse with 64 an instance name with nothing usable, `PORT` 0, 65536
-and an overlong number, and a state volume, or a directory of its layout, that UID
-65532 cannot write, printing the `podman unshare chown` that fixes it. Discovery
+and an overlong number, a state volume, or a directory of its layout, that UID
+65532 cannot write, printing the `podman unshare chown` that fixes it, a malformed
+or unrecognized `PRINTER_APP_AUTH_SERVICE`, `PRINTER_APP_ADMIN_GROUP` or
+`PRINTER_APP_SERVER_OPTIONS`. Discovery
 from another host and USB access are not verified (see
 [docs/state-and-device-isolation.md](../docs/state-and-device-isolation.md)).
 `IMAGE`, `PORT` (default 18080; `PORT`..`PORT+2` are used) and `NAME_PREFIX`
