@@ -114,8 +114,10 @@ daemon starts, cover ChairLift ADR-0016's enable condition:
 - `PRINTER_APP_AUTH_SERVICE=<name>` sets PAPPL's `auth-service`. Because PAPPL
   is built without PAM in this image, any service name is refused at startup
   until the base graph ships PAM support.
-- `PRINTER_APP_ADMIN_GROUP=<group>` sets PAPPL's `admin-group`; the entrypoint
-  refuses to start if the group does not resolve or if auth-service is unset.
+- `PRINTER_APP_ADMIN_GROUP=<group>` is reserved for PAPPL's `admin-group`; the
+  entrypoint refuses to start if the group does not resolve or if auth-service
+  is unset. Since auth-service is itself refused until the base graph ships PAM
+  support, an admin group cannot start this image either.
 
 `PRINTER_APP_SERVER_OPTIONS` also accepts any comma-separated combination of
 PAPPL's other server options (`none`, `dnssd-host`, `no-multi-queue`,
@@ -178,7 +180,12 @@ name; and that an instance name with nothing usable, a `PORT` outside 1-65535
 and an unwritable state volume (or part of its layout) are refused with 64;
 and that a malformed or unavailable `PRINTER_APP_AUTH_SERVICE`, a malformed
 or unresolvable `PRINTER_APP_ADMIN_GROUP`, and an unrecognized
-`PRINTER_APP_SERVER_OPTIONS` value are each refused with 64.
+`PRINTER_APP_SERVER_OPTIONS` value are each refused with 64. It also starts an
+instance with `PRINTER_APP_SERVER_OPTIONS=no-web-interface` and checks that a
+printer can still be added over IPP and answers Get-Printer-Attributes while
+`/`, `/addppd` and the printer's `/…/device` page answer 404 — the same printer
+and paths answer 200 on an instance with the web interface, so the 404 is the
+removal of those pages and not a wrong URL.
 `tests/core-appliance.sh` covers the state layout, seeding, preservation of
 edited state across runs, and a non-numeric `PORT`; `tests/core-payload.sh`
 covers a configured printer surviving a restart.

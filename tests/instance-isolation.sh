@@ -10,6 +10,10 @@
 #     and in the web interface, and each registers its own name for DNS-SD
 #     (_ipps-system._tcp) with its avahi-daemon;
 #   - an instance without PRINTER_APP_INSTANCE keeps the built-in name;
+#   - an instance started with PRINTER_APP_SERVER_OPTIONS=no-web-interface
+#     still adds a printer and answers IPP, while /, /addppd and the printer's
+#     device settings page answer 404 (they answer 200 on an instance with the
+#     web interface, which is what makes the 404 a removal);
 #   - the entrypoint refuses, with 64, a PRINTER_APP_INSTANCE that sanitizes
 #     to nothing, a PORT outside 1-65535, a state volume the image user
 #     cannot write (printing the podman unshare chown that fixes it), a
@@ -21,7 +25,8 @@
 #
 # Environment:
 #   IMAGE        image to verify (default ghcr.io/projectbluefin/ps-printer-app:build)
-#   PORT         first application port (default 18080); PORT..PORT+2 are used
+#   PORT         first application port (default 18080); PORT..PORT+3 are used,
+#                and PORT+1002..PORT+1003 name the (unused) socket device URIs
 #   NAME_PREFIX  container name prefix (default ps-printer-app-inst)
 set -euo pipefail
 
@@ -185,6 +190,63 @@ for row in "${instances[@]:0:2}"; do
     fail "$name: '$expected' is not advertised for DNS-SD on port $instance_port"
   fi
   echo "  ok: $name advertises '$expected' as _ipps-system._tcp on port $instance_port"
+done
+
+echo "== no-web-interface: IPP serves, the web admin pages are gone =="
+# The same printer is added to an instance with the web interface and to one
+# started with no-web-interface, and the same paths are requested from both:
+# 200 on the first proves the paths are the ones PAPPL really serves, so 404 on
+# the second is a removed page, not a misspelled URL.
+noweb_port=$((port + 3))
+noweb_name="${prefix}-noweb"
+probe_printer="nowebcheck"
+new_state_dir
+chmod 0777 "$state_dir"
+containers+=("$noweb_name")
+podman run -d \
+  --name "$noweb_name" \
+  --network host \
+  -e PORT="$noweb_port" \
+  -e PRINTER_APP_SERVER_OPTIONS=no-web-interface \
+  -v "$state_dir:/var/lib/ps-printer-app:Z" \
+  "$image" >/dev/null
+
+# With the web interface off there is no title to wait for, so wait for IPP.
+ipp_ready=0
+for _ in $(seq 1 60); do
+  if attributes="$(python3 "$script_dir/ipp-request.py" "ipp://127.0.0.1:${noweb_port}/ipp/system" get-system-attributes 2>/dev/null)" &&
+    [[ "$(ipp_value status <<<"$attributes" || true)" == 0x0000 ]]; then
+    ipp_ready=1
+    break
+  fi
+  sleep 1
+done
+if ((!ipp_ready)); then
+  podman logs "$noweb_name" >&2 || true
+  fail "$noweb_name: Get-System-Attributes does not answer on port $noweb_port with no-web-interface"
+fi
+echo "  ok: $noweb_name answers IPP Get-System-Attributes on port $noweb_port"
+
+for probe in "${prefix}-default|$((port + 2))|200" "$noweb_name|$noweb_port|404"; do
+  IFS='|' read -r probe_name probe_port expected <<<"$probe"
+  podman exec "$probe_name" /usr/bin/ps-printer-app \
+    -u "ipp://127.0.0.1:${probe_port}/ipp/system" \
+    -d "$probe_printer" \
+    -m generic \
+    -v "cups:socket://127.0.0.1:$((probe_port + 1000))" add ||
+    fail "$probe_name: could not add printer $probe_printer over IPP on port $probe_port"
+  attributes="$(python3 "$script_dir/ipp-request.py" "ipp://127.0.0.1:${probe_port}/ipp/print/${probe_printer}" get-printer-attributes)" ||
+    fail "$probe_name: Get-Printer-Attributes for $probe_printer on port $probe_port failed"
+  status="$(ipp_value status <<<"$attributes")"
+  [[ "$status" == 0x0000 ]] ||
+    { printf '%s\n' "$attributes" >&2; fail "$probe_name: Get-Printer-Attributes returned $status"; }
+  for path in / /addppd "/${probe_printer}/device"; do
+    code="$(curl --silent --output /dev/null --write-out '%{http_code}' \
+      "http://127.0.0.1:${probe_port}${path}" || printf '000')"
+    [[ "$code" == "$expected" ]] ||
+      fail "$probe_name: GET $path on port $probe_port answered $code, expected $expected"
+  done
+  echo "  ok: $probe_name prints over IPP and answers $expected for /, /addppd and /${probe_printer}/device"
 done
 
 echo "== Refused configurations =="

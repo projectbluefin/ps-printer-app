@@ -91,7 +91,12 @@ each with its own `PORT`, state volume and `PRINTER_APP_INSTANCE`, and one witho
 `PRINTER_APP_INSTANCE`. The named instances must both serve, report their distinct,
 sanitized names over IPP Get-System-Attributes (`ipp-request.py`) and in the web
 interface title, and advertise them as `_ipps-system._tcp` on their own port with
-their avahi-daemon; the unnamed one must keep `PostScript Printer Application`. The
+their avahi-daemon; the unnamed one must keep `PostScript Printer Application`. An
+instance started with `PRINTER_APP_SERVER_OPTIONS=no-web-interface` must still
+accept a printer added over IPP and answer Get-Printer-Attributes for it, while
+`/`, `/addppd` and the printer's `/…/device` page answer 404; the same printer and
+the same paths answer 200 on an instance with the web interface, so the 404 is the
+removal of the pages and not a wrong URL. The
 entrypoint must refuse with 64 an instance name with nothing usable, `PORT` 0, 65536
 and an overlong number, a state volume, or a directory of its layout, that UID
 65532 cannot write, printing the `podman unshare chown` that fixes it, a malformed
@@ -99,7 +104,7 @@ or unrecognized `PRINTER_APP_AUTH_SERVICE`, `PRINTER_APP_ADMIN_GROUP` or
 `PRINTER_APP_SERVER_OPTIONS`. Discovery
 from another host and USB access are not verified (see
 [docs/state-and-device-isolation.md](../docs/state-and-device-isolation.md)).
-`IMAGE`, `PORT` (default 18080; `PORT`..`PORT+2` are used) and `NAME_PREFIX`
+`IMAGE`, `PORT` (default 18080; `PORT`..`PORT+3` are used) and `NAME_PREFIX`
 (container names, default `ps-printer-app-inst`) select the image, ports and names.
 
 ## The manifest

@@ -184,6 +184,9 @@ fi
 if [[ -n "${PORT:-}" ]]; then
   args+=(-o "server-port=$PORT")
 fi
+# auth-service and admin-group are forwarded for the day the base graph builds
+# PAPPL with PAM: until then the validation above exits 64 for either of them,
+# so neither branch is reachable.
 if [[ -n "$auth_service" ]]; then
   args+=(-o "auth-service=$auth_service")
 fi
