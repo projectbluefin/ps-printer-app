@@ -39,6 +39,67 @@ if [[ -n "${PRINTER_APP_INSTANCE:-}" ]]; then
   system_name="PostScript Printer Application ($instance)"
 fi
 
+# Web administration is authenticated through PAM (PRINTER_APP_AUTH_SERVICE),
+# restricted to a Unix group (PRINTER_APP_ADMIN_GROUP), disabled entirely
+# (PRINTER_APP_SERVER_OPTIONS=no-web-interface) or some combination of the
+# three (ChairLift ADR-0016 requires one of these before it enables this
+# family). Names are validated before they reach the server so a malformed or
+# unrecognized value fails closed instead of starting an unauthenticated web
+# admin interface. Because PAPPL is built without PAM in this image, any
+# auth-service is refused and no-web-interface is the supported way to secure it.
+auth_service=""
+if [[ -n "${PRINTER_APP_AUTH_SERVICE:-}" ]]; then
+  auth_service="$PRINTER_APP_AUTH_SERVICE"
+  if [[ ! "$auth_service" =~ ^[A-Za-z0-9_-]{1,64}$ ]]; then
+    printf 'PRINTER_APP_AUTH_SERVICE must be 1-64 characters of letters, digits, "-" or "_"\n' >&2
+    exit 64
+  fi
+  # The shared printing base builds PAPPL with --disable-libpam, so
+  # pappl_authenticate_user() always fails. Any auth-service would answer
+  # every admin request with 401 and lock every administrator out.
+  printf 'PRINTER_APP_AUTH_SERVICE=%s cannot be honoured: PAPPL is built without PAM in this image\n' "$auth_service" >&2
+  printf 'PRINTER_APP_SERVER_OPTIONS=no-web-interface is the only supported way to secure web administration.\n' >&2
+  exit 64
+fi
+
+admin_group=""
+if [[ -n "${PRINTER_APP_ADMIN_GROUP:-}" ]]; then
+  admin_group="$PRINTER_APP_ADMIN_GROUP"
+  if [[ ! "$admin_group" =~ ^[a-z_][a-z0-9_-]{0,31}$ ]]; then
+    printf 'PRINTER_APP_ADMIN_GROUP must be a valid Unix group name\n' >&2
+    exit 64
+  fi
+  if ! getent group "$admin_group" >/dev/null 2>&1; then
+    printf 'PRINTER_APP_ADMIN_GROUP=%s does not exist\n' "$admin_group" >&2
+    exit 64
+  fi
+  if [[ -z "$auth_service" ]]; then
+    printf 'PRINTER_APP_ADMIN_GROUP requires PRINTER_APP_AUTH_SERVICE\n' >&2
+    exit 64
+  fi
+fi
+
+# PAPPL's server subcommand accepts server-options as a comma-separated list
+# of these exact keywords (pappl/mainloop-subcommands.c); anything else is
+# silently ignored by PAPPL, so it is rejected here instead.
+valid_server_options=(none dnssd-host no-multi-queue raw-socket usb-printer no-web-interface web-log web-network web-remote web-security no-tls)
+server_options=""
+if [[ -n "${PRINTER_APP_SERVER_OPTIONS:-}" ]]; then
+  server_options="$PRINTER_APP_SERVER_OPTIONS"
+  IFS=',' read -ra requested_options <<<"$server_options"
+  for option in "${requested_options[@]}"; do
+    known=0
+    for valid in "${valid_server_options[@]}"; do
+      [[ "$option" == "$valid" ]] && { known=1; break; }
+    done
+    if ((!known)); then
+      printf 'PRINTER_APP_SERVER_OPTIONS: unrecognized option "%s"\n' "$option" >&2
+      printf 'Valid options are: %s\n' "${valid_server_options[*]}" >&2
+      exit 64
+    fi
+  done
+fi
+
 state_dir=/var/lib/ps-printer-app
 # The appliance runs as an unprivileged user and cannot repair a state volume
 # it does not own. Starting anyway would lose the configured printers at the
@@ -122,6 +183,18 @@ if [[ -n "${system_name:-}" ]]; then
 fi
 if [[ -n "${PORT:-}" ]]; then
   args+=(-o "server-port=$PORT")
+fi
+# auth-service and admin-group are forwarded for the day the base graph builds
+# PAPPL with PAM: until then the validation above exits 64 for either of them,
+# so neither branch is reachable.
+if [[ -n "$auth_service" ]]; then
+  args+=(-o "auth-service=$auth_service")
+fi
+if [[ -n "$admin_group" ]]; then
+  args+=(-o "admin-group=$admin_group")
+fi
+if [[ -n "$server_options" ]]; then
+  args+=(-o "server-options=$server_options")
 fi
 ps-printer-app "${args[@]}" server &
 children+=("$!")

@@ -103,6 +103,52 @@ ps_autoadd(const char *device_info,	// I - Device name (unused)
 #ifndef PS_PRINTER_APP_NO_MAIN
 
 //
+// 'ps_printer_setup()' - Register per-printer web pages.
+//
+
+static void
+ps_printer_setup(pappl_printer_t *printer,  // I - Printer
+                 void            *data)     // I - Global data
+{
+  pappl_system_t *system = papplPrinterGetSystem(printer);
+  char           path[256];                 // Device settings page path
+
+  // Keep pappl-retrofit's setup: it publishes PPD human-readable strings
+  // for IPP clients via printer-strings-uri.
+  prSetupDeviceSettingsPage(printer, data);
+
+  // If no-web-interface is set, remove Device Settings admin page
+  if (!(papplSystemGetOptions(system) & PAPPL_SOPTIONS_WEB_INTERFACE))
+  {
+    papplPrinterGetPath(printer, "device", path, sizeof(path));
+    papplSystemRemoveResource(system, path);
+    papplPrinterRemoveLink(printer, "Device Settings");
+  }
+}
+
+
+//
+// 'ps_system_setup()' - Extra setup steps for the system.
+//
+
+static void
+ps_system_setup(void *data)                 // I - Global data
+{
+  pr_printer_app_global_data_t *global_data = (pr_printer_app_global_data_t *)data;
+  pappl_system_t               *system = prGetSystem(global_data);
+
+  prSetupAddPPDFilesPage(data);
+
+  // If no-web-interface is set, remove Add PPD Files admin page
+  if (!(papplSystemGetOptions(system) & PAPPL_SOPTIONS_WEB_INTERFACE))
+  {
+    papplSystemRemoveResource(system, "/addppd");
+    papplSystemRemoveLink(system, "Add PPD Files");
+  }
+}
+
+
+//
 // 'main()' - Main entry for the ps-printer-app.
 //
 // Skipped when building the unit tests, which link this file to exercise
@@ -146,8 +192,8 @@ main(int  argc,				// I - Number of command-line arguments
     ps_autoadd,
     prIdentify,
     prTestPage,
-    prSetupAddPPDFilesPage,
-    prSetupDeviceSettingsPage,
+    ps_system_setup,
+    ps_printer_setup,
     spooling_conversions,
     stream_formats,
     "",

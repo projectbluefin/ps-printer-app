@@ -219,6 +219,35 @@ on hardware, are described in
 Rock section's `-v /dev/bus/usb:/dev/bus/usb:ro` examples describe the upstream
 Rock image, not this one.
 
+The web admin interface listens on the same host-network port as IPP, so it is
+reachable by anything that can reach the port. Secure it with one of these
+environment variables before exposing the container beyond a trusted host:
+
+- `PRINTER_APP_SERVER_OPTIONS=no-web-interface` disables the web admin
+  interface entirely; IPP printing keeps working. This image does not ship a
+  configurable PAM stack, so it is the only supported way to secure the web
+  admin interface today.
+- `PRINTER_APP_AUTH_SERVICE=<pam-service>` is reserved for authenticating web
+  admin requests once PAM is available. Because PAPPL is built without PAM in
+  this image, any service name is currently refused at startup.
+- `PRINTER_APP_ADMIN_GROUP=<group>` is reserved for restricting administration
+  to members of the named Unix group (checked with `getent group`). It requires
+  PRINTER_APP_AUTH_SERVICE, which is itself refused without PAM, so an admin
+  group is also refused at startup today.
+
+`PRINTER_APP_SERVER_OPTIONS` also accepts any other comma-separated PAPPL
+server option (`none`, `dnssd-host`, `no-multi-queue`, `raw-socket`,
+`usb-printer`, `web-log`, `web-network`, `web-remote`, `web-security`,
+`no-tls`); an unrecognized value refuses to start with exit status 64 instead
+of starting with a silently ignored option:
+
+```sh
+podman run -d --name ps-printer-app --network host \
+  -e PORT=18080 -e PRINTER_APP_SERVER_OPTIONS=no-web-interface \
+  -v "$PWD/state-a:/var/lib/ps-printer-app:Z" \
+  ghcr.io/projectbluefin/ps-printer-app:<version>
+```
+
 
 
 ## THE SNAP
