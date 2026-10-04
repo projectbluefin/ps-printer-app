@@ -29,7 +29,7 @@ depends:
 config:
   build-commands:
     - make clean
-    - make -j2 VERSION="$(cat VERSION)" LDFLAGS="$LDFLAGS -ljpeg"
+    - make -j%{max-jobs} VERSION="$(cat VERSION)" LDFLAGS="$LDFLAGS -ljpeg"
   install-commands:
     # unitdir is cleared because the OCI appliance supervises the application
     # through the container entrypoint rather than a systemd unit.
