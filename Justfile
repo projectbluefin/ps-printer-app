@@ -38,8 +38,24 @@ validate:
     #!/usr/bin/env bash
     set -euo pipefail
     tests/fsdk-contract-test.sh
+    just check-entrypoint
     names="$(just bst show --deps all --format '%{name}' oci/ps-printer-app.bst)"
     printf '%s\n' "$names" | tests/fsdk-contract.sh --graph -
+
+# Entrypoint checks that need no image build.
+check-entrypoint:
+    #!/usr/bin/env bash
+    set -euo pipefail
+    shopt -s nullglob
+    tests=(tests/entrypoint-*.sh)
+    if [ ${#tests[@]} -eq 0 ]; then
+        echo "no tests/entrypoint-*.sh found" >&2
+        exit 1
+    fi
+    for t in "${tests[@]}"; do
+        echo "==> $t"
+        bash "$t"
+    done
 
 fetch:
     #!/usr/bin/env bash
