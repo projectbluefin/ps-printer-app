@@ -35,4 +35,3 @@ jobs:
     with:
       brand_name: "PS Printer App"
       brand_emoji: "📄"
-    secrets: inherit
