@@ -3,6 +3,8 @@ name: FSDK image CI
 on:
   pull_request:
     branches: [testing]
+  push:
+    branches: [testing]
   merge_group:
     branches: [testing]
   workflow_dispatch:
