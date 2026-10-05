@@ -26,10 +26,15 @@ build-depends:
 depends:
   - fsdk-containers.bst:printing/base.bst
 
+environment:
+  MAXJOBS: "%{max-jobs}"
+environment-nocache:
+- MAXJOBS
+
 config:
   build-commands:
     - make clean
-    - make -j2 VERSION="$(cat VERSION)" LDFLAGS="$LDFLAGS -ljpeg"
+    - make -j"${MAXJOBS}" VERSION="$(cat VERSION)" LDFLAGS="$LDFLAGS -ljpeg"
   install-commands:
     # unitdir is cleared because the OCI appliance supervises the application
     # through the container entrypoint rather than a systemd unit.
