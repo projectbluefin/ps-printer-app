@@ -94,14 +94,14 @@ interface title, and advertise them as `_ipps-system._tcp` on their own port wit
 their avahi-daemon; the unnamed one must keep `PostScript Printer Application`. An
 instance started with `PRINTER_APP_SERVER_OPTIONS=no-web-interface` must still
 accept a printer added over IPP and answer Get-Printer-Attributes for it, while
-`/`, `/addppd` and the printer's `/…/device` page answer 404; the same printer and
-the same paths answer 200 on an instance with the web interface, so the 404 is the
+`/`, `/addppd` and the printer's `/…/device` page answer 404 (as do `/logs` and
+`/logfile.txt`); the same printer and those first three paths answer 200 on an instance with the web interface, so the 404 is the
 removal of the pages and not a wrong URL. The
 entrypoint must refuse with 64 an instance name with nothing usable, `PORT` 0, 65536
 and an overlong number, a state volume, or a directory of its layout, that UID
 65532 cannot write, printing the `podman unshare chown` that fixes it, a malformed
 or unrecognized `PRINTER_APP_AUTH_SERVICE`, `PRINTER_APP_ADMIN_GROUP` or
-`PRINTER_APP_SERVER_OPTIONS`. Discovery
+`PRINTER_APP_SERVER_OPTIONS`, and `web-log` combined with `no-web-interface`. Discovery
 from another host and USB access are not verified (see
 [docs/state-and-device-isolation.md](../docs/state-and-device-isolation.md)).
 `IMAGE`, `PORT` (default 18080; `PORT`..`PORT+3` are used) and `NAME_PREFIX`

@@ -123,7 +123,9 @@ daemon starts, cover ChairLift ADR-0016's enable condition:
 PAPPL's other server options (`none`, `dnssd-host`, `no-multi-queue`,
 `raw-socket`, `usb-printer`, `web-log`, `web-network`, `web-remote`,
 `web-security`, `no-tls`); anything else is refused with 64 instead of being
-silently ignored by the server.
+silently ignored by the server. `web-log` together with `no-web-interface` is
+also refused with 64, because PAPPL registers the unauthenticated `/logs` and
+`/logfile.txt` pages for `web-log` even when the web interface is off.
 
 ## USB access without root
 
@@ -179,12 +181,14 @@ own port; that an instance without `PRINTER_APP_INSTANCE` keeps the built-in
 name; and that an instance name with nothing usable, a `PORT` outside 1-65535
 and an unwritable state volume (or part of its layout) are refused with 64;
 and that a malformed or unavailable `PRINTER_APP_AUTH_SERVICE`, a malformed
-or unresolvable `PRINTER_APP_ADMIN_GROUP`, and an unrecognized
-`PRINTER_APP_SERVER_OPTIONS` value are each refused with 64. It also starts an
+or unresolvable `PRINTER_APP_ADMIN_GROUP`, an unrecognized
+`PRINTER_APP_SERVER_OPTIONS` value, and `web-log` combined with `no-web-interface`
+are each refused with 64. It also starts an
 instance with `PRINTER_APP_SERVER_OPTIONS=no-web-interface` and checks that a
 printer can still be added over IPP and answers Get-Printer-Attributes while
-`/`, `/addppd` and the printer's `/…/device` page answer 404 — the same printer
-and paths answer 200 on an instance with the web interface, so the 404 is the
+`/`, `/addppd`, `/logs`, `/logfile.txt` and the printer's `/…/device` page
+answer 404 — the same printer
+and the first three paths answer 200 on an instance with the web interface, so the 404 is the
 removal of those pages and not a wrong URL.
 `tests/core-appliance.sh` covers the state layout, seeding, preservation of
 edited state across runs, and a non-numeric `PORT`; `tests/core-payload.sh`

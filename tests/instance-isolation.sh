@@ -249,6 +249,13 @@ for probe in "${prefix}-default|$((port + 2))|200" "$noweb_name|$noweb_port|404"
   done
   echo "  ok: $probe_name prints over IPP and answers $expected for /, /addppd and /${probe_printer}/device"
 done
+for path in /logs /logfile.txt; do
+  code="$(curl --silent --output /dev/null --write-out '%{http_code}' \
+    "http://127.0.0.1:${noweb_port}${path}" || printf '000')"
+  [[ "$code" == 404 ]] ||
+    fail "$noweb_name: GET $path on port $noweb_port answered $code, expected 404"
+done
+echo "  ok: $noweb_name answers 404 for /logs and /logfile.txt"
 
 echo "== Refused configurations =="
 expect_refusal "a PRINTER_APP_INSTANCE without a usable character" \
@@ -275,6 +282,9 @@ expect_refusal "PRINTER_APP_ADMIN_GROUP without auth service" \
 expect_refusal "an unrecognized PRINTER_APP_SERVER_OPTIONS value" \
   'unrecognized option "bogus-option"' \
   -e PRINTER_APP_SERVER_OPTIONS=bogus-option
+expect_refusal "web-log combined with no-web-interface" \
+  'web-log cannot be combined with no-web-interface' \
+  -e PRINTER_APP_SERVER_OPTIONS=no-web-interface,web-log
 
 # A fresh bind mount owned by the invoking user is owned by root inside a
 # rootless container, so the image user cannot write it.

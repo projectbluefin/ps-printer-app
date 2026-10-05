@@ -98,6 +98,13 @@ if [[ -n "${PRINTER_APP_SERVER_OPTIONS:-}" ]]; then
       exit 64
     fi
   done
+  # PAPPL registers /logs and /logfile.txt for web-log outside the
+  # web-interface block, and without an auth-service they are unauthenticated,
+  # so web-log would still expose the server log with no-web-interface.
+  if [[ ",$server_options," == *",no-web-interface,"* && ",$server_options," == *",web-log,"* ]]; then
+    printf 'PRINTER_APP_SERVER_OPTIONS: web-log cannot be combined with no-web-interface (it serves the server log without authentication)\n' >&2
+    exit 64
+  fi
 fi
 
 state_dir=/var/lib/ps-printer-app

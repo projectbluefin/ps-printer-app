@@ -239,7 +239,10 @@ environment variables before exposing the container beyond a trusted host:
 server option (`none`, `dnssd-host`, `no-multi-queue`, `raw-socket`,
 `usb-printer`, `web-log`, `web-network`, `web-remote`, `web-security`,
 `no-tls`); an unrecognized value refuses to start with exit status 64 instead
-of starting with a silently ignored option:
+of starting with a silently ignored option. `web-log` cannot be combined with
+`no-web-interface`: PAPPL would still serve the server log at `/logs` and
+`/logfile.txt` without authentication, so that combination is also refused
+with 64:
 
 ```sh
 podman run -d --name ps-printer-app --network host \

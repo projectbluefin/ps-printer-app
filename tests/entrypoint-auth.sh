@@ -71,7 +71,11 @@ run 'no-web-interface is accepted' \
   PRINTER_APP_SERVER_OPTIONS=no-web-interface
 
 run 'multiple valid server options are accepted' \
-  0 'no-web-interface,web-log' \
+  0 'no-web-interface,no-tls' \
+  PRINTER_APP_SERVER_OPTIONS=no-web-interface,no-tls
+
+run 'web-log with no-web-interface is refused' \
+  64 'PRINTER_APP_SERVER_OPTIONS: web-log cannot be combined with no-web-interface' \
   PRINTER_APP_SERVER_OPTIONS=no-web-interface,web-log
 
 run 'unrecognized server option is rejected' \
