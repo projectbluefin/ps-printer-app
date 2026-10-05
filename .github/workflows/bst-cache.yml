@@ -80,7 +80,7 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
-      - uses: taiki-e/install-action@4cef1412cce204788f482e778a0b9187f9626a29 # v2
+      - uses: taiki-e/install-action@e407f7bafb71fd004bc5c2da3032e5470cbb6ef0 # v2
         with:
           tool: just
       - name: Install host dependencies
@@ -100,7 +100,6 @@ jobs:
           key: bst-v1-${{ matrix.arch }}-${{ steps.bst-key.outputs.hash }}-${{ github.run_id }}
           restore-keys: |
             bst-v1-${{ matrix.arch }}-${{ steps.bst-key.outputs.hash }}-
-            bst-v1-${{ matrix.arch }}-
       - name: Install cosign
         continue-on-error: true
         uses: sigstore/cosign-installer@6f9f17788090df1f26f669e9d70d6ae9567deba6 # v4.1.2
@@ -161,8 +160,7 @@ jobs:
           if [ "${mb}" -le 9000 ]; then
             echo "fits=true" >> "$GITHUB_OUTPUT"
           else
-            echo "::error::BuildStream cache is ${mb} MB (> 9000 MB); not saving"
-            exit 1
+            echo "::warning::BuildStream cache is ${mb} MB (> 9000 MB); not saving"
           fi
       - name: Save BuildStream cache
         id: save

@@ -11,7 +11,7 @@ Full builds restore BuildStream's local cache (`~/.cache/buildstream/cas`,
 `artifacts`, `source_protos`) from the Actions cache, one entry per arch.
 `ci/buildstream.conf` sets no cache quota, because BuildStream fails builds at
 quota. Only `.github/workflows/bst-cache.yml` saves the cache (saved only when an
-arch fits in 9000 MB uncompressed; a larger cache fails the refill): on pushes to
+arch fits in 9000 MB uncompressed; a larger cache is skipped with a warning): on pushes to
 `testing` that touch graph inputs, nightly, and on dispatch.
 Reset it with `gh cache delete --all -R projectbluefin/ps-printer-app`.
 

@@ -188,7 +188,10 @@ and paths answer 200 on an instance with the web interface, so the 404 is the
 removal of those pages and not a wrong URL.
 `tests/core-appliance.sh` covers the state layout, seeding, preservation of
 edited state across runs, and a non-numeric `PORT`; `tests/core-payload.sh`
-covers a configured printer surviving a restart.
+covers a configured printer surviving a restart; `tests/usb-quirks.sh`
+covers the USB quirk table: that the file seeded at `$USB_QUIRK_DIR/usb` is the
+packaged default the image ships at `/usr/share/cups/usb/org.cups.usb-quirks`,
+and that a user edit of it survives a restart.
 
 **Not verified.** No printer hardware is available. None of the following has
 been observed:

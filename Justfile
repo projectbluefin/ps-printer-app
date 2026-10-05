@@ -105,6 +105,23 @@ verify-pin:
 verify-instances:
     IMAGE="{{ image_ref }}" tests/instance-isolation.sh
 
+# USB quirk seeding: the seeded table under USB_QUIRK_DIR/usb is the packaged
+# default from the installed CUPS path, and a user edit survives a restart.
+verify-usb-quirks:
+    IMAGE="{{ image_ref }}" tests/usb-quirks.sh
+
+# The final image must not ship Avahi's unrelated sample remote-login records.
+check-no-remote-login-records:
+    podman run --rm --entrypoint /usr/bin/bash "{{ image_ref }}" -ec '\
+      for service in ssh.service sftp-ssh.service; do \
+        path="/etc/avahi/services/$service"; \
+        if [[ -e "$path" ]]; then echo "unexpected Avahi service file: $path" >&2; exit 1; fi; \
+      done'
+
+# Observe SSH/SFTP and printer DNS-SD on the host network across start/restart.
+verify-service-advertisements:
+    IMAGE="{{ image_ref }}" tests/service-advertisements.sh
+
 # The image is composed from runtime domains only: the printing base it builds
 # on is a devel stack, so headers, static libraries and pkg-config/CMake files
 # must not leak into it (fsdk-containers docs/skills/printing-base.md, rule 5).
@@ -138,6 +155,8 @@ verify:
     just verify-payload
     just verify-pin
     just verify-instances
+    just verify-usb-quirks
+    just check-no-remote-login-records
 
 # SPDX SBOM of the image graph for releases (run `just fetch` first).
 sbom:
