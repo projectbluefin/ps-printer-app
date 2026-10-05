@@ -128,6 +128,20 @@ ps_printer_setup(pappl_printer_t *printer,  // I - Printer
 
 
 //
+// 'ps_not_found_cb()' - Resource callback returning 404 Not Found.
+//
+
+static bool
+ps_not_found_cb(pappl_client_t *client,     // I - Client
+                void           *data)       // I - Global data (unused)
+{
+  (void)data;
+
+  return (papplClientRespond(client, HTTP_STATUS_NOT_FOUND, NULL, NULL, 0, 0));
+}
+
+
+//
 // 'ps_system_setup()' - Extra setup steps for the system.
 //
 
@@ -139,13 +153,16 @@ ps_system_setup(void *data)                 // I - Global data
 
   prSetupAddPPDFilesPage(data);
 
-  // If no-web-interface is set, remove Add PPD Files admin page and log pages
+  // If no-web-interface is set, remove Add PPD Files admin page and replace
+  // standard log callbacks with 404 handlers before papplSystemRun() executes
   if (!(papplSystemGetOptions(system) & PAPPL_SOPTIONS_WEB_INTERFACE))
   {
     papplSystemRemoveResource(system, "/addppd");
     papplSystemRemoveLink(system, "Add PPD Files");
-    papplSystemRemoveResource(system, "/logs");
-    papplSystemRemoveResource(system, "/logfile.txt");
+    papplSystemAddResourceCallback(system, "/logs", "text/html",
+                                   (pappl_resource_cb_t)ps_not_found_cb, NULL);
+    papplSystemAddResourceCallback(system, "/logfile.txt", "text/plain",
+                                   (pappl_resource_cb_t)ps_not_found_cb, NULL);
     papplSystemRemoveLink(system, "View Logs");
   }
 }
