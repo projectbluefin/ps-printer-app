@@ -69,6 +69,7 @@ TARGETS		=	ps-printer-app
 # libpappl-retrofit installed.  See tests/README.md.
 TEST_CFLAGS	=	-Itests/stubs -DPS_PRINTER_APP_NO_MAIN -Wall -Wextra
 TEST_TARGETS	=	tests/test_ps_autoadd
+PYTHON_TESTS	=	test_issue_policy.py
 
 .PHONY:		all clean install test
 
@@ -87,6 +88,7 @@ clean:
 
 test:		$(TEST_TARGETS)
 	for t in $(TEST_TARGETS); do ./$$t || exit 1; done
+	for t in $(PYTHON_TESTS); do python3 -m unittest discover -s tests -p $$t || exit 1; done
 
 tests/test_ps_autoadd:	tests/test_ps_autoadd.c ps-printer-app.c \
 			tests/stubs/pappl-retrofit.h
