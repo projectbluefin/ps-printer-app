@@ -110,7 +110,7 @@ dnssd_escape() {
 
 # Expect the entrypoint to refuse a configuration with 64 and a diagnostic.
 expect_refusal() {
-  local label="$1" diagnostic="$2" name status
+  local label="$1" diagnostic="$2" name status logs
   shift 2
   name="${prefix}-refused-${#containers[@]}"
   containers+=("$name")
@@ -119,8 +119,9 @@ expect_refusal() {
   status=$?
   set -e
   [[ "$status" -eq 64 ]] || { podman logs "$name" >&2 || true; fail "$label exited $status instead of 64"; }
-  podman logs "$name" 2>&1 | grep -qF -- "$diagnostic" ||
-    { podman logs "$name" >&2 || true; fail "$label: diagnostic '$diagnostic' missing"; }
+  logs="$(podman logs "$name" 2>&1)"
+  grep -qF -- "$diagnostic" <<<"$logs" ||
+    { printf '%s\n' "$logs" >&2; fail "$label: diagnostic '$diagnostic' missing"; }
   echo "  ok: $label is refused with 64"
 }
 

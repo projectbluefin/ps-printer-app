@@ -126,11 +126,13 @@ change between snapshots. `just verify` also runs the image-only
 
 ## Entrypoint checks
 
-`tests/entrypoint-auth.sh` and `tests/entrypoint-port.sh` exercise the `PORT`,
+`tests/entrypoint-auth.sh`, `tests/entrypoint-port.sh` and
+`tests/entrypoint-refusal-helper.sh` exercise the `PORT`,
 `PRINTER_APP_INSTANCE`, `PRINTER_APP_AUTH_SERVICE`, `PRINTER_APP_ADMIN_GROUP`
 and `PRINTER_APP_SERVER_OPTIONS` validation at the top of
-`files/container-entrypoint.sh` on the host, without building or running the
-OCI image. Run them with `just check-entrypoint` or as part of `just validate`.
+`files/container-entrypoint.sh` and the refusal matcher on the host, without
+building or running the OCI image. Run them with `just check-entrypoint` or as
+part of `just validate`.
 
 ## The manifest
 
