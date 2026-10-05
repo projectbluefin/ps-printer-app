@@ -12,10 +12,10 @@ set -euo pipefail
 
 script_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 isolation_script="$script_dir/instance-isolation.sh"
-slice_file="$script_dir/.expect-refusal-slice.sh"
+slice_file="$(mktemp "$script_dir/.expect-refusal-slice.XXXXXX")"
 
 cleanup() {
-  rm -f "$slice_file"
+  rm -f -- "$slice_file"
 }
 trap cleanup EXIT
 
