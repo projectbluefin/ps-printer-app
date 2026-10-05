@@ -12,14 +12,21 @@ set -euo pipefail
 
 script_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 isolation_script="$script_dir/instance-isolation.sh"
+slice_file="$script_dir/.expect-refusal-slice.sh"
+
+cleanup() {
+  rm -f "$slice_file"
+}
+trap cleanup EXIT
 
 if [ ! -f "$isolation_script" ]; then
   printf 'FAIL: %s not found\n' "$isolation_script" >&2
   exit 1
 fi
 
-# Source-slice the actual expect_refusal function from tests/instance-isolation.sh
-eval "$(sed -n '/^expect_refusal() {/,/^}/p' "$isolation_script")"
+# Source-slice the actual expect_refusal function from instance-isolation.sh into a file, then source it
+sed -n '/^expect_refusal() {/,/^}/p' "$isolation_script" >"$slice_file"
+source "$slice_file"
 
 prefix="test-inst"
 image="test-image"
