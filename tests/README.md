@@ -136,7 +136,19 @@ make test
 ```
 
 The tests build with a plain C compiler only. PAPPL, CUPS, libppd,
-libcupsfilters and libpappl-retrofit do **not** need to be installed.
+libcupsfilters and libpappl-retrofit do **not** need to be installed. The
+Python tests need only `python3`.
+
+### The IPP client
+
+`tests/test_ipp_request.py` covers `ipp-request.py`, the IPP client whose
+printed `status=`, `job-id=`, `job-state=` and system attribute lines the
+appliance suites read. Against a local HTTP server it pins the request each
+operation sends (header, operation group, `printer-uri` or `system-uri`, the
+job template group of a Print-Job and the document after the end tag), the
+response parser (status, additional values, delimiter tags, bytes after the
+end tag, value decoding), the refusal of a non-IPP response, and every command
+line refusal, which must exit 2 without contacting the server.
 
 ### What is covered
 

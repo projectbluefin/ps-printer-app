@@ -69,7 +69,8 @@ TARGETS		=	ps-printer-app
 # libpappl-retrofit installed.  See tests/README.md.
 TEST_CFLAGS	=	-Itests/stubs -DPS_PRINTER_APP_NO_MAIN -Wall -Wextra
 TEST_TARGETS	=	tests/test_ps_autoadd
-PYTHON_TESTS	=	test_issue_policy.py
+# Host-only Python unit tests for the issue policy and IPP oracle client.
+PYTHON_TESTS	=	test_issue_policy.py test_ipp_request.py
 
 .PHONY:		all clean install test
 
