@@ -139,11 +139,14 @@ ps_system_setup(void *data)                 // I - Global data
 
   prSetupAddPPDFilesPage(data);
 
-  // If no-web-interface is set, remove Add PPD Files admin page
+  // If no-web-interface is set, remove Add PPD Files admin page and log pages
   if (!(papplSystemGetOptions(system) & PAPPL_SOPTIONS_WEB_INTERFACE))
   {
     papplSystemRemoveResource(system, "/addppd");
     papplSystemRemoveLink(system, "Add PPD Files");
+    papplSystemRemoveResource(system, "/logs");
+    papplSystemRemoveResource(system, "/logfile.txt");
+    papplSystemRemoveLink(system, "View Logs");
   }
 }
 
