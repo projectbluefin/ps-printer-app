@@ -1,14 +1,65 @@
 #!/usr/bin/env bash
-# Regression test for expect_refusal log matching pattern in tests/instance-isolation.sh.
+# Regression test for expect_refusal in tests/instance-isolation.sh.
 #
-# When a container logs multiple lines (e.g. unrecognized PRINTER_APP_SERVER_OPTIONS
-# followed by the allowed options list), piping "podman logs | grep -q" under
-# "set -euo pipefail" risks early exit of grep -q causing SIGPIPE (exit code 141)
-# on the logging process, making the pipeline fail despite a successful match.
-#
-# The helper must buffer logs first into a variable before matching with grep -qF
-# to avoid SIGPIPE while preserving exact diagnostic verification and exit 64 semantics.
+# Source-slices the ACTUAL expect_refusal function from tests/instance-isolation.sh
+# and verifies under "set -euo pipefail" that:
+#   1. Streaming multi-line container logs (>pipe buffer) with a match on line 1
+#      succeed without SIGPIPE (exit code 141) on the logging process.
+#   2. Single-line diagnostics succeed.
+#   3. A missing diagnostic fails closed with exit 1.
+#   4. An unexpected container exit code (non-64) fails closed with exit 1.
 set -euo pipefail
+
+script_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+isolation_script="$script_dir/instance-isolation.sh"
+
+if [ ! -f "$isolation_script" ]; then
+  printf 'FAIL: %s not found\n' "$isolation_script" >&2
+  exit 1
+fi
+
+# Source-slice the actual expect_refusal function from tests/instance-isolation.sh
+eval "$(sed -n '/^expect_refusal() {/,/^}/p' "$isolation_script")"
+
+prefix="test-inst"
+image="test-image"
+containers=()
+
+fail() {
+  echo "FAIL: $*" >&2
+  exit 1
+}
+
+stub_run_exit=64
+stub_logs_mode="multiline_streaming"
+
+# Stub podman to simulate container exit 64 and streaming logs
+podman() {
+  local cmd="$1"
+  shift
+  if [ "$cmd" = "run" ]; then
+    return "$stub_run_exit"
+  elif [ "$cmd" = "logs" ]; then
+    case "$stub_logs_mode" in
+      multiline_streaming)
+        printf 'PRINTER_APP_SERVER_OPTIONS: unrecognized option "bogus-option"\n'
+        # Stream >64KB in chunks without sleep; if pipe is closed early, write fails
+        python3 -u -c '
+import sys
+for _ in range(500):
+    sys.stdout.write("Valid options are: none dnssd-host no-multi-queue raw-socket usb-printer no-web-interface web-log web-network web-remote web-security no-tls\n")
+    sys.stdout.flush()
+'
+        ;;
+      singleline)
+        printf 'PORT must be between 1 and 65535\n'
+        ;;
+      missing)
+        printf 'Some other log output without diagnostic\n'
+        ;;
+    esac
+  fi
+}
 
 failures=0
 
@@ -17,69 +68,48 @@ report() {
   failures=$((failures + 1))
 }
 
-# The buffer-first matching function under test (identical to tests/instance-isolation.sh)
-match_refusal_log() {
-  local label="$1" diagnostic="$2" logs="$3"
-  if ! grep -qF -- "$diagnostic" <<<"$logs"; then
-    report "$label: diagnostic '$diagnostic' missing in logs: $logs"
-    return 1
-  fi
-  printf 'ok: %s\n' "$label"
-  return 0
-}
-
-# 1. Multi-line output matching line 1
-multiline_logs="PRINTER_APP_SERVER_OPTIONS: unrecognized option \"bogus-option\"
-Valid options are: none dnssd-host no-multi-queue raw-socket usb-printer no-web-interface web-log web-network web-remote web-security no-tls"
-
-match_refusal_log \
-  "multi-line log with match on line 1" \
-  'unrecognized option "bogus-option"' \
-  "$multiline_logs"
-
-# 2. Multi-line output matching line 2
-match_refusal_log \
-  "multi-line log with match on line 2" \
-  "Valid options are: none dnssd-host" \
-  "$multiline_logs"
-
-# 3. Single-line log output
-match_refusal_log \
-  "single-line log match" \
-  "PORT must be between 1 and 65535" \
-  "PORT must be between 1 and 65535"
-
-# 4. Multi-line output from simulated streaming process (preventing SIGPIPE under pipefail)
-streaming_producer() {
-  python3 -c '
-import sys, time
-sys.stdout.write("PRINTER_APP_SERVER_OPTIONS: unrecognized option \"bogus-option\"\n")
-sys.stdout.flush()
-time.sleep(0.01)
-sys.stdout.write("Valid options are: none dnssd-host\n")
-sys.stdout.flush()
-'
-}
-
-captured_logs="$(streaming_producer 2>&1)"
-match_refusal_log \
-  "streaming producer logs buffered without SIGPIPE" \
-  'unrecognized option "bogus-option"' \
-  "$captured_logs"
-
-# 5. Missing diagnostic must be detected and report failure
-missing_detected=0
-if ! grep -qF -- "completely-absent-string" <<<"$multiline_logs"; then
-  missing_detected=1
-fi
-if [ "$missing_detected" -eq 1 ]; then
-  printf 'ok: missing diagnostic correctly detected and rejected\n'
+# 1. Multi-line streaming logs matching line 1: succeeds without SIGPIPE
+containers=()
+stub_run_exit=64
+stub_logs_mode="multiline_streaming"
+if ( expect_refusal "multiline streaming log" 'unrecognized option "bogus-option"' ) >/dev/null; then
+  printf 'ok: actual expect_refusal succeeds on multi-line streaming log tail without SIGPIPE\n'
 else
-  report "missing diagnostic was unexpectedly accepted"
+  report "expect_refusal failed on multi-line streaming logs"
+fi
+
+# 2. Single-line log output: succeeds
+containers=()
+stub_run_exit=64
+stub_logs_mode="singleline"
+if ( expect_refusal "singleline port" "PORT must be between 1 and 65535" ) >/dev/null; then
+  printf 'ok: actual expect_refusal succeeds on single-line diagnostic\n'
+else
+  report "expect_refusal failed on single-line diagnostic"
+fi
+
+# 3. Missing diagnostic: fails closed
+containers=()
+stub_run_exit=64
+stub_logs_mode="missing"
+if ( expect_refusal "missing diagnostic" "completely-absent-string" ) >/dev/null 2>&1; then
+  report "expect_refusal unexpectedly passed when diagnostic was missing"
+else
+  printf 'ok: actual expect_refusal fails when diagnostic is missing\n'
+fi
+
+# 4. Container non-64 exit: fails closed
+containers=()
+stub_run_exit=1
+stub_logs_mode="singleline"
+if ( expect_refusal "bad exit" "PORT must be between 1 and 65535" ) >/dev/null 2>&1; then
+  report "expect_refusal unexpectedly passed when container exit was 1 instead of 64"
+else
+  printf 'ok: actual expect_refusal fails when container exit code is not 64\n'
 fi
 
 if [ "$failures" -ne 0 ]; then
   printf '%s check(s) failed\n' "$failures" >&2
   exit 1
 fi
-printf 'All expect_refusal helper regression checks passed\n'
+printf 'All source-sliced expect_refusal regression checks passed\n'
