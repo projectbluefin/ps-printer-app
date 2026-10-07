@@ -1,6 +1,6 @@
 name: "Bug report"
 description: "Tell us what went wrong in PostScript Printer Application and how to reproduce it."
-labels: ["needs-triage", "kind/bug"]
+labels: ["needs-human", "kind/bug"]
 body:
   - type: markdown
     attributes:
@@ -12,11 +12,11 @@ body:
 
         ## What happens next
 
-        This report starts in `needs-triage`. A maintainer will read it, ask for missing
-        information if needed, and decide whether to accept implementation work.
-        Welcoming machine analysis is **not** approval to implement a change.
+        A maintainer reads every report and may ask for more information. Once it is
+        accepted, it can be picked up for work. You don't need labels or commands; just
+        reply in the issue as you normally would.
 
-        See the [PostScript issue lifecycle](https://github.com/projectbluefin/ps-printer-app/blob/testing/docs/issue-lifecycle.md).
+        See [how issues and PRs work here](https://github.com/projectbluefin/common/blob/main/docs/skills/label-workflow.md).
 
   - type: textarea
     id: what-happened
@@ -69,7 +69,7 @@ body:
     id: automation-preference
     attributes:
       label: "Automation preference"
-      description: "Choose how you want this report analyzed. Human interaction only asks us not to use machine analysis or agent implementation; routine status and label automation still runs. A maintainer must separately accept any implementation work."
+      description: "Choose who may work on this report. With Human interaction only, maintainers keep the needs-human label on it, so agents never pick it up."
       options:
         - "Human interaction only"
         - "Machine analysis is welcome"

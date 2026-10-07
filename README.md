@@ -182,6 +182,9 @@ just build
 just verify
 ```
 
+Issues and pull requests are handled with Prow `/commands`; see
+[how issues and PRs work here](https://github.com/projectbluefin/common/blob/main/docs/skills/label-workflow.md).
+
 PRs target `testing`. `promote-stable.yml` refuses FSDK image labels that
 disagree with the fsdk-containers pin (`scripts/verify-fsdk-metadata.py`, see
 `docs/fsdk-metadata.md`), rebuilds and verifies an exact `testing` commit on both

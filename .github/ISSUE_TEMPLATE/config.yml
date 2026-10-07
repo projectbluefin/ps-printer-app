@@ -1,5 +1,5 @@
-blank_issues_enabled: true
+blank_issues_enabled: false
 contact_links:
-  - name: "PostScript issue lifecycle"
-    url: https://github.com/projectbluefin/ps-printer-app/blob/testing/docs/issue-lifecycle.md
-    about: "What happens after an issue is filed, who acts next, and how image delivery is verified."
+  - name: "How issues and PRs work here"
+    url: https://github.com/projectbluefin/common/blob/main/docs/skills/label-workflow.md
+    about: "How maintainers triage issues and how pull requests are reviewed and merged with Prow."
