@@ -196,12 +196,13 @@ immutable amd64+arm64 GHCR index, keyless cosign-signed, with a signed SPDX
 SBOM and build provenance. It refuses a tag that does not match `VERSION` or
 the `stable` HEAD, FSDK image labels that disagree with the fsdk-containers
 pin, and any version already in the registry. There are no mutable OCI
-`latest`, `edge` or `stable` aliases, and no scheduled workflow writes to the
+`latest` or `edge` aliases, and no scheduled workflow writes to the
 repository. Failed image checks block release. The release workflow pushes,
 signs (index and both architecture manifests), attests and verifies everything
 by digest. It creates the `<VERSION>`, `<VERSION>-x86_64` and `<VERSION>-aarch64`
-tags only after every check passes, so a failed release leaves no tagged,
-unsigned image.
+tags only after every check passes, then moves the mutable `stable` tag to the
+same signed index digest (consumed by ChairLift's Podman `AutoUpdate=registry`
+quadlets), so a failed release leaves no tagged, unsigned image.
 
 The image runs as `nonroot` (65532:65532) on the host network and keeps all
 state under `/var/lib/ps-printer-app`. Give each instance its own `PORT`,
