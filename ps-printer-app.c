@@ -128,6 +128,20 @@ ps_printer_setup(pappl_printer_t *printer,  // I - Printer
 
 
 //
+// 'ps_not_found_cb()' - Resource callback answering 404 Not Found.
+//
+
+static bool
+ps_not_found_cb(pappl_client_t *client,     // I - Client
+                void           *data)       // I - Unused
+{
+  (void)data;
+
+  return (papplClientRespond(client, HTTP_STATUS_NOT_FOUND, NULL, NULL, 0, 0));
+}
+
+
+//
 // 'ps_system_setup()' - Extra setup steps for the system.
 //
 
@@ -144,6 +158,13 @@ ps_system_setup(void *data)                 // I - Global data
   {
     papplSystemRemoveResource(system, "/addppd");
     papplSystemRemoveLink(system, "Add PPD Files");
+
+    // pappl-retrofit enables web-log by default and papplSystemRun() adds
+    // /logs and /logfile.txt after this callback, regardless of the web
+    // interface.  PAPPL keeps the first resource registered for a path, so
+    // claiming both paths here with 404 handlers keeps the log unreachable.
+    papplSystemAddResourceCallback(system, "/logs", "text/html", ps_not_found_cb, NULL);
+    papplSystemAddResourceCallback(system, "/logfile.txt", "text/plain", ps_not_found_cb, NULL);
   }
 }
 
