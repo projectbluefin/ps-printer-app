@@ -185,24 +185,34 @@ just verify
 Issues and pull requests are handled with Prow `/commands`; see
 [how issues and PRs work here](https://github.com/projectbluefin/common/blob/main/docs/skills/label-workflow.md).
 
-PRs target `testing`. `promote-stable.yml` refuses FSDK image labels that
-disagree with the fsdk-containers pin (`scripts/verify-fsdk-metadata.py`, see
-`docs/fsdk-metadata.md`), rebuilds and verifies an exact `testing` commit on both
-architectures, then fast-forwards `stable` to it only if it is still the
-`testing` HEAD. After that, only the matching `v<VERSION>`
-tag on the `stable` HEAD (`VERSION` is the foomatic-db snapshot date plus a
-packaging revision, e.g. `v20240504-20`) makes `registry-actions.yml` publish an
-immutable amd64+arm64 GHCR index, keyless cosign-signed, with a signed SPDX
-SBOM and build provenance. It refuses a tag that does not match `VERSION` or
-the `stable` HEAD, FSDK image labels that disagree with the fsdk-containers
-pin, and any version already in the registry. There are no mutable OCI
-`latest` or `edge` aliases, and no scheduled workflow writes to the
-repository. Failed image checks block release. The release workflow pushes,
-signs (index and both architecture manifests), attests and verifies everything
-by digest. It creates the `<VERSION>`, `<VERSION>-x86_64` and `<VERSION>-aarch64`
-tags only after every check passes, then moves the mutable `stable` tag to the
-same signed index digest (consumed by ChairLift's Podman `AutoUpdate=registry`
-quadlets), so a failed release leaves no tagged, unsigned image.
+PRs target `testing` and merge through the merge queue, whose required native
+x86_64 and aarch64 build and `just verify` checks gate every commit. Renovate
+keeps the fsdk-containers junction (`elements/fsdk-containers.bst`) on
+fsdk-containers `main` and automerges each bump once those checks pass.
+
+Every push to `testing` makes `registry-actions.yml` rebuild and verify both
+architectures and publish an amd64+arm64 GHCR index, keyless cosign-signed
+(index and both architecture manifests), with a signed SPDX SBOM and build
+provenance. The workflow derives the `io.projectbluefin.fsdk.version` and
+`io.projectbluefin.fsdk.ref` labels from the junction at publish time; nothing
+FSDK-specific is committed beyond the junction ref. It pushes, signs, attests
+and verifies everything by digest, and only then tags it: the immutable
+`sha-<commit>` tag, and the moving `<VERSION>` (`VERSION` is the foomatic-db
+snapshot date plus a packaging revision, e.g. `20240504-20`),
+`<VERSION>-x86_64`, `<VERSION>-aarch64` and `stable` tags (`stable` is consumed
+by ChairLift's Podman `AutoUpdate=registry` quadlets). A failed check leaves no
+tagged, unsigned image. Reverting the pull request is the rollback.
+
+Publishing is held until the PPD-upload security sign-off
+([#45](https://github.com/projectbluefin/ps-printer-app/issues/45)): every
+`registry-actions.yml` job is skipped unless the repository variable
+`PS_PUBLISH_APPROVED` is `true`. To lift the hold, a maintainer runs
+`gh variable set PS_PUBLISH_APPROVED --body true -R projectbluefin/ps-printer-app`,
+dispatches `registry-actions.yml` on `testing` (or merges the next pull request),
+and then makes the new `ghcr.io/projectbluefin/ps-printer-app` package public
+in its package settings (Actions cannot change package visibility; check it with
+`skopeo list-tags docker://ghcr.io/projectbluefin/ps-printer-app`, which needs no
+login once the package is public).
 
 The image runs as `nonroot` (65532:65532) on the host network and keeps all
 state under `/var/lib/ps-printer-app`. Give each instance its own `PORT`,
