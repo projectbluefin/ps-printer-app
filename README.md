@@ -185,11 +185,11 @@ just verify
 Issues and pull requests are handled with Prow `/commands`; see
 [how issues and PRs work here](https://github.com/projectbluefin/common/blob/main/docs/skills/label-workflow.md).
 
-PRs target `testing`. `promote-stable.yml` refuses FSDK image labels that
+PRs target `main`. `promote-stable.yml` refuses FSDK image labels that
 disagree with the fsdk-containers pin (`scripts/verify-fsdk-metadata.py`, see
-`docs/fsdk-metadata.md`), rebuilds and verifies an exact `testing` commit on both
+`docs/fsdk-metadata.md`), rebuilds and verifies an exact `main` commit on both
 architectures, then fast-forwards `stable` to it only if it is still the
-`testing` HEAD. After that, only the matching `v<VERSION>`
+`main` HEAD. After that, only the matching `v<VERSION>`
 tag on the `stable` HEAD (`VERSION` is the foomatic-db snapshot date plus a
 packaging revision, e.g. `v20240504-20`) makes `registry-actions.yml` publish an
 immutable amd64+arm64 GHCR index, keyless cosign-signed, with a signed SPDX
