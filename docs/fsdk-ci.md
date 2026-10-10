@@ -23,24 +23,24 @@ workflow.
 
 ## Release
 
-`.github/workflows/promote-stable.yml` (manual dispatch with `testing_sha`)
-first compares the nested FSDK pin with the `io.projectbluefin.fsdk.*` labels
-(`metadata` job), then rebuilds that exact commit natively on x86_64 and AArch64
-with `just build`, compares the pin with the built image's labels, and runs
-`just verify`. Only then does it fast-forward `stable` to the commit, and only if
-it is still the `testing` HEAD and `stable` is its ancestor. See
-`docs/fsdk-metadata.md`.
+`.github/workflows/registry-actions.yml` runs on every push to `testing` (and on
+dispatch from `testing`). Every commit there came through the merge queue, so
+it already passed the full native build and `just verify` above. The
+`metadata` job reads `VERSION`, derives the `io.projectbluefin.fsdk.version`
+and `.ref` labels from the freedesktop-sdk junction of the pinned
+fsdk-containers commit, and refuses a commit whose `sha-<commit>` tag already
+exists. `build` rebuilds and verifies both architectures and stamps those
+labels plus the revision and creation time; `publish`, the only job with
+`packages: write` and `id-token: write`, needs both. The index, both
+architecture manifests and the `just sbom` SPDX SBOM are signed with keyless
+cosign, the index gets a build-provenance attestation, and the workflow
+verifies all of it from the registry by digest before tagging: immutable
+`sha-<commit>`, then the moving `<VERSION>`, `<VERSION>-x86_64`,
+`<VERSION>-aarch64` and `stable`. Reverting a pull request is the rollback.
 
-`.github/workflows/registry-actions.yml` runs only on `v*` tag pushes. It
-requires the tag to be `v$(cat VERSION)` on the `stable` HEAD, the
-`io.projectbluefin.fsdk.*` labels in `elements/oci/ps-printer-app.bst` to match
-the freedesktop-sdk junction of the pinned fsdk-containers commit, and the
-version to be absent from `ghcr.io/projectbluefin/ps-printer-app`. It then
-rebuilds and verifies both architectures, stamps the revision and creation
-time, and publishes `<VERSION>-x86_64`, `<VERSION>-aarch64` and the
-`<VERSION>` index. The index and its `just sbom` SPDX SBOM are signed with
-keyless cosign, the index gets a build-provenance attestation, and the workflow
-verifies all of it from the registry. Tags are never overwritten.
+Every job is skipped until the repository variable `PS_PUBLISH_APPROVED` is
+`true`: publishing is held for the PPD-upload security sign-off (#45). See the
+README for lifting the hold.
 
 The upstream Snap/Rock CI, the scheduled manifest updater and the Rock registry
 workflow are removed; `snap/` and `rockcraft.yaml` stay only as references.
@@ -72,8 +72,10 @@ fsdk-containers' `docs/skills/printing-base.md`.
   keyless cosign signature, and only then extracts it into the local cache.
   The step never fails the job; any error is a `::warning::` and the base is
   built locally.
-- `.github/workflows/update-base.yml` tracks fsdk-containers `main` daily and
-  proposes a `deps/fsdk-containers` pull request against `testing`.
+- Renovate (`renovate.json`, a `git-refs` custom manager) moves the junction
+  `ref:` to the fsdk-containers `main` HEAD and automerges the bump through the
+  merge queue once the required `FSDK (x86_64)` and `FSDK (aarch64)` checks pass.
+  The ref is the only line that changes: nothing FSDK-specific is committed.
 
 ## Build interface
 

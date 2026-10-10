@@ -8,7 +8,23 @@
     "testing"
   ],
   "enabledManagers": [
+    "custom.regex",
     "github-actions"
+  ],
+  "customManagers": [
+    {
+      "customType": "regex",
+      "description": "Follow fsdk-containers main through the junction ref",
+      "managerFilePatterns": [
+        "/^elements\\/fsdk-containers\\.bst$/"
+      ],
+      "matchStrings": [
+        "track: (?<currentValue>main)\\n    ref: (?:\\S+-g)?(?<currentDigest>[0-9a-f]{40})"
+      ],
+      "depNameTemplate": "https://github.com/projectbluefin/fsdk-containers",
+      "datasourceTemplate": "git-refs",
+      "autoReplaceStringTemplate": "track: {{{newValue}}}\n    ref: {{{newDigest}}}"
+    }
   ],
   "packageRules": [
     {
@@ -16,6 +32,17 @@
         "github-actions"
       ],
       "automerge": false
+    },
+    {
+      "description": "fsdk-containers bumps go through the merge queue once the required FSDK checks pass; git-refs digests have no release timestamp, so no release-age hold",
+      "matchDepNames": [
+        "https://github.com/projectbluefin/fsdk-containers"
+      ],
+      "automerge": true,
+      "automergeType": "pr",
+      "platformAutomerge": true,
+      "ignoreTests": false,
+      "minimumReleaseAge": null
     },
     {
       "description": "BuildStream builds fail on ubuntu-26.04 runners (fsdk-containers#332); keep 24.04",
