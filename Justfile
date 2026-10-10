@@ -34,9 +34,13 @@ bst *ARGS:
 # tests/fsdk-contract-test.sh runs first: a green contract check is only worth
 # what the check still rejects, and this is the only contract gate a pull
 # request runs. It needs no BuildStream, container runtime or network.
+#
+# tests/entrypoint-validation.sh is host-only too: the entrypoint must reject
+# malformed web-administration settings before it touches persistent state.
 validate:
     #!/usr/bin/env bash
     set -euo pipefail
+    tests/entrypoint-validation.sh
     tests/fsdk-contract-test.sh
     names="$(just bst show --deps all --format '%{name}' oci/ps-printer-app.bst)"
     printf '%s\n' "$names" | tests/fsdk-contract.sh --graph -

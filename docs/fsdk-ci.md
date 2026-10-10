@@ -85,7 +85,8 @@ The workflow follows the Ghostscript appliance's build interface:
 - `project.conf` and `elements/oci/ps-printer-app.bst` define the image graph.
 - `Justfile` (or `justfile`) provides `bst`, `validate`, `build`, and `verify`
   recipes; `build` and `verify` must not depend on a `fetch` recipe.
-- `just validate` runs `tests/fsdk-contract-test.sh`, then `bst show --deps all
+- `just validate` runs `tests/entrypoint-validation.sh` and
+  `tests/fsdk-contract-test.sh`, then `bst show --deps all
   oci/ps-printer-app.bst` (pull requests).
 - `just bst --config /src/ci/buildstream.conf --network-retries 5 build
   oci/ps-printer-app.bst` builds the image, fetching only uncached sources. CI

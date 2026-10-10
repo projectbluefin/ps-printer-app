@@ -217,6 +217,27 @@ podman run -d --name ps-printer-app-a --network host \
   ghcr.io/projectbluefin/ps-printer-app:<version>
 ```
 
+PAPPL serves IPP and the web interface on one port, so on the host network the
+web administration pages are reachable by every client that can reach the IPP
+port; the entrypoint prints a `NOTICE` saying so whenever the web interface is
+enabled. Three variables control web administration:
+
+| Variable | Forwarded as | Accepted values |
+| --- | --- | --- |
+| `PRINTER_APP_SERVER_OPTIONS` | `-o server-options=…` | Comma-separated PAPPL server options from the allow-list: `no-web-interface`. |
+| `PRINTER_APP_AUTH_SERVICE` | `-o auth-service=…` | A PAM service name; refused (exit `78`) while the base builds PAPPL without PAM. |
+| `PRINTER_APP_ADMIN_GROUP` | `-o admin-group=…` | A group from the image's `/etc/group`; requires `PRINTER_APP_AUTH_SERVICE`. |
+
+`PRINTER_APP_SERVER_OPTIONS=no-web-interface` turns the web pages off while IPP
+printing and DNS-SD keep working; manage printers from inside the container with
+`podman exec ps-printer-app-a ps-printer-app -u ipp://127.0.0.1:18080/ipp/system … add`.
+`PRINTER_APP_AUTH_SERVICE` is refused outright because the shared printing base
+builds PAPPL with `--disable-libpam`, so forwarding it would answer every
+administration request with `401`. An unlisted server option (such as `no-tls`
+or `none`), a malformed name, a group the image cannot resolve, or a group
+without an auth service exits `64` (malformed) or `78` (cannot be honoured).
+`tests/entrypoint-validation.sh` covers those rejections on the host.
+
 State, instance names and rootless USB access, including what is not verified
 on hardware, are described in
 [docs/state-and-device-isolation.md](docs/state-and-device-isolation.md). The
