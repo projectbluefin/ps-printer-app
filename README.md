@@ -635,9 +635,9 @@ HPLIP's `hpps` filter and PostScript PPD files, the Foomatic-db manufacturer
 PostScript PPD files, and the shared printing base (CUPS, cups-filters,
 Ghostscript, PAPPL and the rest). Those are licensed under their respective
 upstream terms, several of them mixed or unresolved. The `just sbom` SPDX SBOM,
-signed and attached only by a `v*` release (held by #27), inventories the
-components and their pinned sources but carries no license fields. The
-`Apache-2.0` label is intentionally left unchanged, as the application source
+signed and attached on each push to `testing` (publishing held by #45),
+inventories the components and their pinned sources but carries no license
+fields. The `Apache-2.0` label is intentionally left unchanged, as the application source
 is genuinely Apache-2.0; the label's scope is the application source, not the
 bundled components.
 
