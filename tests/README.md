@@ -185,6 +185,17 @@ Append to the `cases[]` table in `main()`: the device ID to pass in, what each
 stubbed helper answers for it, the driver `ps_autoadd()` must return (`NULL`
 for none), and how many PPD lookups it should make.
 
+### The devel-content guard
+
+`tests/test_verify_no_devel.py` runs the real `just verify-no-devel` recipe with
+a `podman` stub on `PATH` whose `export` streams a root filesystem built by the
+test, so it needs `just` but no image or container runtime. `just verify` only
+ever shows the guard a clean image; these cases require it to refuse headers,
+static and libtool archives, and `pkgconfig` and `cmake` directories with a
+diagnostic naming the path, to accept license notices under
+`usr/share/licenses`, to fail when the export fails part-way, and to remove the
+container and the extraction directory either way.
+
 ## The graph contract
 
 `fsdk-contract.sh` checks this repository against fsdk-containers' printing-base
