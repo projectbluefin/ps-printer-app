@@ -12,10 +12,10 @@ name: FSDK metadata consistency
 on:
   pull_request:
     branches:
-      - testing
+      - main
   push:
     branches:
-      - testing
+      - main
   workflow_dispatch:
 
 permissions:

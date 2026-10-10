@@ -42,7 +42,7 @@ python3 scripts/verify-fsdk-metadata.py --fsdk-junction path/to/freedesktop-sdk.
 ## Where it runs
 
 - `.github/workflows/fsdk-metadata.yml` runs the unit tests and the comparison
-  against the OCI element on every pull request and push to `testing`, so an
+  against the OCI element on every pull request and push to `main`, so an
   fsdk-containers bump that moves FSDK fails on its own pull request. It builds
   nothing and holds no credentials.
 - `.github/workflows/promote-stable.yml` runs the comparison in its `metadata`

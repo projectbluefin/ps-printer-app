@@ -1,6 +1,6 @@
 # Native FSDK image validation
 
-`.github/workflows/fsdk-ci.yml` runs on every pull request to `testing`, in the
+`.github/workflows/fsdk-ci.yml` runs on every pull request to `main`, in the
 merge queue, and on manual dispatch. Pull requests only validate the BuildStream
 graph (`just validate`); no image is built. The merge queue and
 `workflow_dispatch` run the full native x86_64 and AArch64 build and verification,
@@ -12,7 +12,7 @@ Full builds restore BuildStream's local cache (`~/.cache/buildstream/cas`,
 `ci/buildstream.conf` sets no cache quota, because BuildStream fails builds at
 quota. Only `.github/workflows/bst-cache.yml` saves the cache (saved only when an
 arch fits in 9000 MB uncompressed; a larger cache is skipped with a warning): on pushes to
-`testing` that touch graph inputs, nightly, and on dispatch.
+`main` that touch graph inputs, nightly, and on dispatch.
 Reset it with `gh cache delete --all -R projectbluefin/ps-printer-app`.
 
 Both jobs inherit only `contents: read`. Checkout does not persist credentials,
@@ -23,12 +23,12 @@ workflow.
 
 ## Release
 
-`.github/workflows/promote-stable.yml` (manual dispatch with `testing_sha`)
+`.github/workflows/promote-stable.yml` (manual dispatch with the `main` commit as `testing_sha`)
 first compares the nested FSDK pin with the `io.projectbluefin.fsdk.*` labels
 (`metadata` job), then rebuilds that exact commit natively on x86_64 and AArch64
 with `just build`, compares the pin with the built image's labels, and runs
 `just verify`. Only then does it fast-forward `stable` to the commit, and only if
-it is still the `testing` HEAD and `stable` is its ancestor. See
+it is still the `main` HEAD and `stable` is its ancestor. See
 `docs/fsdk-metadata.md`.
 
 `.github/workflows/registry-actions.yml` runs only on `v*` tag pushes. It
@@ -73,7 +73,7 @@ fsdk-containers' `docs/skills/printing-base.md`.
   The step never fails the job; any error is a `::warning::` and the base is
   built locally.
 - `.github/workflows/update-base.yml` tracks fsdk-containers `main` daily and
-  proposes a `deps/fsdk-containers` pull request against `testing`.
+  proposes a `deps/fsdk-containers` pull request against `main`.
 
 ## Build interface
 
