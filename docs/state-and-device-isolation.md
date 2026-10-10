@@ -53,6 +53,15 @@ quirks are seeded from the image once, so an edit survives a restart and an
 image upgrade. `PPD_PATHS` may be set to change the PPD search path; the other
 paths are fixed.
 
+CUPS filters come only from the image (`FILTER_DIR`,
+`/usr/lib/ps-printer-app/filter`); the volume has no filter directory. A PPD
+whose `*cupsFilter` or `*cupsFilter2` names a filter the image lacks, such as a
+vendor's accounting or authentication script, is accepted with a "PPD needs
+filters which are not installed" warning. If that is its only filter and it
+takes PostScript, jobs go to the printer unfiltered and whatever the filter
+implements does not work; otherwise its jobs fail with "No pre-filter found".
+Such a printer needs that filter built into the image.
+
 ## Several instances on one host
 
 Each Printer Application on one host or LAN needs its own **port**, its own
