@@ -2,8 +2,9 @@
 
 ## Supported images
 
-Only `ghcr.io/projectbluefin/ps-printer-app` images built from the `main`
-branch of this repository are supported. The Snap, Rock and Docker Hub images
+Only `ghcr.io/projectbluefin/ps-printer-app` release images are supported:
+those published by `registry-actions.yml` from a `v<VERSION>` tag on the
+`stable` branch HEAD of this repository. The Snap, Rock and Docker Hub images
 described in the README are OpenPrinting's and are not built here.
 
 ## Reporting a vulnerability
