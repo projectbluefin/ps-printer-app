@@ -54,7 +54,7 @@ jobs:
           revision="$(git rev-parse HEAD)"
           # The FSDK labels are derived from the junction here, never committed,
           # so a bare fsdk-containers ref bump is a complete update.
-          junction_ref="$(sed -n 's/^[[:space:]]*ref: \([0-9a-f]\{40\}\)$/\1/p' elements/fsdk-containers.bst)"
+          junction_ref="$(sed -n -E 's/^[[:space:]]*ref: (.*-g)?([0-9a-f]{40})$/\2/p' elements/fsdk-containers.bst)"
           [[ "$junction_ref" =~ ^[0-9a-f]{40}$ ]]
           upstream="$(mktemp -d)"
           trap 'rm -rf "$upstream"' EXIT

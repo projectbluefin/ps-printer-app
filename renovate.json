@@ -19,10 +19,11 @@
         "/^elements\\/fsdk-containers\\.bst$/"
       ],
       "matchStrings": [
-        "track: (?<currentValue>main)\\n    ref: (?<currentDigest>[0-9a-f]{40})"
+        "track: (?<currentValue>main)\\n    ref: (?:\\S+-g)?(?<currentDigest>[0-9a-f]{40})"
       ],
       "depNameTemplate": "https://github.com/projectbluefin/fsdk-containers",
-      "datasourceTemplate": "git-refs"
+      "datasourceTemplate": "git-refs",
+      "autoReplaceStringTemplate": "track: {{{newValue}}}\n    ref: {{{newDigest}}}"
     }
   ],
   "packageRules": [
