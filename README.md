@@ -14,7 +14,10 @@ work (or now the code of pappl-retrofit) is derived from the
 [hp-printer-app](https://github.com/michaelrsweet/hp-printer-app).
 
 Your contributions are welcome. Please post [issues and pull
-requests](https://github.com/OpenPrinting/ps-printer-app).
+requests](https://github.com/projectbluefin/ps-printer-app/issues) in
+this repository. See [how issues and PRs work
+here](https://github.com/projectbluefin/common/blob/main/docs/skills/label-workflow.md)
+for what happens after an issue or pull request is opened.
 
 
 ### This Printer Application is a working model for
