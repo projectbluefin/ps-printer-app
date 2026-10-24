@@ -125,7 +125,7 @@ expect_fail 'a direct FSDK reference is rejected' 'FSDK referenced outside the f
 new_tree
 
 # An unpinned junction tracks whatever upstream main is today.
-sed -i 's/^\( *\)ref: 8a02f5e18b6d89c5558d2371212a5489e86c3ea2$/\1ref: main/' "$tree/elements/fsdk-containers.bst"
+sed -i 's/^\( *\)ref: [0-9a-f]\{40\}$/\1ref: main/' "$tree/elements/fsdk-containers.bst"
 expect_fail 'an unpinned junction is rejected' 'does not pin the junction to a commit' "$tree/tests/fsdk-contract.sh"
 new_tree
 
@@ -137,7 +137,7 @@ sed -i "s/^    arch: '%{arch}'$/    arch: '%{arch}'\n    strip-commands: ['true'
 expect_fail 'a junction option besides arch is rejected' "configures something besides arch" "$tree/tests/fsdk-contract.sh"
 new_tree
 
-sed -i "/^    ref: 8a02f5e18b6d89c5558d2371212a5489e86c3ea2$/a\\  - kind: patch_queue\n    path: patches/cups" \
+sed -i "/^    ref: [0-9a-f]\{40\}$/a\\  - kind: patch_queue\n    path: patches/cups" \
   "$tree/elements/fsdk-containers.bst"
 expect_fail 'a patch queue on the junction is rejected' 'queues patches' "$tree/tests/fsdk-contract.sh"
 new_tree
