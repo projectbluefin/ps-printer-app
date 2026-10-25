@@ -153,6 +153,25 @@ sed -i 's/^\( *\)ref: release-1-1-0-0-g29ccf6cf85781315a696774e7458a2f1f61aac57$
 expect_fail 'a git source pinned to a tag is rejected' 'commit pin(s)' "$tree/tests/fsdk-contract.sh"
 new_tree
 
+# A tarball is only immutable through its sha256; a version string is not a pin.
+sed -i 's/^\( *\)ref: [0-9a-f]\{64\}$/\1ref: 2.3.1/' \
+  "$tree/elements/plugins/buildstream-plugins-community.bst"
+expect_fail 'a tar source without a sha256 pin is rejected' 'sha256 pin(s)' "$tree/tests/fsdk-contract.sh"
+new_tree
+
+# A pinned junction to another repository, such as a fork, is a different printing base.
+sed -i 's#github:projectbluefin/fsdk-containers\.git#github:example/fsdk-containers.git#' \
+  "$tree/elements/fsdk-containers.bst"
+expect_fail 'a junction to another repository is rejected' 'does not junction projectbluefin/fsdk-containers' \
+  "$tree/tests/fsdk-contract.sh"
+new_tree
+
+# Run outside a checkout, the checker has nothing to hold to the contract.
+rm -rf "$tree/elements"
+mkdir "$tree/elements"
+expect_fail 'a tree without elements is rejected' 'no elements under' "$tree/tests/fsdk-contract.sh"
+new_tree
+
 # A repository-owned CUPS element is a second copy of the same source.
 printf 'kind: manual\n' >"$tree/elements/printer-app/cups.bst"
 expect_fail 'a repository-owned CUPS element is rejected' 'repository-owned CUPS stack element' "$tree/tests/fsdk-contract.sh"
@@ -166,6 +185,11 @@ new_tree
 # A patch only Snap and Rock use, with no element and no legacy recipe behind it.
 cp "$tree/patches/cups-dnssd-backend-socket-only.patch" "$tree/patches/cups-usb-quirk-dir.patch"
 expect_fail 'an unowned patch file is rejected' 'neither referenced by the legacy Snap/Rock packaging' "$tree/tests/fsdk-contract.sh"
+new_tree
+
+# The domain excludes below only apply to a compose element.
+sed -i 's/^kind: compose$/kind: stack/' "$tree/elements/printer-app/core-runtime.bst"
+expect_fail 'a runtime that is not a compose element is rejected' 'is not a compose element' "$tree/tests/fsdk-contract.sh"
 new_tree
 
 # Without the exclude the devel stack's compiler and package manager ship.
