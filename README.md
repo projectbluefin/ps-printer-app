@@ -206,6 +206,11 @@ snapshot date plus a packaging revision, e.g. `20240504-20`),
 by ChairLift's Podman `AutoUpdate=registry` quadlets). A failed check leaves no
 tagged, unsigned image. Reverting the pull request is the rollback.
 
+The application also reports `VERSION` to IPP clients as four 16-bit numbers.
+The Makefile maps the date form `YYYYMMDD-N` to `YYYY.M.D.N` (`20240504-20`
+becomes `2024.5.4.20`) and stops the build for a `VERSION` it cannot convert;
+`make test` checks the shipped `VERSION`.
+
 Publishing is held until the PPD-upload security sign-off
 ([#45](https://github.com/projectbluefin/ps-printer-app/issues/45)): every
 `registry-actions.yml` job is skipped unless the repository variable

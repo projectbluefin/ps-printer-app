@@ -30,18 +30,34 @@ OPTIM		=	-Os -g
 CFLAGS		+=	`pkg-config --cflags pappl` `cups-config --cflags` `pkg-config --cflags libppd` `pkg-config --cflags libcupsfilters` `pkg-config --cflags libpappl-retrofit` $(OPTIM)
 ifdef VERSION
 CFLAGS		+=	-DSYSTEM_VERSION_STR="\"$(VERSION)\""
-ifndef MAJOR
-MAJOR		=	`echo $(VERSION) | perl -p -e 's/^(\d+).*$$/\1/'`
+# PAPPL keeps the numeric version as four 16-bit integers.  VERSION is either a
+# foomatic-db snapshot date plus a packaging revision, YYYYMMDD-N, mapped to
+# YYYY.M.D.N (20240504-20 -> 2024.5.4.20), or MAJOR[.MINOR[.PATCH]][-PACKAGE]
+# with missing fields set to 0.  Any other VERSION, or a field above 65535,
+# stops the build instead of compiling a meaningless number.
+VERSION_NUMBERS	:=	$(shell printf '%s\n' '$(VERSION)' | awk '\
+  NR > 1 { exit 1 } \
+  /^[0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9]-[0-9]+$$/ { \
+    f[1] = substr($$0, 1, 4); f[2] = substr($$0, 5, 2); \
+    f[3] = substr($$0, 7, 2); f[4] = substr($$0, 10); \
+    if (f[2] + 0 < 1 || f[2] + 0 > 12 || f[3] + 0 < 1 || f[3] + 0 > 31) exit 1; \
+    ok = 1 } \
+  /^[0-9]+(\.[0-9]+(\.[0-9]+)?)?(-[0-9]+)?$$/ && !ok { \
+    v = $$0; f[4] = 0; d = index(v, "-"); \
+    if (d) { f[4] = substr(v, d + 1); v = substr(v, 1, d - 1) } \
+    n = split(v, p, "."); for (i = 1; i <= 3; i++) f[i] = (i <= n) ? p[i] : 0; \
+    ok = 1 } \
+  END { \
+    if (!ok || NR != 1) exit 1; \
+    for (i = 1; i <= 4; i++) if (length(f[i]) > 5 || f[i] + 0 > 65535) exit 1; \
+    print f[1] + 0, f[2] + 0, f[3] + 0, f[4] + 0 }')
+ifneq ($(words $(VERSION_NUMBERS)),4)
+$(error VERSION "$(VERSION)" is neither YYYYMMDD-N nor MAJOR[.MINOR[.PATCH]][-PACKAGE] with every field at most 65535)
 endif
-ifndef MINOR
-MINOR		=	`echo $(VERSION) | perl -p -e 's/^\d+\D+(\d+).*$$/\1/'`
-endif
-ifndef PATCH
-PATCH		=	`echo $(VERSION) | perl -p -e 's/^\d+\D+\d+\D+(\d+).*$$/\1/'`
-endif
-ifndef PACKAGE
-PACKAGE		=	`echo $(VERSION) | perl -p -e 's/^\d+\D+\d+\D+\d+\D+(\d+).*$$/\1/'`
-endif
+MAJOR		?=	$(word 1,$(VERSION_NUMBERS))
+MINOR		?=	$(word 2,$(VERSION_NUMBERS))
+PATCH		?=	$(word 3,$(VERSION_NUMBERS))
+PACKAGE		?=	$(word 4,$(VERSION_NUMBERS))
 endif
 ifdef MAJOR
 CFLAGS		+=	-DSYSTEM_VERSION_ARR_0=$(MAJOR)
@@ -69,8 +85,9 @@ TARGETS		=	ps-printer-app
 # libpappl-retrofit installed.  See tests/README.md.
 TEST_CFLAGS	=	-Itests/stubs -DPS_PRINTER_APP_NO_MAIN -Wall -Wextra
 TEST_TARGETS	=	tests/test_ps_autoadd
-# Host-only Python unit tests (Renovate config; the IPP client the appliance suites trust).
-PYTHON_TESTS	=	test_renovate.py test_ipp_request.py
+# Host-only Python unit tests (Renovate config; the IPP client the appliance
+# suites trust; the numeric version derived from VERSION).
+PYTHON_TESTS	=	test_renovate.py test_ipp_request.py test_numeric_version.py
 
 .PHONY:		all clean install test
 
