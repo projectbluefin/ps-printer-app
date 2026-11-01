@@ -67,7 +67,7 @@ jobs:
         if: needs.prerequisites.outputs.available != 'true'
         run: |
           echo "FSDK image build skipped: bootstrap prerequisites pending."
-      - uses: taiki-e/install-action@86f7a0ffb25f40114606501a311ebcfaf882ea32 # v2
+      - uses: taiki-e/install-action@1919c4a95903d2c33e4a221102edca87309fc14b # v2
         if: needs.prerequisites.outputs.available == 'true'
         with:
           tool: just
