@@ -11,9 +11,22 @@ build-depends:
   - filename: printer-app/core-runtime.bst
     config:
       location: /layer
+variables:
+  (@):
+    - fsdk-containers.bst:include/slim-printing.yml
+  app-forbidden-paths: |
+    etc/avahi/services/ssh.service
+    etc/avahi/services/sftp-ssh.service
+    usr/share/cups/ipptool
+    usr/bin/cupsd
+    usr/bin/ippeveprinter
+    usr/share/ppd/cupsfilters
+
 
 config:
   commands:
+    - "%{slim-printing-commands}"
+    - "%{slim-printing-gate-commands}"
     - |
       version="$(cat /metadata/VERSION)"
       install -d /layer/etc
@@ -30,7 +43,7 @@ config:
       # Keep the shared base's avahi-printing element and PAPPL's dynamic IPP publication.
       rm -f /layer/etc/avahi/services/ssh.service \
         /layer/etc/avahi/services/sftp-ssh.service
-      rm -rf /layer/usr/lib/debug /layer/usr/share/cups/ipptool
+      rm -rf /layer/usr/share/cups/ipptool
       rm -f /layer/usr/bin/cupsd /layer/usr/bin/ippeveprinter
       # cups-filters' own PDF and PCL-XL PPDs are outside this PostScript-only
       # payload, and pappl-retrofit would take their "Generic PDF Printer" as

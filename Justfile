@@ -134,6 +134,33 @@ verify-no-devel:
     [ -z "${bad}" ] || { echo "devel content in ${IMAGE}: ${bad}" >&2; exit 1; }
     echo "OK: ${IMAGE} carries no devel content"
 
+# Recheck both the shared recipe and the appliance-specific removals in the exported image.
+verify-slim:
+    #!/usr/bin/env bash
+    set -euo pipefail
+    image="{{ image_ref }}"
+    work="$(mktemp -d)"
+    ctr=""
+    trap 'if [[ -n "${ctr}" ]]; then podman rm "${ctr}" >/dev/null; fi; rm -rf "${work}"' EXIT
+    just bst show --deps none --format '%{vars}' oci/ps-printer-app.bst > "${work}/vars"
+    python3 -c 'import sys, yaml; v = yaml.safe_load(sys.stdin); print(v["slim-printing-forbidden-paths"]); print(v["app-forbidden-paths"])' < "${work}/vars" > "${work}/forbidden"
+    mkdir "${work}/root"
+    ctr="$(podman create "${image}" /none)"
+    podman export "${ctr}" | tar -C "${work}/root" -xf -
+    shopt -s nullglob globstar
+    bad=0
+    while IFS= read -r pattern; do
+      [[ -n "${pattern}" ]] || continue
+      for match in "${work}/root"/${pattern}; do
+        [[ -e "${match}" || -L "${match}" ]] || continue
+        echo "forbidden path in ${image}: ${match#"${work}/root"}" >&2
+        bad=1
+      done
+    done < "${work}/forbidden"
+    [[ "${bad}" -eq 0 ]] || exit 1
+    echo "OK: ${image} carries no forbidden slim-printing paths"
+
+
 # The contract check above is only worth what it rejects. This breaks each
 # invariant it guards in a scratch copy of the graph and requires the check to
 # fail, so a check that stopped working cannot pass as a green validate.
@@ -145,6 +172,7 @@ verify:
     just validate
     just verify-contract
     just verify-no-devel
+    just verify-slim
     just verify-core
     just verify-routes
     just verify-payload
