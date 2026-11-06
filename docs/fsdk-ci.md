@@ -62,6 +62,11 @@ fsdk-containers' `docs/skills/printing-base.md`.
   gate before the appliance-specific removals. `just verify-slim` checks the
   shared and appliance-specific forbidden paths again in the exported image.
   Bash, Python and ordinary Python bytecode remain available to the appliance.
+  BuildStream expands cross-junction includes in the subproject's variable
+  scope, where this recipe's internal variable reference is undefined. The OCI
+  element therefore includes `include/slim-printing.yml` locally; `just validate`
+  compares that copy byte-for-byte with the pinned junction's source. Refresh
+  the copy when updating the junction.
 - `just validate` checks the contract itself against the resolved graph:
   `tests/fsdk-contract.sh` fails on a second FSDK junction, a CUPS stack
   element outside the junction (a second CUPS owner), a patch staged by an

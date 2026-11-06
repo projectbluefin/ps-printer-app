@@ -51,6 +51,13 @@ validate:
     tests/fsdk-contract-test.sh
     names="$(just bst show --deps all --format '%{name}' oci/ps-printer-app.bst)"
     printf '%s\n' "$names" | tests/fsdk-contract.sh --graph -
+    work="$(mktemp -d "{{ justfile_directory() }}/.slim-check.XXXXXX")"
+    trap 'rm -rf "${work}"' EXIT
+    just bst source checkout --directory "/src/${work##*/}/junction" fsdk-containers.bst
+    cmp include/slim-printing.yml "${work}/junction/fsdk-containers/include/slim-printing.yml" || {
+        echo "slim-printing.yml differs from the pinned fsdk-containers recipe" >&2
+        exit 1
+    }
 
 fetch:
     #!/usr/bin/env bash
