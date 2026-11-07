@@ -41,12 +41,14 @@ bst *ARGS:
 #
 # tests/entrypoint-*.sh are host-only too: the entrypoint must reject malformed
 # PORT, instance and web-administration settings before it touches persistent
-# state, and instance-isolation.sh's refusal matcher must fail closed.
+# state, it must hand the shared startup library this appliance's paths and
+# options, and instance-isolation.sh's refusal matcher must fail closed.
 validate:
     #!/usr/bin/env bash
     set -euo pipefail
     tests/entrypoint-validation.sh
     tests/entrypoint-port.sh
+    tests/entrypoint-wiring.sh
     tests/entrypoint-refusal-helper.sh
     tests/fsdk-contract-test.sh
     names="$(just bst show --deps all --format '%{name}' oci/ps-printer-app.bst)"

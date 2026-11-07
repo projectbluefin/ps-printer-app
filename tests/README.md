@@ -135,12 +135,17 @@ change between snapshots. `just verify` also runs the image-only
 `PRINTER_APP_INSTANCE`, `PRINTER_APP_AUTH_SERVICE`, `PRINTER_APP_ADMIN_GROUP`
 and `PRINTER_APP_SERVER_OPTIONS` validation at the top of
 `files/container-entrypoint.sh` and the refusal matcher on the host, without
-building or running the OCI image. `just validate` runs them.
+building or running the OCI image. `tests/entrypoint-wiring.sh` runs
+`files/container-entrypoint.sh` itself against the shared library, with the
+state, `/run` and supervisor steps recorded instead of run: it checks that
+validation refuses before any state is touched, that the state volume, CUPS
+environment and validated options reach the library and `ps-printer-app`, and
+that a refusal starts nothing. `just validate` runs them.
 
-The first two source the shared startup library through
-`tests/source-printing-base.sh`, which downloads
-`elements/printing/files/entrypoint-common.sh` from fsdk-containers at the
-junction ref pinned in `elements/fsdk-containers.bst`, so they need network
+`entrypoint-validation.sh`, `entrypoint-port.sh` and `entrypoint-wiring.sh`
+source the shared startup library through `tests/source-printing-base.sh`,
+which downloads `elements/printing/files/entrypoint-common.sh` from
+fsdk-containers at the junction ref pinned in `elements/fsdk-containers.bst`, so they need network
 access. To run them offline, point `PRINTER_APP_ENTRYPOINT_COMMON` at a local
 copy of that file at the same ref.
 
