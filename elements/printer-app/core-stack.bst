@@ -11,6 +11,8 @@ depends:
   - printer-app/hplip-ps.bst
   - printer-app/runtime-files.bst
   - fsdk-containers.bst:printing/base.bst
+  # The shared slimming gate checks that the shared printing entrypoint is staged.
+  - fsdk-containers.bst:printing/entrypoint-common.bst
   - fsdk-containers.bst:freedesktop-sdk.bst:public-stacks/runtime-gnu.bst
   - fsdk-containers.bst:freedesktop-sdk.bst:components/ca-certificates.bst
   - fsdk-containers.bst:freedesktop-sdk.bst:components/catatonit.bst
