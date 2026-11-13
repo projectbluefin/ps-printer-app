@@ -19,7 +19,7 @@ env:
 
 jobs:
   metadata:
-    # Publishing stays held until the PPD-upload security sign-off (ps#45);
+    # Publishing stays held until the PPD-upload security sign-off (ps#198);
     # a maintainer lifts the hold by setting the PS_PUBLISH_APPROVED repository
     # variable to true.
     if: vars.PS_PUBLISH_APPROVED == 'true' && github.ref == 'refs/heads/main'

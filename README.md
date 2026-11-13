@@ -212,7 +212,7 @@ becomes `2024.5.4.20`) and stops the build for a `VERSION` it cannot convert;
 `make test` checks the shipped `VERSION`.
 
 Publishing is held until the PPD-upload security sign-off
-([#45](https://github.com/projectbluefin/ps-printer-app/issues/45)): every
+([#198](https://github.com/projectbluefin/ps-printer-app/issues/198)): every
 `registry-actions.yml` job is skipped unless the repository variable
 `PS_PUBLISH_APPROVED` is `true`. To lift the hold, a maintainer runs
 `gh variable set PS_PUBLISH_APPROVED --body true -R projectbluefin/ps-printer-app`,
@@ -644,7 +644,7 @@ HPLIP's `hpps` filter and PostScript PPD files, the Foomatic-db manufacturer
 PostScript PPD files, and the shared printing base (CUPS, cups-filters,
 Ghostscript, PAPPL and the rest). Those are licensed under their respective
 upstream terms, several of them mixed or unresolved. The `just sbom` SPDX SBOM,
-signed and attached on each push to `main` (publishing held by #45),
+signed and attached on each push to `main` (publishing held by #198),
 inventories the components and their pinned sources but carries no license
 fields. The `Apache-2.0` label is intentionally left unchanged, as the application source
 is genuinely Apache-2.0; the label's scope is the application source, not the

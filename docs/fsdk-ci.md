@@ -37,7 +37,7 @@ verifies all of it from the registry by digest before tagging: immutable
 `<VERSION>-aarch64` and `stable`. Reverting a pull request is the rollback.
 
 Every job is skipped until the repository variable `PS_PUBLISH_APPROVED` is
-`true`: publishing is held for the PPD-upload security sign-off (#45). See the
+`true`: publishing is held for the PPD-upload security sign-off (#198). See the
 README for lifting the hold.
 
 The upstream Snap/Rock CI, the scheduled manifest updater and the Rock registry
