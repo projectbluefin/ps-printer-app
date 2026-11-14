@@ -1,0 +1,7322 @@
+# Supported Printers: PostScript Printer Application
+
+This application is for **printing to printers that accept PostScript**, either natively or through a compatible PostScript emulation. It is not limited to a finite set of models: a PostScript-capable printer without a model-specific PPD can use the shipped **Generic PostScript Printer** driver ([generic-ps-printer.ppd](generic-ps-printer.ppd), FileVersion 2.3).
+
+### Notes & Scope
+- **PostScript Support Required:** A printer that accepts only PCL, PCL XL, a proprietary raster format or a host-based protocol is **not supported** unless it also has working PostScript capability.
+- **Optional Modules:** If PostScript requires an optional vendor module, that option must be physically installed and enabled.
+- **Printing Only:** Multifunction devices do not have scanner or fax support through this appliance.
+- **Declared vs Tested:** These are driver-declared capabilities, not a hardware-tested compatibility list.
+
+### Bundled Model Database & Provenance (Application Version 20240504-20)
+| Provider | Shipped selection | Source |
+| --- | --- | --- |
+| Generic | Generic PostScript Printer | Repository PPD, FileVersion 2.3 |
+| Foomatic | 4,026 manufacturer PPD files; 5,801 distinct model names/aliases | [foomatic-db 20240504-10, commit 76dd1e31354c189b2edd9ae8201285d622c89395](https://github.com/OpenPrinting/foomatic-db/tree/76dd1e31354c189b2edd9ae8201285d622c89395/db/source/PPD) |
+| HPLIP PostScript | 520 PPD files; 1,384 distinct model names/aliases | [Debian HPLIP 3.26.4+dfsg0-3, commit f27f786d5f1060cce7c92e42488bd5e5d00ba135](https://salsa.debian.org/printing-team/hplip.v2/-/tree/f27f786d5f1060cce7c92e42488bd5e5d00ba135/prnt/ps) |
+
+## Table of Contents
+
+- [Generic PostScript Driver](#generic-postscript-driver)
+### Foomatic Manufacturer PostScript PPDs
+- [Brother](#foomatic-brother) (126 models)
+- [Canon](#foomatic-canon) (46 models)
+- [Epson](#foomatic-epson) (63 models)
+- [Gestetner](#foomatic-gestetner) (620 models)
+- [HP](#foomatic-hp) (25 models)
+- [Imagistics](#foomatic-imagistics) (2 models)
+- [InfoPrint](#foomatic-infoprint) (6 models)
+- [Infotec](#foomatic-infotec) (452 models)
+- [KONICA MINOLTA](#foomatic-konica-minolta) (20 models)
+- [Kyocera](#foomatic-kyocera) (120 models)
+- [Kyocera Mita](#foomatic-kyocera-mita) (51 models)
+- [Lanier](#foomatic-lanier) (696 models)
+- [Lexmark](#foomatic-lexmark) (404 models)
+- [NRG](#foomatic-nrg) (710 models)
+- [Oce](#foomatic-oce) (54 models)
+- [Oki](#foomatic-oki) (30 models)
+- [Ricoh](#foomatic-ricoh) (1097 models)
+- [Samsung](#foomatic-samsung) (91 models)
+- [Savin](#foomatic-savin) (662 models)
+- [Sharp](#foomatic-sharp) (434 models)
+- [TOSHIBA](#foomatic-toshiba) (30 models)
+- [TOSHIBA TEC Corp.](#foomatic-toshiba-tec-corp) (4 models)
+- [UTAX](#foomatic-utax) (8 models)
+- [UTAX/TA](#foomatic-utaxta) (38 models)
+- [UTAX_TA](#foomatic-utax_ta) (12 models)
+### HPLIP PostScript PPDs
+- [HP](#hplip-hp) (1384 models)
+
+---
+
+## Generic PostScript Driver
+
+- Generic PostScript Printer
+
+## Foomatic Manufacturer PostScript PPDs
+
+### Foomatic: Brother
+
+- Brother DCP-7025
+- Brother DCP-7025 BR-Script3
+- Brother DCP-7045N
+- Brother DCP-7045N BR-Script3
+- Brother DCP-8020
+- Brother DCP-8020 BR-Script3
+- Brother DCP-8025D
+- Brother DCP-8025D BR-Script3
+- Brother DCP-8040
+- Brother DCP-8040 BR-Script3
+- Brother DCP-8045D
+- Brother DCP-8045D BR-Script3
+- Brother DCP-8080DN
+- Brother DCP-8080DN BR-Script3
+- Brother DCP-8085DN
+- Brother DCP-8085DN BR-Script3
+- Brother DCP-9010CN
+- Brother DCP-9010CN BR-Script3
+- Brother DCP-9040CN
+- Brother DCP-9040CN BR-Script3
+- Brother DCP-9045CDN
+- Brother DCP-9045CDN BR-Script3
+- Brother HL-1450 BR-Script2
+- Brother HL-1450 series
+- Brother HL-1470N BR-Script2
+- Brother HL-1470N series
+- Brother HL-1650/70N BR-Script3
+- Brother HL-1650_1670N series
+- Brother HL-1850/70N BR-Script3
+- Brother HL-1850_1870N series
+- Brother HL-2460 BR-Script3
+- Brother HL-2460 series
+- Brother HL-2600CN BR-Script3
+- Brother HL-2600CN series
+- Brother HL-2700CN BR-Script3
+- Brother HL-2700CN series
+- Brother HL-3070CW
+- Brother HL-3070CW BR-Script3
+- Brother HL-3260N BR-Script3
+- Brother HL-3260N series
+- Brother HL-3450CN BR-Script3
+- Brother HL-3450CN series
+- Brother HL-4050CDN
+- Brother HL-4050CDN BR-Script3
+- Brother HL-4070CDW
+- Brother HL-4070CDW BR-Script3
+- Brother HL-5050 BR-Script3
+- Brother HL-5050 series
+- Brother HL-5070DN BR-Script3J
+- Brother HL-5070DN series
+- Brother HL-5070N BR-Script3
+- Brother HL-5070N series
+- Brother HL-5150D BR-Script3
+- Brother HL-5150D series
+- Brother HL-5170DN BR-Script3
+- Brother HL-5170DN series
+- Brother HL-5240 BR-Script3
+- Brother HL-5240 series
+- Brother HL-5250DN BR-Script3
+- Brother HL-5250DN series
+- Brother HL-5270DN BR-Script3
+- Brother HL-5270DN series
+- Brother HL-5350DN BR-Script3
+- Brother HL-5350DN series
+- Brother HL-5370DW BR-Script3
+- Brother HL-5370DW series
+- Brother HL-5380DN BR-Script3
+- Brother HL-5380DN series
+- Brother HL-6050 BR-Script3
+- Brother HL-6050 series
+- Brother HL-6050D/DN BR-Script3
+- Brother HL-6050D_DN series
+- Brother HL-7050 BR-Script3
+- Brother HL-7050 series
+- Brother HL-8050N BR-Script3
+- Brother HL-8050N series
+- Brother MFC-7225N
+- Brother MFC-7225N BR-Script3
+- Brother MFC-7450
+- Brother MFC-7450 BR-Script3
+- Brother MFC-7820N
+- Brother MFC-7820N BR-Script3
+- Brother MFC-7840N
+- Brother MFC-7840N BR-Script3
+- Brother MFC-7840W
+- Brother MFC-7840W BR-Script3
+- Brother MFC-8220
+- Brother MFC-8220 BR-Script3
+- Brother MFC-8370DN
+- Brother MFC-8370DN BR-Script3
+- Brother MFC-8380DN
+- Brother MFC-8380DN BR-Script3
+- Brother MFC-8420
+- Brother MFC-8420 BR-Script3
+- Brother MFC-8440
+- Brother MFC-8440 BR-Script3
+- Brother MFC-8480DN
+- Brother MFC-8480DN BR-Script3
+- Brother MFC-8640D
+- Brother MFC-8640D BR-Script3
+- Brother MFC-8670DN BR-Script3
+- Brother MFC-8670DN series
+- Brother MFC-8680DN
+- Brother MFC-8680DN BR-Script3
+- Brother MFC-8820D
+- Brother MFC-8820D BR-Script3
+- Brother MFC-8840D
+- Brother MFC-8840D BR-Script3
+- Brother MFC-8880DN
+- Brother MFC-8880DN BR-Script3
+- Brother MFC-8890DW
+- Brother MFC-8890DW BR-Script3
+- Brother MFC-9010CN
+- Brother MFC-9010CN BR-Script3
+- Brother MFC-9120CN
+- Brother MFC-9120CN BR-Script3
+- Brother MFC-9320CW
+- Brother MFC-9320CW BR-Script3
+- Brother MFC-9420CN BR-Script3
+- Brother MFC-9420CN series
+- Brother MFC-9440CN
+- Brother MFC-9440CN BR-Script3
+- Brother MFC-9450CDN
+- Brother MFC-9450CDN BR-Script3
+- Brother MFC-9840CDW
+- Brother MFC-9840CDW BR-Script3
+
+### Foomatic: Canon
+
+- Canon iPR C600
+- Canon iPR C650 PPD
+- Canon iPR C700/800
+- Canon iPR C750/850 PPD
+- Canon iR-ADV 400/500
+- Canon iR-ADV 4025/4035
+- Canon iR-ADV 4045/4051
+- Canon iR-ADV 4225/4235
+- Canon iR-ADV 4245/4251
+- Canon iR-ADV 6055/6065
+- Canon iR-ADV 6075
+- Canon iR-ADV 6255/6265
+- Canon iR-ADV 6275
+- Canon iR-ADV 8085/8095
+- Canon iR-ADV 8105
+- Canon iR-ADV 8205
+- Canon iR-ADV 8285/8295
+- Canon iR-ADV C2020/2030
+- Canon iR-ADV C2020i/2030i
+- Canon iR-ADV C2025
+- Canon iR-ADV C2220/2230
+- Canon iR-ADV C2225
+- Canon iR-ADV C250/350
+- Canon iR-ADV C3320
+- Canon iR-ADV C3320L
+- Canon iR-ADV C3325/3330
+- Canon iR-ADV C351
+- Canon iR-ADV C5030/5035
+- Canon iR-ADV C5045/5051
+- Canon iR-ADV C5235/5240
+- Canon iR-ADV C5250/5255
+- Canon iR-ADV C7055/7065
+- Canon iR-ADV C7260/7270
+- Canon iR-ADV C7280
+- Canon iR-ADV C9060/9070
+- Canon iR-ADV C9065/9075
+- Canon iR-ADV C9270/9280
+- Canon LBP6670
+- Canon LBP6680/3480
+- Canon LBP6780/3580
+- Canon LBP710C PPD
+- Canon LBP712C PPD
+- Canon LBP7660C
+- Canon LBP7680C/5280
+- Canon LBP7780C/5480
+- Canon LBP8780
+
+### Foomatic: Epson
+
+- Epson AL-2600
+- EPSON AL-2600 PS3
+- EPSON AL-C1900 PS3
+- EPSON AL-C2000 PS3
+- Epson AL-C2600
+- EPSON AL-C2600 PS3
+- Epson AL-C2800
+- EPSON AL-C2800 PS3
+- Epson AL-C3800
+- EPSON AL-C3800 PS3
+- Epson AL-C3900
+- EPSON AL-C3900 PS3
+- EPSON AL-C4000 PS3
+- Epson AL-C4100
+- EPSON AL-C4100 PS3
+- Epson AL-C4200
+- EPSON AL-C4200 PS3
+- EPSON AL-C8600 PS3
+- Epson AL-C9100
+- EPSON AL-C9100 PS3
+- Epson AL-C9200
+- EPSON AL-C9200 PS3
+- Epson AL-CX21
+- EPSON AL-CX21 PS3
+- Epson AL-M2000
+- EPSON AL-M2000 PS3
+- Epson AL-M2010
+- EPSON AL-M2010 PS3
+- Epson AL-M2400
+- EPSON AL-M2400 PS3
+- Epson AL-M2410
+- EPSON AL-M2410 PS3
+- Epson AL-M4000
+- EPSON AL-M4000 PS3
+- Epson AL-M8000
+- EPSON AL-M8000 PS3
+- Epson AL-MX20
+- EPSON AL-MX20 PS3
+- Epson AL-MX21
+- EPSON AL-MX21 PS3
+- EPSON EPL-5900 PS3
+- EPSON EPL-6100 PS3
+- Epson EPL-6200
+- EPSON EPL-6200 PS3
+- EPSON EPL-N2500 PS3
+- Epson EPL-N2550
+- EPSON EPL-N2550 PS3
+- Epson EPL-N2700
+- EPSON EPL-N2700 PS3
+- Epson EPL-N3000
+- EPSON EPL-N3000 PS3
+- Epson EPL-N7000
+- EPSON EPL-N7000 PS3
+- EPSON LP-8300CPD
+- EPSON LP-8500CPD
+- EPSON LP-8800CPS
+- EPSON LP-9100PS3
+- Epson LP-9200C
+- EPSON LP-9200CPL
+- EPSON LP-9500CPS
+- EPSON LP-9600SPD
+- Epson LP-9800C
+- EPSON LP-9800CPL
+
+### Foomatic: Gestetner
+
+- Gestetner 10512
+- Gestetner 10512 PS3
+- Gestetner 2212
+- Gestetner 2212 PS3
+- Gestetner 2712
+- Gestetner 2712 PS3
+- Gestetner 3212
+- Gestetner 3212 PS3
+- Gestetner 3502
+- Gestetner 3502 PS3
+- Gestetner 3532/4235g
+- Gestetner 3532/4235g PS3
+- Gestetner 4502
+- Gestetner 4502 PS3
+- Gestetner 4532/4245g
+- Gestetner 4532/4245g PS3
+- Gestetner 6002
+- Gestetner 6002 PS3
+- Gestetner 7502
+- Gestetner 7502 PS3
+- Gestetner 9002
+- Gestetner 9002 PS3
+- Gestetner C7010
+- Gestetner C7010 PS3
+- Gestetner C7116
+- Gestetner C7116 PS3
+- Gestetner C7416
+- Gestetner C7416 PS3
+- Gestetner C7417
+- Gestetner C7417 PS3
+- Gestetner C7425dn
+- Gestetner C7425dn PS3
+- Gestetner C7435n
+- Gestetner C7435n PS3
+- Gestetner C7521n
+- Gestetner C7521n PS3
+- Gestetner C7526dn
+- Gestetner C7526dn PS3
+- Gestetner C7528n
+- Gestetner C7528n PS3
+- Gestetner C7531dn
+- Gestetner C7531dn PS3
+- Gestetner C7535n
+- Gestetner C7535n PS3
+- Gestetner C7640nD
+- Gestetner C7640nD PS3
+- Gestetner C8140ND
+- Gestetner C8140ND PS3
+- Gestetner C8150ND
+- Gestetner C8150ND PS3
+- Gestetner CS555
+- Gestetner CS555 PS3
+- Gestetner DSc1020
+- Gestetner DSc1020 PS3
+- Gestetner DSc1025
+- Gestetner DSc1025 PS3
+- Gestetner DSc1030
+- Gestetner DSc1030 PS3
+- Gestetner DSc1045
+- Gestetner DSc1045 PS3
+- Gestetner DSc1060
+- Gestetner DSc1060 PS3
+- Gestetner DSc1120
+- Gestetner DSc1120 PS3
+- Gestetner DSc1220
+- Gestetner DSc1220 PS3
+- Gestetner DSc1220ex
+- Gestetner DSc1220ex PS3
+- Gestetner DSc1225
+- Gestetner DSc1225 PS3
+- Gestetner DSc1225ex
+- Gestetner DSc1225ex PS3
+- Gestetner DSc1230
+- Gestetner DSc1230 PS3
+- Gestetner DSc1230ex
+- Gestetner DSc1230ex PS3
+- Gestetner DSc1245
+- Gestetner DSc1245 PS3
+- Gestetner DSc1245ex
+- Gestetner DSc1245ex PS3
+- Gestetner DSc1260
+- Gestetner DSc1260 PS3
+- Gestetner DSc1260ex
+- Gestetner DSc1260ex PS3
+- Gestetner DSc224
+- Gestetner DSc224 PS3
+- Gestetner DSc232
+- Gestetner DSc232 PS3
+- Gestetner DSc328
+- Gestetner DSc328 PS3
+- Gestetner DSc332
+- Gestetner DSc332 PS3
+- Gestetner DSc338
+- Gestetner DSc338 PS3
+- Gestetner DSc38
+- Gestetner DSc38 PS3
+- Gestetner DSc38u
+- Gestetner DSc38u PS3
+- Gestetner DSc424
+- Gestetner DSc424 PS3
+- Gestetner DSc428
+- Gestetner DSc428 PS3
+- Gestetner DSc432
+- Gestetner DSc432 PS3
+- Gestetner DSc435
+- Gestetner DSc435 PS3
+- Gestetner DSc445
+- Gestetner DSc445 PS3
+- Gestetner DSc460
+- Gestetner DSc460 PS3
+- Gestetner DSc524
+- Gestetner DSc524 PS3
+- Gestetner DSc532
+- Gestetner DSc532 PS3
+- Gestetner DSm 2625
+- Gestetner DSm 2625 PS3
+- Gestetner DSm 2630
+- Gestetner DSm 2630 PS3
+- Gestetner DSm 2635
+- Gestetner DSm 2635 PS3
+- Gestetner DSm 2640
+- Gestetner DSm 2640 PS3
+- Gestetner DSm 2650
+- Gestetner DSm 2650 PS3
+- Gestetner DSm 2660
+- Gestetner DSm 2660 PS3
+- Gestetner DSm1525
+- Gestetner DSm1525 PS3
+- Gestetner DSm1530
+- Gestetner DSm1530 PS3
+- Gestetner DSm1533
+- Gestetner DSm1533 PS3
+- Gestetner DSm2525
+- Gestetner DSm2525 PS3
+- Gestetner DSm2530
+- Gestetner DSm2530 PS3
+- Gestetner DSm2535
+- Gestetner DSm2535 PS3
+- Gestetner DSm2540
+- Gestetner DSm2540 PS3
+- Gestetner DSm2550
+- Gestetner DSm2550 PS3
+- Gestetner DSm2560
+- Gestetner DSm2560 PS3
+- Gestetner DSm415
+- Gestetner DSm415 PS3
+- Gestetner DSm615
+- Gestetner DSm615 PS3
+- Gestetner DSm616
+- Gestetner DSm616 PS3
+- Gestetner DSm618
+- Gestetner DSm618 PS3
+- Gestetner DSm618d
+- Gestetner DSm618d PS3
+- Gestetner DSm620
+- Gestetner DSm620 PS3
+- Gestetner DSm620d
+- Gestetner DSm620d PS3
+- Gestetner DSm622
+- Gestetner DSm622 PS3
+- Gestetner DSm627
+- Gestetner DSm627 PS3
+- Gestetner DSm635/635G
+- Gestetner DSm635/635G PS3
+- Gestetner DSm645/645G
+- Gestetner DSm645/645G PS3
+- Gestetner DSm651
+- Gestetner DSm651 PS3
+- Gestetner DSm660
+- Gestetner DSm660 PS3
+- Gestetner DSm675
+- Gestetner DSm675 PS3
+- Gestetner DSm725
+- Gestetner DSm725 PS3
+- Gestetner DSm730
+- Gestetner DSm730 PS3
+- Gestetner DSm735/735G
+- Gestetner DSm735/735G PS3
+- Gestetner DSm745/745G
+- Gestetner DSm745/745G PS3
+- Gestetner F9199/9199nf
+- Gestetner F9199/9199nf PS3
+- Gestetner GS1227
+- Gestetner GS1227 PS3
+- Gestetner GS3020
+- Gestetner GS3020 PS3
+- Gestetner GS3021
+- Gestetner GS3021 PS3
+- Gestetner GS3025
+- Gestetner GS3025 PS3
+- Gestetner GS3025m
+- Gestetner GS3025m PS3
+- Gestetner GS3030
+- Gestetner GS3030 PS3
+- Gestetner GS3030m
+- Gestetner GS3030m PS3
+- Gestetner GS3035m
+- Gestetner GS3035m PS3
+- Gestetner GS3040m
+- Gestetner GS3040m PS3
+- Gestetner GS3045
+- Gestetner GS3045 PS3
+- Gestetner GS3050m
+- Gestetner GS3050m PS3
+- Gestetner GS3060m
+- Gestetner GS3060m PS3
+- Gestetner GS3160
+- Gestetner GS3160 PS3
+- Gestetner GS4020c
+- Gestetner GS4020c PS3
+- Gestetner GS4025c
+- Gestetner GS4025c PS3
+- Gestetner GS4030c
+- Gestetner GS4030c PS3
+- Gestetner GS4045c
+- Gestetner GS4045c PS3
+- Gestetner GS4160c
+- Gestetner GS4160c PS3
+- Gestetner GWD2004
+- Gestetner GWD2004 PS3
+- Gestetner GWD2006
+- Gestetner GWD2006 PS3
+- Gestetner GWD3006
+- Gestetner GWD3006 PS3
+- Gestetner GWD5100
+- Gestetner GWD5100 PS3
+- Gestetner GWD7140
+- Gestetner GWD7140 PS3
+- Gestetner IM 2500
+- Gestetner IM 2500 PS3
+- Gestetner IM 2702
+- Gestetner IM 2702 PS3
+- Gestetner IM 3000
+- Gestetner IM 3000 PS3
+- Gestetner IM 350
+- Gestetner IM 350 PS3
+- Gestetner IM 3500
+- Gestetner IM 3500 PS3
+- Gestetner IM 4000
+- Gestetner IM 4000 PS3
+- Gestetner IM 430
+- Gestetner IM 430 PS3
+- Gestetner IM 5000
+- Gestetner IM 5000 PS3
+- Gestetner IM 6000
+- Gestetner IM 6000 PS3
+- Gestetner IM C2000
+- Gestetner IM C2000 PS3
+- Gestetner IM C2010
+- Gestetner IM C2010 PS3
+- Gestetner IM C2500
+- Gestetner IM C2500 PS3
+- Gestetner IM C2510
+- Gestetner IM C2510 PS3
+- Gestetner IM C300
+- Gestetner IM C300 PS3
+- Gestetner IM C3000
+- Gestetner IM C3000 PS3
+- Gestetner IM C3010
+- Gestetner IM C3010 PS3
+- Gestetner IM C3500
+- Gestetner IM C3500 PS3
+- Gestetner IM C3510
+- Gestetner IM C3510 PS3
+- Gestetner IM C400
+- Gestetner IM C400 PS3
+- Gestetner IM C4500
+- Gestetner IM C4500 PS3
+- Gestetner IM C4510
+- Gestetner IM C4510 PS3
+- Gestetner IM C5510
+- Gestetner IM C5510 PS3
+- Gestetner IM C6000
+- Gestetner IM C6000 PS3
+- Gestetner IM C6010
+- Gestetner IM C6010 PS3
+- Gestetner IM CW2200
+- Gestetner IM CW2200 PS3
+- Gestetner IP CW2200
+- Gestetner IP CW2200 PS3
+- Gestetner MP 161/DSm416
+- Gestetner MP 161/DSm416 PS3
+- Gestetner MP 171
+- Gestetner MP 171 PS3
+- Gestetner MP 2001
+- Gestetner MP 2001 PS3
+- Gestetner MP 2501
+- Gestetner MP 2501 PS3
+- Gestetner MP 2510/DSm725e
+- Gestetner MP 2510/DSm725e PS3
+- Gestetner MP 2550
+- Gestetner MP 2550 PS3
+- Gestetner MP 2550B
+- Gestetner MP 2550B PS3
+- Gestetner MP 2553
+- Gestetner MP 2553 PS3
+- Gestetner MP 2554
+- Gestetner MP 2554 PS3
+- Gestetner MP 2555
+- Gestetner MP 2555 PS3
+- Gestetner MP 2851
+- Gestetner MP 2851 PS3
+- Gestetner MP 301
+- Gestetner MP 301 PS3
+- Gestetner MP 3010/DSm730e
+- Gestetner MP 3010/DSm730e PS3
+- Gestetner MP 305+
+- Gestetner MP 305+ PS3
+- Gestetner MP 3053
+- Gestetner MP 3053 PS3
+- Gestetner MP 3054
+- Gestetner MP 3054 PS3
+- Gestetner MP 3055
+- Gestetner MP 3055 PS3
+- Gestetner MP 3350
+- Gestetner MP 3350 PS3
+- Gestetner MP 3350B
+- Gestetner MP 3350B PS3
+- Gestetner MP 3351
+- Gestetner MP 3351 PS3
+- Gestetner MP 3353
+- Gestetner MP 3353 PS3
+- Gestetner MP 3554
+- Gestetner MP 3554 PS3
+- Gestetner MP 3555
+- Gestetner MP 3555 PS3
+- Gestetner MP 4000
+- Gestetner MP 4000 PS3
+- Gestetner MP 4000B
+- Gestetner MP 4000B PS3
+- Gestetner MP 4001
+- Gestetner MP 4001 PS3
+- Gestetner MP 4002
+- Gestetner MP 4002 PS3
+- Gestetner MP 401SPF
+- Gestetner MP 401SPF PS3
+- Gestetner MP 402SPF
+- Gestetner MP 402SPF PS3
+- Gestetner MP 4054
+- Gestetner MP 4054 PS3
+- Gestetner MP 4055
+- Gestetner MP 4055 PS3
+- Gestetner MP 5000
+- Gestetner MP 5000 PS3
+- Gestetner MP 5000B
+- Gestetner MP 5000B PS3
+- Gestetner MP 5001
+- Gestetner MP 5001 PS3
+- Gestetner MP 5002
+- Gestetner MP 5002 PS3
+- Gestetner MP 5054
+- Gestetner MP 5054 PS3
+- Gestetner MP 5055
+- Gestetner MP 5055 PS3
+- Gestetner MP 6000
+- Gestetner MP 6000 PS3
+- Gestetner MP 6001
+- Gestetner MP 6001 PS3
+- Gestetner MP 6002
+- Gestetner MP 6002 PS3
+- Gestetner MP 6054
+- Gestetner MP 6054 PS3
+- Gestetner MP 6055
+- Gestetner MP 6055 PS3
+- Gestetner MP 6503
+- Gestetner MP 6503 PS3
+- Gestetner MP 7000
+- Gestetner MP 7000 PS3
+- Gestetner MP 7001
+- Gestetner MP 7001 PS3
+- Gestetner MP 7502
+- Gestetner MP 7502 PS3
+- Gestetner MP 7503
+- Gestetner MP 7503 PS3
+- Gestetner MP 8000
+- Gestetner MP 8000 PS3
+- Gestetner MP 8001
+- Gestetner MP 8001 PS3
+- Gestetner MP 9001
+- Gestetner MP 9001 PS3
+- Gestetner MP 9002
+- Gestetner MP 9002 PS3
+- Gestetner MP 9003
+- Gestetner MP 9003 PS3
+- Gestetner MP C2003
+- Gestetner MP C2003 PS3
+- Gestetner MP C2004
+- Gestetner MP C2004 PS3
+- Gestetner MP C2004ex
+- Gestetner MP C2004ex PS3
+- Gestetner MP C2011
+- Gestetner MP C2011 PS3
+- Gestetner MP C2050
+- Gestetner MP C2050 PS3
+- Gestetner MP C2051
+- Gestetner MP C2051 PS3
+- Gestetner MP C2503
+- Gestetner MP C2503 PS3
+- Gestetner MP C2504
+- Gestetner MP C2504 PS3
+- Gestetner MP C2504ex
+- Gestetner MP C2504ex PS3
+- Gestetner MP C2550
+- Gestetner MP C2550 PS3
+- Gestetner MP C2551
+- Gestetner MP C2551 PS3
+- Gestetner MP C2800
+- Gestetner MP C2800 PS3
+- Gestetner MP C300
+- Gestetner MP C300 PS3
+- Gestetner MP C3001
+- Gestetner MP C3001 PS3
+- Gestetner MP C3002
+- Gestetner MP C3002 PS3
+- Gestetner MP C3003
+- Gestetner MP C3003 PS3
+- Gestetner MP C3004
+- Gestetner MP C3004 PS3
+- Gestetner MP C3004ex
+- Gestetner MP C3004ex PS3
+- Gestetner MP C300SR
+- Gestetner MP C300SR PS3
+- Gestetner MP C305
+- Gestetner MP C305 PS3
+- Gestetner MP C306Z
+- Gestetner MP C306Z PS3
+- Gestetner MP C307
+- Gestetner MP C307 PS3
+- Gestetner MP C3300
+- Gestetner MP C3300 PS3
+- Gestetner MP C3501
+- Gestetner MP C3501 PS3
+- Gestetner MP C3502
+- Gestetner MP C3502 PS3
+- Gestetner MP C3503
+- Gestetner MP C3503 PS3
+- Gestetner MP C3504
+- Gestetner MP C3504 PS3
+- Gestetner MP C3504ex
+- Gestetner MP C3504ex PS3
+- Gestetner MP C400
+- Gestetner MP C400 PS3
+- Gestetner MP C4000
+- Gestetner MP C4000 PS3
+- Gestetner MP C400SR
+- Gestetner MP C400SR PS3
+- Gestetner MP C401
+- Gestetner MP C401 PS3
+- Gestetner MP C401SR
+- Gestetner MP C401SR PS3
+- Gestetner MP C406Z
+- Gestetner MP C406Z PS3
+- Gestetner MP C407
+- Gestetner MP C407 PS3
+- Gestetner MP C4501
+- Gestetner MP C4501 PS3
+- Gestetner MP C4501A
+- Gestetner MP C4501A PS3
+- Gestetner MP C4502
+- Gestetner MP C4502 PS3
+- Gestetner MP C4502A
+- Gestetner MP C4502A PS3
+- Gestetner MP C4503
+- Gestetner MP C4503 PS3
+- Gestetner MP C4504
+- Gestetner MP C4504 PS3
+- Gestetner MP C4504ex
+- Gestetner MP C4504ex PS3
+- Gestetner MP C5000
+- Gestetner MP C5000 PS3
+- Gestetner MP C5501
+- Gestetner MP C5501 PS3
+- Gestetner MP C5501A
+- Gestetner MP C5501A PS3
+- Gestetner MP C5502
+- Gestetner MP C5502 PS3
+- Gestetner MP C5502A
+- Gestetner MP C5502A PS3
+- Gestetner MP C5503
+- Gestetner MP C5503 PS3
+- Gestetner MP C6000
+- Gestetner MP C6000 PS3
+- Gestetner MP C6003
+- Gestetner MP C6003 PS3
+- Gestetner MP C6004
+- Gestetner MP C6004 PS3
+- Gestetner MP C6004ex
+- Gestetner MP C6004ex PS3
+- Gestetner MP C6501
+- Gestetner MP C6501 PS3
+- Gestetner MP C6502
+- Gestetner MP C6502 PS3
+- Gestetner MP C6503
+- Gestetner MP C6503 PS3
+- Gestetner MP C7500
+- Gestetner MP C7500 PS3
+- Gestetner MP C7501
+- Gestetner MP C7501 PS3
+- Gestetner MP C8002
+- Gestetner MP C8002 PS3
+- Gestetner MP C8003
+- Gestetner MP C8003 PS3
+- Gestetner MP CW2200
+- Gestetner MP CW2200 PS3
+- Gestetner MP CW2201
+- Gestetner MP CW2201 PS3
+- Gestetner MP W6700
+- Gestetner MP W6700 PS3
+- Gestetner MP W7100
+- Gestetner MP W7100 PS3
+- Gestetner MP W8140
+- Gestetner MP W8140 PS3
+- Gestetner MP1100/DSm7110
+- Gestetner MP1100/DSm7110 PS3
+- Gestetner MP1350/DSm7135
+- Gestetner MP1350/DSm7135 PS3
+- Gestetner MP1600/DSm716
+- Gestetner MP1600/DSm716 PS3
+- Gestetner MP2000/DSm721d
+- Gestetner MP2000/DSm721d PS3
+- Gestetner MP2352/DSm923
+- Gestetner MP2352/DSm923 PS3
+- Gestetner MP2500/DSm625
+- Gestetner MP2500/DSm625 PS3
+- Gestetner MP2852/DSm928
+- Gestetner MP2852/DSm928 PS3
+- Gestetner MP3352/DSm933
+- Gestetner MP3352/DSm933 PS3
+- Gestetner MP3500/DSm735e
+- Gestetner MP3500/DSm735e PS3
+- Gestetner MP4500/DSm745e
+- Gestetner MP4500/DSm745e PS3
+- Gestetner MP5500/DSm755
+- Gestetner MP5500/DSm755 PS3
+- Gestetner MP6500/DSm765
+- Gestetner MP6500/DSm765 PS3
+- Gestetner MP7500/DSm775
+- Gestetner MP7500/DSm775 PS3
+- Gestetner MP9000/DSm790
+- Gestetner MP9000/DSm790 PS3
+- Gestetner MPC1500/GS106
+- Gestetner MPC1500/GS106 PS3
+- Gestetner MPC2500/DSc525
+- Gestetner MPC2500/DSc525 PS3
+- Gestetner MPC3000/DSc530
+- Gestetner MPC3000/DSc530 PS3
+- Gestetner MPC3500/DSc535
+- Gestetner MPC3500/DSc535 PS3
+- Gestetner MPC4500/DSc545
+- Gestetner MPC4500/DSc545 PS3
+- Gestetner P7026
+- Gestetner P7026 PS3
+- Gestetner P7026n
+- Gestetner P7026n PS3
+- Gestetner P7031n
+- Gestetner P7031n PS3
+- Gestetner P7031nL
+- Gestetner P7031nL PS3
+- Gestetner P7032
+- Gestetner P7032 PS3
+- Gestetner P7035n
+- Gestetner P7035n PS3
+- Gestetner P7126
+- Gestetner P7126 PS3
+- Gestetner P7126n
+- Gestetner P7126n PS3
+- Gestetner P7132n
+- Gestetner P7132n PS3
+- Gestetner P7145
+- Gestetner P7145 PS3
+- Gestetner P7245
+- Gestetner P7245 PS3
+- Gestetner P7325
+- Gestetner P7325 PS3
+- Gestetner P7325n
+- Gestetner P7325n PS3
+- Gestetner P7431cn
+- Gestetner P7431cn PS3
+- Gestetner P7527
+- Gestetner P7527 PS3
+- Gestetner P7527n
+- Gestetner P7527n PS3
+- Gestetner P7535n
+- Gestetner P7535n PS3
+- Gestetner P7575
+- Gestetner P7575 PS3
+- Gestetner P7675
+- Gestetner P7675 PS3
+- Gestetner Pro 1106EX
+- Gestetner Pro 1106EX PS3
+- Gestetner Pro 1107EX
+- Gestetner Pro 1107EX PS3
+- Gestetner Pro 1356EX
+- Gestetner Pro 1356EX PS3
+- Gestetner Pro 1357EX
+- Gestetner Pro 1357EX PS3
+- Gestetner Pro 906EX
+- Gestetner Pro 906EX PS3
+- Gestetner Pro 907EX
+- Gestetner Pro 907EX PS3
+- Gestetner Pro C5200S
+- Gestetner Pro C5200S PS3
+- Gestetner Pro C5210S
+- Gestetner Pro C5210S PS3
+- Gestetner SP 4210N
+- Gestetner SP 4210N PS3
+- Gestetner SP 6330N
+- Gestetner SP 6330N PS3
+- Gestetner SP 8200DN
+- Gestetner SP 8200DN PS3
+- Gestetner SP C320DN
+- Gestetner SP C320DN PS3
+- Gestetner SP C420DN
+- Gestetner SP C420DN PS3
+- Gestetner SP C430DN
+- Gestetner SP C430DN PS3
+- Gestetner SP C431DN
+- Gestetner SP C431DN PS3
+- Gestetner SP W2470
+- Gestetner SP W2470 PS3
+
+### Foomatic: HP
+
+- HP DesignJet 1050C
+- HP DesignJet 1050C PS3
+- HP DesignJet 1055CM
+- HP DesignJet 1055CM (C6075A)
+- HP DesignJet 1055CM PS3
+- HP DesignJet 2500CP
+- HP DesignJet 2500CP PS3
+- HP DesignJet 3500CP
+- HP DesignJet 3500CP PS3
+- HP DesignJet 5000PS
+- HP DesignJet 5000PS (C6091A)
+- HP DesignJet 5000PS (C6091V)
+- HP DesignJet 5000PS (C6096A)
+- HP DesignJet 5000PS (C6096V)
+- HP designjet 5500ps
+- HP designjet 5500ps (Q1252A)
+- HP designjet 5500ps (Q1252V)
+- HP designjet 5500ps (Q1254A)
+- HP designjet 5500ps (Q1254V)
+- HP DesignJet 800PS
+- HP DesignJet 800PS (C7779C)
+- HP DesignJet 800PS (C7780C)
+- HP hp9100
+- hp officejet 9100 series
+- HP Officejet 9100 series PS
+
+### Foomatic: Imagistics
+
+- Imagistics im8530
+- Imagistics im8530Series PS
+
+### Foomatic: InfoPrint
+
+- InfoPrint Pro 1107EX
+- InfoPrint Pro 1107EX PS3
+- InfoPrint Pro 1357EX
+- InfoPrint Pro 1357EX PS3
+- InfoPrint Pro 907EX
+- InfoPrint Pro 907EX PS3
+
+### Foomatic: Infotec
+
+- Infotec 4353 MF
+- infotec 4353 MF PS3
+- Infotec 4452 MF
+- infotec 4452 MF PS3
+- Infotec IP 280
+- infotec IP 280 PS3
+- Infotec IPC 2525
+- infotec IPC 2525 PS3
+- Infotec IPC 2525DN
+- infotec IPC 2525DN PS3
+- Infotec IPC 2525e
+- infotec IPC 2525e PS3
+- Infotec IPC 3030DN
+- infotec IPC 3030DN PS3
+- Infotec IPC 3535
+- infotec IPC 3535 PS3
+- Infotec IPC 4040DN
+- infotec IPC 4040DN PS3
+- Infotec IPC1036
+- infotec IPC1036 PS3
+- Infotec IPC2838
+- infotec IPC2838 PS3
+- Infotec IS 2015
+- infotec IS 2015 PS3
+- Infotec IS 2018
+- infotec IS 2018 PS3
+- Infotec IS 2018D
+- infotec IS 2018D PS3
+- Infotec IS 2060
+- infotec IS 2060 PS3
+- Infotec IS 2075
+- infotec IS 2075 PS3
+- Infotec IS 2122
+- infotec IS 2122 PS3
+- Infotec IS 2127
+- infotec IS 2127 PS3
+- Infotec IS 2132
+- infotec IS 2132 PS3
+- Infotec IS 2135
+- infotec IS 2135 PS3
+- Infotec IS 2145
+- infotec IS 2145 PS3
+- Infotec IS 2151
+- infotec IS 2151 PS3
+- Infotec IS 2160
+- infotec IS 2160 PS3
+- Infotec IS 2175
+- infotec IS 2175 PS3
+- Infotec IS 2215
+- infotec IS 2215 PS3
+- Infotec IS 2216
+- infotec IS 2216 PS3
+- Infotec IS 2220
+- infotec IS 2220 PS3
+- Infotec IS 2220D
+- infotec IS 2220D PS3
+- Infotec IS 2225
+- infotec IS 2225 PS3
+- Infotec IS 2230
+- infotec IS 2230 PS3
+- Infotec IS 2235
+- infotec IS 2235 PS3
+- Infotec IS 2245
+- infotec IS 2245 PS3
+- Infotec IS 2255
+- infotec IS 2255 PS3
+- Infotec IS 2265
+- infotec IS 2265 PS3
+- Infotec IS 2275
+- infotec IS 2275 PS3
+- Infotec IS 2316
+- infotec IS 2316 PS3
+- Infotec IS 2320
+- infotec IS 2320 PS3
+- Infotec IS 2325
+- infotec IS 2325 PS3
+- Infotec IS 2416
+- infotec IS 2416 PS3
+- Infotec IS 2425
+- infotec IS 2425 PS3
+- Infotec IS 2430
+- infotec IS 2430 PS3
+- Infotec IS 2435
+- infotec IS 2435 PS3
+- Infotec IS 2445
+- infotec IS 2445 PS3
+- Infotec IS 3090
+- infotec IS 3090 PS3
+- Infotec IS 3110
+- infotec IS 3110 PS3
+- Infotec IS 3135
+- infotec IS 3135 PS3
+- Infotec IS2022
+- infotec IS2022 PS3
+- Infotec IS2027
+- infotec IS2027 PS3
+- Infotec IS2032
+- infotec IS2032 PS3
+- Infotec IS2035
+- infotec IS2035 PS3
+- Infotec IS2045
+- infotec IS2045 PS3
+- Infotec IS2090
+- infotec IS2090 PS3
+- Infotec IS2105
+- infotec IS2105 PS3
+- Infotec ISC 1024c
+- infotec ISC 1024c PS3
+- Infotec ISC 1032c
+- infotec ISC 1032c PS3
+- Infotec ISC 2028
+- infotec ISC 2028 PS3
+- Infotec ISC 2428
+- infotec ISC 2428 PS3
+- Infotec ISC 2432
+- infotec ISC 2432 PS3
+- Infotec ISC 2525
+- infotec ISC 2525 PS3
+- Infotec ISC 2835
+- infotec ISC 2835 PS3
+- Infotec ISC 2838
+- infotec ISC 2838 PS3
+- Infotec ISC 3030
+- infotec ISC 3030 PS3
+- Infotec ISC 3535
+- infotec ISC 3535 PS3
+- Infotec ISC 3545
+- infotec ISC 3545 PS3
+- Infotec ISC 4045
+- infotec ISC 4045 PS3
+- Infotec ISC 4560
+- infotec ISC 4560 PS3
+- Infotec ISC 5560
+- infotec ISC 5560 PS3
+- Infotec ISC 615G
+- infotec ISC 615G PS3
+- Infotec ISC1032
+- infotec ISC1032 PS3
+- Infotec ISC824
+- infotec ISC824 PS3
+- Infotec MP 171
+- infotec MP 171 PS3
+- Infotec MP 2001
+- infotec MP 2001 PS3
+- Infotec MP 201
+- infotec MP 201 PS3
+- Infotec MP 2352
+- infotec MP 2352 PS3
+- Infotec MP 2501
+- infotec MP 2501 PS3
+- Infotec MP 2550
+- infotec MP 2550 PS3
+- Infotec MP 2550B
+- infotec MP 2550B PS3
+- Infotec MP 2553
+- infotec MP 2553 PS3
+- Infotec MP 2554
+- infotec MP 2554 PS3
+- Infotec MP 2555
+- infotec MP 2555 PS3
+- Infotec MP 2851
+- infotec MP 2851 PS3
+- Infotec MP 2852
+- infotec MP 2852 PS3
+- Infotec MP 301
+- infotec MP 301 PS3
+- Infotec MP 305+
+- infotec MP 305+ PS3
+- Infotec MP 3053
+- infotec MP 3053 PS3
+- Infotec MP 3054
+- infotec MP 3054 PS3
+- Infotec MP 3055
+- infotec MP 3055 PS3
+- Infotec MP 3350
+- infotec MP 3350 PS3
+- Infotec MP 3350B
+- infotec MP 3350B PS3
+- Infotec MP 3351
+- infotec MP 3351 PS3
+- Infotec MP 3352
+- infotec MP 3352 PS3
+- Infotec MP 3353
+- infotec MP 3353 PS3
+- Infotec MP 3554
+- infotec MP 3554 PS3
+- Infotec MP 3555
+- infotec MP 3555 PS3
+- Infotec MP 4000
+- infotec MP 4000 PS3
+- Infotec MP 4000B
+- infotec MP 4000B PS3
+- Infotec MP 4001
+- infotec MP 4001 PS3
+- Infotec MP 4002
+- infotec MP 4002 PS3
+- Infotec MP 402SPF
+- infotec MP 402SPF PS3
+- Infotec MP 4054
+- infotec MP 4054 PS3
+- Infotec MP 4055
+- infotec MP 4055 PS3
+- Infotec MP 5000
+- infotec MP 5000 PS3
+- Infotec MP 5000B
+- infotec MP 5000B PS3
+- Infotec MP 5001
+- infotec MP 5001 PS3
+- Infotec MP 5002
+- infotec MP 5002 PS3
+- Infotec MP 501
+- infotec MP 501 PS3
+- Infotec MP 5054
+- infotec MP 5054 PS3
+- Infotec MP 5055
+- infotec MP 5055 PS3
+- Infotec MP 6000
+- infotec MP 6000 PS3
+- Infotec MP 6001
+- infotec MP 6001 PS3
+- Infotec MP 6002
+- infotec MP 6002 PS3
+- Infotec MP 601
+- infotec MP 601 PS3
+- Infotec MP 6054
+- infotec MP 6054 PS3
+- Infotec MP 6055
+- infotec MP 6055 PS3
+- Infotec MP 6503
+- infotec MP 6503 PS3
+- Infotec MP 7000
+- infotec MP 7000 PS3
+- Infotec MP 7001
+- infotec MP 7001 PS3
+- Infotec MP 7502
+- infotec MP 7502 PS3
+- Infotec MP 7503
+- infotec MP 7503 PS3
+- Infotec MP 8000
+- infotec MP 8000 PS3
+- Infotec MP 8001
+- infotec MP 8001 PS3
+- Infotec MP 9001
+- infotec MP 9001 PS3
+- Infotec MP 9002
+- infotec MP 9002 PS3
+- Infotec MP 9003
+- infotec MP 9003 PS3
+- Infotec MP C2003
+- infotec MP C2003 PS3
+- Infotec MP C2003Z
+- infotec MP C2003Z PS3
+- Infotec MP C2004
+- infotec MP C2004 PS3
+- Infotec MP C2004ex
+- infotec MP C2004ex PS3
+- Infotec MP C2011
+- infotec MP C2011 PS3
+- Infotec MP C2050
+- infotec MP C2050 PS3
+- Infotec MP C2051
+- infotec MP C2051 PS3
+- Infotec MP C2503
+- infotec MP C2503 PS3
+- Infotec MP C2503Z
+- infotec MP C2503Z PS3
+- Infotec MP C2504
+- infotec MP C2504 PS3
+- Infotec MP C2504ex
+- infotec MP C2504ex PS3
+- Infotec MP C2550
+- infotec MP C2550 PS3
+- Infotec MP C2551
+- infotec MP C2551 PS3
+- Infotec MP C2800
+- infotec MP C2800 PS3
+- Infotec MP C300
+- infotec MP C300 PS3
+- Infotec MP C3001
+- infotec MP C3001 PS3
+- Infotec MP C3002
+- infotec MP C3002 PS3
+- Infotec MP C3003
+- infotec MP C3003 PS3
+- Infotec MP C3004
+- infotec MP C3004 PS3
+- Infotec MP C3004ex
+- infotec MP C3004ex PS3
+- Infotec MP C300SR
+- infotec MP C300SR PS3
+- Infotec MP C305
+- infotec MP C305 PS3
+- Infotec MP C306Z
+- infotec MP C306Z PS3
+- Infotec MP C307
+- infotec MP C307 PS3
+- Infotec MP C3300
+- infotec MP C3300 PS3
+- Infotec MP C3501
+- infotec MP C3501 PS3
+- Infotec MP C3502
+- infotec MP C3502 PS3
+- Infotec MP C3503
+- infotec MP C3503 PS3
+- Infotec MP C3504
+- infotec MP C3504 PS3
+- Infotec MP C3504ex
+- infotec MP C3504ex PS3
+- Infotec MP C400
+- infotec MP C400 PS3
+- Infotec MP C4000
+- infotec MP C4000 PS3
+- Infotec MP C400SR
+- infotec MP C400SR PS3
+- Infotec MP C401
+- infotec MP C401 PS3
+- Infotec MP C401SR
+- infotec MP C401SR PS3
+- Infotec MP C406Z
+- infotec MP C406Z PS3
+- Infotec MP C407
+- infotec MP C407 PS3
+- Infotec MP C4501
+- infotec MP C4501 PS3
+- Infotec MP C4501A
+- infotec MP C4501A PS3
+- Infotec MP C4502
+- infotec MP C4502 PS3
+- Infotec MP C4502A
+- infotec MP C4502A PS3
+- Infotec MP C4503
+- infotec MP C4503 PS3
+- Infotec MP C4504
+- infotec MP C4504 PS3
+- Infotec MP C4504ex
+- infotec MP C4504ex PS3
+- Infotec MP C5000
+- infotec MP C5000 PS3
+- Infotec MP C5501
+- infotec MP C5501 PS3
+- Infotec MP C5501A
+- infotec MP C5501A PS3
+- Infotec MP C5502
+- infotec MP C5502 PS3
+- Infotec MP C5502A
+- infotec MP C5502A PS3
+- Infotec MP C5503
+- infotec MP C5503 PS3
+- Infotec MP C5504
+- infotec MP C5504 PS3
+- Infotec MP C5504ex
+- infotec MP C5504ex PS3
+- Infotec MP C6000
+- infotec MP C6000 PS3
+- Infotec MP C6003
+- infotec MP C6003 PS3
+- Infotec MP C6004
+- infotec MP C6004 PS3
+- Infotec MP C6004ex
+- infotec MP C6004ex PS3
+- Infotec MP C6501
+- infotec MP C6501 PS3
+- Infotec MP C6502
+- infotec MP C6502 PS3
+- Infotec MP C6503
+- infotec MP C6503 PS3
+- Infotec MP C7500
+- infotec MP C7500 PS3
+- Infotec MP C7501
+- infotec MP C7501 PS3
+- Infotec MP C8002
+- infotec MP C8002 PS3
+- Infotec MP C8003
+- infotec MP C8003 PS3
+- Infotec Pro 1106EX
+- infotec Pro 1106EX PS3
+- Infotec Pro 1107EX
+- infotec Pro 1107EX PS3
+- Infotec Pro 1356EX
+- infotec Pro 1356EX PS3
+- Infotec Pro 1357EX
+- infotec Pro 1357EX PS3
+- Infotec Pro 8100S
+- infotec Pro 8100S PS3
+- Infotec Pro 8110
+- infotec Pro 8110 PS3
+- Infotec Pro 8110S
+- infotec Pro 8110S PS3
+- Infotec Pro 8120
+- infotec Pro 8120 PS3
+- Infotec Pro 8120S
+- infotec Pro 8120S PS3
+- Infotec Pro 8200S
+- infotec Pro 8200S PS3
+- Infotec Pro 8210
+- infotec Pro 8210 PS3
+- Infotec Pro 8210S
+- infotec Pro 8210S PS3
+- Infotec Pro 8220
+- infotec Pro 8220 PS3
+- Infotec Pro 8220S
+- infotec Pro 8220S PS3
+- Infotec Pro 8300S
+- infotec Pro 8300S PS3
+- Infotec Pro 8310
+- infotec Pro 8310 PS3
+- Infotec Pro 8310S
+- infotec Pro 8310S PS3
+- Infotec Pro 8320
+- infotec Pro 8320 PS3
+- Infotec Pro 8320S
+- infotec Pro 8320S PS3
+- Infotec Pro 906EX
+- infotec Pro 906EX PS3
+- Infotec Pro 907EX
+- infotec Pro 907EX PS3
+- Infotec Pro C5100S
+- infotec Pro C5100S PS3
+- Infotec Pro C5110S
+- infotec Pro C5110S PS3
+- Infotec Pro C5200S
+- infotec Pro C5200S PS3
+- Infotec Pro C5210S
+- infotec Pro C5210S PS3
+- Infotec Pro C5300S
+- infotec Pro C5300S PS3
+- Infotec Pro C5300SL
+- infotec Pro C5300SL PS3
+- Infotec Pro C5310S
+- infotec Pro C5310S PS3
+- Infotec Pro C7100
+- infotec Pro C7100 PS3
+- Infotec Pro C7100S
+- infotec Pro C7100S PS3
+- Infotec Pro C7110
+- infotec Pro C7110 PS3
+- Infotec Pro C7110S
+- infotec Pro C7110S PS3
+- Infotec Pro C7200
+- infotec Pro C7200 PS3
+- Infotec Pro C7200S
+- Infotec Pro C7200S Light
+- infotec Pro C7200S Light PS3
+- infotec Pro C7200S PS3
+- Infotec Pro C7210
+- infotec Pro C7210 PS3
+- Infotec Pro C7210S
+- infotec Pro C7210S PS3
+- Infotec SP 5300
+- infotec SP 5300 PS3
+- Infotec SP 5310
+- infotec SP 5310 PS3
+
+### Foomatic: KONICA MINOLTA
+
+- KONICA MINOLTA 1050
+- KONICA MINOLTA 1050 PS/P
+- KONICA MINOLTA 500/420/360
+- KONICA MINOLTA 500/420/360 PS/P
+- KONICA MINOLTA 750/600
+- KONICA MINOLTA 750/600 PS/P
+- KONICA MINOLTA C250
+- KONICA MINOLTA C250 PS/P
+- KONICA MINOLTA C252
+- KONICA MINOLTA C252 PS/P
+- KONICA MINOLTA C351
+- KONICA MINOLTA C351 PS/P
+- KONICA MINOLTA C352/C300
+- KONICA MINOLTA C352/C300 PS/P
+- KONICA MINOLTA C450
+- KONICA MINOLTA C450 PS/P
+- KONICA MINOLTA C451
+- KONICA MINOLTA C451 PS/P
+- KONICA MINOLTA C550
+- KONICA MINOLTA C550 PS/P
+
+### Foomatic: Kyocera
+
+- Kyocera CS 250ci
+- Kyocera CS 250ci KPDL
+- Kyocera CS 300ci
+- Kyocera CS 300ci KPDL
+- Kyocera CS 3050ci
+- Kyocera CS 3050ci KPDL
+- Kyocera CS 3550ci
+- Kyocera CS 3550ci KPDL
+- Kyocera CS 400ci
+- Kyocera CS 400ci KPDL
+- Kyocera CS 500ci
+- Kyocera CS 500ci KPDL
+- Kyocera CS-C2525E
+- Kyocera CS-C2525E KPDL
+- Kyocera CS-C3225E
+- Kyocera CS-C3225E KPDL
+- Kyocera CS-C3232E
+- Kyocera CS-C3232E KPDL
+- Kyocera CS-C4035E
+- Kyocera CS-C4035E KPDL
+- Kyocera FS-1000
+- Kyocera FS-1030D
+- Kyocera FS-1118MFP
+- Kyocera FS-1200
+- Kyocera FS-1700
+- Kyocera FS-1700+
+- Kyocera FS-1714M
+- Kyocera FS-1750
+- Kyocera FS-2000D
+- Kyocera FS-2000D KPDL
+- Kyocera FS-2100D
+- Kyocera FS-2100D KPDL
+- Kyocera FS-2100DN
+- Kyocera FS-2100DN KPDL
+- Kyocera FS-3700
+- Kyocera FS-3700+
+- Kyocera FS-3718M
+- Kyocera FS-3750
+- Kyocera FS-3900DN
+- Kyocera FS-3900DN KPDL
+- Kyocera FS-4000DN
+- Kyocera FS-4000DN KPDL
+- Kyocera FS-4100DN
+- Kyocera FS-4100DN KPDL
+- Kyocera FS-4200DN
+- Kyocera FS-4200DN KPDL
+- Kyocera FS-4300DN
+- Kyocera FS-4300DN KPDL
+- Kyocera FS-5800C
+- Kyocera FS-5900C
+- Kyocera FS-600
+- Kyocera FS-6300
+- Kyocera FS-6500+
+- Kyocera FS-6700
+- Kyocera FS-680
+- Kyocera FS-6900
+- Kyocera FS-6950DN
+- Kyocera FS-6950DN KPDL
+- Kyocera FS-7000
+- Kyocera FS-7000+
+- Kyocera FS-7028M
+- Kyocera FS-800
+- Kyocera FS-9000
+- Kyocera FS-9130DN
+- Kyocera FS-9130DN KPDL
+- Kyocera FS-920
+- Kyocera FS-9530DN
+- Kyocera FS-9530DN KPDL
+- Kyocera FS-C5015N
+- Kyocera FS-C5015N KPDL
+- Kyocera FS-C5020N
+- Kyocera FS-C5020N KPDL
+- Kyocera FS-C5025N
+- Kyocera FS-C5025N KPDL
+- Kyocera FS-C5030N
+- Kyocera FS-C5030N KPDL
+- Kyocera FS-C5100DN
+- Kyocera FS-C5100DN KPDL
+- Kyocera FS-C5200DN
+- Kyocera FS-C5200DN KPDL
+- Kyocera FS-C5300DN
+- Kyocera FS-C5300DN KPDL
+- Kyocera FS-C5350DN
+- Kyocera FS-C5350DN KPDL
+- Kyocera FS-C5400DN
+- Kyocera FS-C5400DN KPDL
+- Kyocera FS-C8100DN
+- Kyocera FS-C8100DN KPDL
+- Kyocera FS-C8100DN+
+- Kyocera FS-C8100DN+ KPDL
+- Kyocera KM-1820
+- Kyocera KM-3050
+- Kyocera KM-3050 KPDL
+- Kyocera KM-4050
+- Kyocera KM-4050 KPDL
+- Kyocera KM-5050
+- Kyocera KM-5050 KPDL
+- Kyocera KM-6030
+- Kyocera KM-6030 KPDL
+- Kyocera KM-8030
+- Kyocera KM-8030 KPDL
+- Kyocera KM-C2520
+- Kyocera KM-C2525E
+- Kyocera KM-C2525E KPDL
+- Kyocera KM-C3225
+- Kyocera KM-C3225E
+- Kyocera KM-C3225E KPDL
+- Kyocera KM-C3232
+- Kyocera KM-C3232E
+- Kyocera KM-C3232E KPDL
+- Kyocera KM-C4035E
+- Kyocera KM-C4035E KPDL
+- Kyocera TASKalfa 250ci
+- Kyocera TASKalfa 250ci KPDL
+- Kyocera TASKalfa 300ci
+- Kyocera TASKalfa 300ci KPDL
+- Kyocera TASKalfa 400ci
+- Kyocera TASKalfa 400ci KPDL
+- Kyocera TASKalfa 500ci
+- Kyocera TASKalfa 500ci KPDL
+
+### Foomatic: Kyocera Mita
+
+- Kyocera Mita Ci-1100
+- Kyocera Mita CS-1650
+- Kyocera Mita CS-1815
+- Kyocera Mita CS-2050
+- Kyocera Mita CS-2550
+- Kyocera Mita FS-1000+
+- Kyocera Mita FS-1010
+- Kyocera Mita FS-1018MFP
+- Kyocera Mita FS-1020D
+- Kyocera Mita FS-1050
+- Kyocera Mita FS-1800
+- Kyocera Mita FS-1800+
+- Kyocera Mita FS-1900
+- Kyocera Mita FS-1920
+- Kyocera Mita FS-3800
+- Kyocera Mita FS-3820N
+- Kyocera Mita FS-3830N
+- Kyocera Mita FS-6020
+- Kyocera Mita FS-6026
+- Kyocera Mita FS-6750
+- Kyocera Mita FS-8000C
+- Kyocera Mita FS-9100DN
+- Kyocera Mita FS-9120DN
+- Kyocera Mita FS-9500DN
+- Kyocera Mita FS-9520DN
+- Kyocera Mita FS-C5016N
+- Kyocera Mita FS-C8008N
+- Kyocera Mita FS-C8026N
+- Kyocera Mita KM-1510
+- Kyocera Mita KM-1530
+- Kyocera Mita KM-1650
+- Kyocera Mita KM-1810
+- Kyocera Mita KM-1815
+- Kyocera Mita KM-2030
+- Kyocera Mita KM-2050
+- Kyocera Mita KM-2530
+- Kyocera Mita KM-2550
+- Kyocera Mita KM-3035
+- Kyocera Mita KM-3530
+- Kyocera Mita KM-4030
+- Kyocera Mita KM-4035
+- Kyocera Mita KM-4230/5230
+- Kyocera Mita KM-4530
+- Kyocera Mita KM-5035
+- Kyocera Mita KM-5530
+- Kyocera Mita KM-6230
+- Kyocera Mita KM-6330
+- Kyocera Mita KM-7530
+- Kyocera Mita KM-C2630
+- Kyocera Mita KM-C830
+- Kyocera Mita KM-C850
+
+### Foomatic: Lanier
+
+- Lanier 2132
+- LANIER 2132 PS3
+- Lanier 2138
+- LANIER 2138 PS3
+- Lanier 2145
+- LANIER 2145 PS3
+- Lanier 5622
+- LANIER 5622 PS3
+- Lanier 5627
+- LANIER 5627 PS3
+- Lanier 5632
+- LANIER 5632 PS3
+- Lanier 5635
+- LANIER 5635 PS3
+- Lanier 5645
+- LANIER 5645 PS3
+- Lanier IM 2500
+- LANIER IM 2500 PS3
+- Lanier IM 3000
+- LANIER IM 3000 PS3
+- Lanier IM 350
+- LANIER IM 350 PS3
+- Lanier IM 3500
+- LANIER IM 3500 PS3
+- Lanier IM 4000
+- LANIER IM 4000 PS3
+- Lanier IM 430
+- LANIER IM 430 PS3
+- Lanier IM 5000
+- LANIER IM 5000 PS3
+- Lanier IM 550
+- LANIER IM 550 PS3
+- Lanier IM 600
+- LANIER IM 600 PS3
+- Lanier IM 6000
+- LANIER IM 6000 PS3
+- Lanier IM 600SR
+- LANIER IM 600SR PS3
+- Lanier IM 7000
+- LANIER IM 7000 PS3
+- Lanier IM 8000
+- LANIER IM 8000 PS3
+- Lanier IM 9000
+- LANIER IM 9000 PS3
+- Lanier IM C2000
+- LANIER IM C2000 PS3
+- Lanier IM C2500
+- LANIER IM C2500 PS3
+- Lanier IM C300
+- LANIER IM C300 PS3
+- Lanier IM C3000
+- LANIER IM C3000 PS3
+- Lanier IM C3500
+- LANIER IM C3500 PS3
+- Lanier IM C400
+- LANIER IM C400 PS3
+- Lanier IM C400SR
+- LANIER IM C400SR PS3
+- Lanier IM C4500
+- LANIER IM C4500 PS3
+- Lanier IM C530F
+- LANIER IM C530F PS3
+- Lanier IM C530FB
+- LANIER IM C530FB PS3
+- Lanier IM C6000
+- LANIER IM C6000 PS3
+- Lanier IM C6500
+- LANIER IM C6500 PS3
+- Lanier IM C8000
+- LANIER IM C8000 PS3
+- Lanier IM CW2200
+- LANIER IM CW2200 PS3
+- Lanier IP CW2200
+- LANIER IP CW2200 PS3
+- Lanier LC155
+- LANIER LC155 PS3
+- Lanier LD 130C
+- LANIER LD 130C PS3
+- Lanier LD 130CSR
+- LANIER LD 130CSR PS3
+- Lanier LD 140C
+- LANIER LD 140C PS3
+- Lanier LD 140CSR
+- LANIER LD 140CSR PS3
+- Lanier LD 620C
+- LANIER LD 620C PS3
+- Lanier LD 625C
+- LANIER LD 625C PS3
+- Lanier LD0105
+- LANIER LD0105 PS3
+- Lanier LD015
+- LANIER LD015 PS3
+- Lanier LD024c
+- LANIER LD024c PS3
+- Lanier LD032c
+- LANIER LD032c PS3
+- Lanier LD035
+- LANIER LD035 PS3
+- Lanier LD045
+- LANIER LD045 PS3
+- Lanier LD060
+- LANIER LD060 PS3
+- Lanier LD075
+- LANIER LD075 PS3
+- Lanier LD090
+- LANIER LD090 PS3
+- Lanier LD115
+- LANIER LD115 PS3
+- Lanier LD116
+- LANIER LD116 PS3
+- Lanier LD118
+- LANIER LD118 PS3
+- Lanier LD118d
+- LANIER LD118d PS3
+- Lanier LD120
+- LANIER LD120 PS3
+- Lanier LD120d
+- LANIER LD120d PS3
+- Lanier LD122
+- LANIER LD122 PS3
+- Lanier LD124c
+- LANIER LD124c PS3
+- Lanier LD127
+- LANIER LD127 PS3
+- Lanier LD132
+- LANIER LD132 PS3
+- Lanier LD132c
+- LANIER LD132c PS3
+- Lanier LD135
+- LANIER LD135 PS3
+- Lanier LD145
+- LANIER LD145 PS3
+- Lanier LD151
+- LANIER LD151 PS3
+- Lanier LD160
+- LANIER LD160 PS3
+- Lanier LD160c
+- LANIER LD160c PS3
+- Lanier LD175
+- LANIER LD175 PS3
+- Lanier LD225
+- LANIER LD225 PS3
+- Lanier LD228c
+- LANIER LD228c PS3
+- Lanier LD230
+- LANIER LD230 PS3
+- Lanier LD232c
+- LANIER LD232c PS3
+- Lanier LD235
+- LANIER LD235 PS3
+- Lanier LD238c
+- LANIER LD238c PS3
+- Lanier LD245
+- LANIER LD245 PS3
+- Lanier LD328c
+- LANIER LD328c PS3
+- Lanier LD335c
+- LANIER LD335c PS3
+- Lanier LD345c
+- LANIER LD345c PS3
+- Lanier LF510/515e
+- LANIER LF510/515e PS3
+- Lanier LP 020c
+- LANIER LP 020c PS3
+- Lanier LP 036c
+- LANIER LP 036c PS3
+- Lanier LP025/LP026
+- LANIER LP025/LP026 PS3
+- Lanier LP025N/LP026N
+- LANIER LP025N/LP026N PS3
+- Lanier LP031c
+- LANIER LP031c PS3
+- Lanier LP032
+- LANIER LP032 PS3
+- Lanier LP116c
+- LANIER LP116c PS3
+- Lanier LP122c/LP121c
+- LANIER LP122c/LP121c PS3
+- Lanier LP124w
+- LANIER LP124w PS3
+- Lanier LP125cx/LP126cn
+- LANIER LP125cx/LP126cn PS3
+- Lanier LP127n/LP128n
+- LANIER LP127n/LP128n PS3
+- Lanier LP128
+- LANIER LP128 PS3
+- Lanier LP131n
+- LANIER LP131n PS3
+- Lanier LP131nL
+- LANIER LP131nL PS3
+- Lanier LP135n
+- LANIER LP135n PS3
+- Lanier LP136n
+- LANIER LP136n PS3
+- Lanier LP137CN
+- LANIER LP137CN PS3
+- Lanier LP138c
+- LANIER LP138c PS3
+- Lanier LP142CN
+- LANIER LP142CN PS3
+- Lanier LP145n/SP 8100DN
+- LANIER LP145n/SP 8100DN PS3
+- Lanier LP150dn/SP8200DN
+- LANIER LP150dn/SP8200DN PS3
+- Lanier LP175/LP175hdn
+- LANIER LP175/LP175hdn PS3
+- Lanier LP222cn/LP221c
+- LANIER LP222cn/LP221c PS3
+- Lanier LP226c/SP C410
+- LANIER LP226c/SP C410 PS3
+- Lanier LP231c/SP C411
+- LANIER LP231c/SP C411 PS3
+- Lanier LP235c
+- LANIER LP235c PS3
+- Lanier LP235N
+- LANIER LP235N PS3
+- Lanier LP331cn/SP C420
+- LANIER LP331cn/SP C420 PS3
+- Lanier LP332c
+- LANIER LP332c PS3
+- Lanier LP335c
+- LANIER LP335c PS3
+- Lanier LP37N
+- LANIER LP37N PS3
+- Lanier LP440c/SP C811DN
+- LANIER LP440c/SP C811DN PS3
+- Lanier LP540C/SPC820DN
+- LANIER LP540C/SPC820DN PS3
+- Lanier LP550C/SPC821DN
+- LANIER LP550C/SPC821DN PS3
+- Lanier LW324
+- LANIER LW324 PS3
+- Lanier LW326
+- LANIER LW326 PS3
+- Lanier LW426
+- LANIER LW426 PS3
+- Lanier LW5100
+- LANIER LW5100 PS3
+- Lanier LW7140
+- LANIER LW7140 PS3
+- Lanier MP 1100/LD1100
+- LANIER MP 1100/LD1100 PS3
+- Lanier MP 1350/LD1135
+- LANIER MP 1350/LD1135 PS3
+- Lanier MP 1600/LD316
+- LANIER MP 1600/LD316 PS3
+- Lanier MP 161/LD016
+- LANIER MP 161/LD016 PS3
+- Lanier MP 171/LD 117
+- LANIER MP 171/LD 117 PS3
+- Lanier MP 2000/LD320d
+- LANIER MP 2000/LD320d PS3
+- Lanier MP 2001
+- LANIER MP 2001 PS3
+- Lanier MP 201/LD 220
+- LANIER MP 201/LD 220 PS3
+- Lanier MP 2352
+- LANIER MP 2352 PS3
+- Lanier MP 2501
+- LANIER MP 2501 PS3
+- Lanier MP 2510/LD325
+- LANIER MP 2510/LD325 PS3
+- Lanier MP 2550/LD425
+- LANIER MP 2550/LD425 PS3
+- Lanier MP 2550B/LD425B
+- LANIER MP 2550B/LD425B PS3
+- Lanier MP 2553
+- LANIER MP 2553 PS3
+- Lanier MP 2554
+- LANIER MP 2554 PS3
+- Lanier MP 2555
+- LANIER MP 2555 PS3
+- Lanier MP 2851/LD528
+- LANIER MP 2851/LD528 PS3
+- Lanier MP 2852
+- LANIER MP 2852 PS3
+- Lanier MP 301
+- LANIER MP 301 PS3
+- Lanier MP 3010/LD330
+- LANIER MP 3010/LD330 PS3
+- Lanier MP 305+
+- LANIER MP 305+ PS3
+- Lanier MP 3053
+- LANIER MP 3053 PS3
+- Lanier MP 3054
+- LANIER MP 3054 PS3
+- Lanier MP 3055
+- LANIER MP 3055 PS3
+- Lanier MP 3350/LD433
+- LANIER MP 3350/LD433 PS3
+- Lanier MP 3350B/LD433B
+- LANIER MP 3350B/LD433B PS3
+- Lanier MP 3351/LD533
+- LANIER MP 3351/LD533 PS3
+- Lanier MP 3352
+- LANIER MP 3352 PS3
+- Lanier MP 3353
+- LANIER MP 3353 PS3
+- Lanier MP 3500/LD335
+- LANIER MP 3500/LD335 PS3
+- Lanier MP 3554
+- LANIER MP 3554 PS3
+- Lanier MP 3555
+- LANIER MP 3555 PS3
+- Lanier MP 4000/LD040
+- LANIER MP 4000/LD040 PS3
+- Lanier MP 4000B/LD040B
+- LANIER MP 4000B/LD040B PS3
+- Lanier MP 4001/LD140
+- LANIER MP 4001/LD140 PS3
+- Lanier MP 4002
+- LANIER MP 4002 PS3
+- Lanier MP 401SPF
+- LANIER MP 401SPF PS3
+- Lanier MP 402SPF
+- LANIER MP 402SPF PS3
+- Lanier MP 4054
+- LANIER MP 4054 PS3
+- Lanier MP 4055
+- LANIER MP 4055 PS3
+- Lanier MP 4500/LD345
+- LANIER MP 4500/LD345 PS3
+- Lanier MP 5000/LD050
+- LANIER MP 5000/LD050 PS3
+- Lanier MP 5000B/LD050B
+- LANIER MP 5000B/LD050B PS3
+- Lanier MP 5001/LD150
+- LANIER MP 5001/LD150 PS3
+- Lanier MP 5002
+- LANIER MP 5002 PS3
+- Lanier MP 501
+- LANIER MP 501 PS3
+- Lanier MP 5054
+- LANIER MP 5054 PS3
+- Lanier MP 5055
+- LANIER MP 5055 PS3
+- Lanier MP 5500/LD255
+- LANIER MP 5500/LD255 PS3
+- Lanier MP 6000/LD260
+- LANIER MP 6000/LD260 PS3
+- Lanier MP 6001/LD360
+- LANIER MP 6001/LD360 PS3
+- Lanier MP 6002
+- LANIER MP 6002 PS3
+- Lanier MP 601
+- LANIER MP 601 PS3
+- Lanier MP 6054
+- LANIER MP 6054 PS3
+- Lanier MP 6055
+- LANIER MP 6055 PS3
+- Lanier MP 6500/LD265
+- LANIER MP 6500/LD265 PS3
+- Lanier MP 6503
+- LANIER MP 6503 PS3
+- Lanier MP 7000/LD270
+- LANIER MP 7000/LD270 PS3
+- Lanier MP 7001/LD370
+- LANIER MP 7001/LD370 PS3
+- Lanier MP 7500/LD275
+- LANIER MP 7500/LD275 PS3
+- Lanier MP 7502
+- LANIER MP 7502 PS3
+- Lanier MP 7503
+- LANIER MP 7503 PS3
+- Lanier MP 8000/LD280
+- LANIER MP 8000/LD280 PS3
+- Lanier MP 8001/LD380
+- LANIER MP 8001/LD380 PS3
+- Lanier MP 9000/LD190
+- LANIER MP 9000/LD190 PS3
+- Lanier MP 9001/LD390
+- LANIER MP 9001/LD390 PS3
+- Lanier MP 9002
+- LANIER MP 9002 PS3
+- Lanier MP 9003
+- LANIER MP 9003 PS3
+- Lanier MP C2003
+- LANIER MP C2003 PS3
+- Lanier MP C2004
+- LANIER MP C2004 PS3
+- Lanier MP C2004ex
+- LANIER MP C2004ex PS3
+- Lanier MP C2050/LD520C
+- LANIER MP C2050/LD520C PS3
+- Lanier MP C2500/LD425c
+- LANIER MP C2500/LD425c PS3
+- Lanier MP C2503
+- LANIER MP C2503 PS3
+- Lanier MP C2504
+- LANIER MP C2504 PS3
+- Lanier MP C2504ex
+- LANIER MP C2504ex PS3
+- Lanier MP C2550/LD525C
+- LANIER MP C2550/LD525C PS3
+- Lanier MP C2800/LD528C
+- LANIER MP C2800/LD528C PS3
+- Lanier MP C300
+- LANIER MP C300 PS3
+- Lanier MP C3000/LD430c
+- LANIER MP C3000/LD430c PS3
+- Lanier MP C3001/LD630C
+- LANIER MP C3001/LD630C PS3
+- Lanier MP C3002
+- LANIER MP C3002 PS3
+- Lanier MP C3003
+- LANIER MP C3003 PS3
+- Lanier MP C3004
+- LANIER MP C3004 PS3
+- Lanier MP C3004ex
+- LANIER MP C3004ex PS3
+- Lanier MP C300SR
+- LANIER MP C300SR PS3
+- Lanier MP C305
+- LANIER MP C305 PS3
+- Lanier MP C306Z
+- LANIER MP C306Z PS3
+- Lanier MP C307
+- LANIER MP C307 PS3
+- Lanier MP C3300/LD533C
+- LANIER MP C3300/LD533C PS3
+- Lanier MP C3500/LD435c
+- LANIER MP C3500/LD435c PS3
+- Lanier MP C3501/LD635C
+- LANIER MP C3501/LD635C PS3
+- Lanier MP C3502
+- LANIER MP C3502 PS3
+- Lanier MP C3503
+- LANIER MP C3503 PS3
+- Lanier MP C3504
+- LANIER MP C3504 PS3
+- Lanier MP C3504ex
+- LANIER MP C3504ex PS3
+- Lanier MP C400
+- LANIER MP C400 PS3
+- Lanier MP C4000/LD540C
+- LANIER MP C4000/LD540C PS3
+- Lanier MP C400SR
+- LANIER MP C400SR PS3
+- Lanier MP C401
+- LANIER MP C401 PS3
+- Lanier MP C401SR
+- LANIER MP C401SR PS3
+- Lanier MP C406Z
+- LANIER MP C406Z PS3
+- Lanier MP C407
+- LANIER MP C407 PS3
+- Lanier MP C4500/LD445c
+- LANIER MP C4500/LD445c PS3
+- Lanier MP C4501/LD645C
+- LANIER MP C4501/LD645C PS3
+- Lanier MP C4502
+- LANIER MP C4502 PS3
+- Lanier MP C4502A
+- LANIER MP C4502A PS3
+- Lanier MP C4503
+- LANIER MP C4503 PS3
+- Lanier MP C4504
+- LANIER MP C4504 PS3
+- Lanier MP C4504ex
+- LANIER MP C4504ex PS3
+- Lanier MP C5000/LD550C
+- LANIER MP C5000/LD550C PS3
+- Lanier MP C501
+- LANIER MP C501 PS3
+- Lanier MP C5501/LD655C
+- LANIER MP C5501/LD655C PS3
+- Lanier MP C5502
+- LANIER MP C5502 PS3
+- Lanier MP C5502A
+- LANIER MP C5502A PS3
+- Lanier MP C5503
+- LANIER MP C5503 PS3
+- Lanier MP C5504ex
+- LANIER MP C5504ex PS3
+- Lanier MP C6000/LD260c
+- LANIER MP C6000/LD260c PS3
+- Lanier MP C6003
+- LANIER MP C6003 PS3
+- Lanier MP C6004
+- LANIER MP C6004 PS3
+- Lanier MP C6004ex
+- LANIER MP C6004ex PS3
+- Lanier MP C6501/LD365C
+- LANIER MP C6501/LD365C PS3
+- Lanier MP C6502
+- LANIER MP C6502 PS3
+- Lanier MP C6503
+- LANIER MP C6503 PS3
+- Lanier MP C7500/LD275c
+- LANIER MP C7500/LD275c PS3
+- Lanier MP C7501/LD375C
+- LANIER MP C7501/LD375C PS3
+- Lanier MP C8002
+- LANIER MP C8002 PS3
+- Lanier MP C8003
+- LANIER MP C8003 PS3
+- Lanier MP CW2200
+- LANIER MP CW2200 PS3
+- Lanier MP CW2201
+- LANIER MP CW2201 PS3
+- Lanier MP W6700
+- LANIER MP W6700 PS3
+- Lanier MP W7100
+- LANIER MP W7100 PS3
+- Lanier MP W8140
+- LANIER MP W8140 PS3
+- Lanier MP2500/LD125
+- LANIER MP2500/LD125 PS3
+- Lanier MPC1500/LD215c
+- LANIER MPC1500/LD215c PS3
+- Lanier MPC4501A/LD645CA
+- LANIER MPC4501A/LD645CA PS3
+- Lanier MPC5501A/LD655CA
+- LANIER MPC5501A/LD655CA PS3
+- Lanier P 501
+- LANIER P 501 PS3
+- Lanier P 502
+- LANIER P 502 PS3
+- Lanier P 800
+- LANIER P 800 PS3
+- Lanier P 801
+- LANIER P 801 PS3
+- Lanier P C600
+- LANIER P C600 PS3
+- Lanier Pro 1106EX
+- LANIER Pro 1106EX PS3
+- Lanier Pro 1107EX
+- LANIER Pro 1107EX PS3
+- Lanier Pro 1356EX
+- LANIER Pro 1356EX PS3
+- Lanier Pro 1357EX
+- LANIER Pro 1357EX PS3
+- Lanier Pro 8100S
+- LANIER Pro 8100S PS3
+- Lanier Pro 8110
+- LANIER Pro 8110 PS3
+- Lanier Pro 8110S
+- LANIER Pro 8110S PS3
+- Lanier Pro 8120
+- LANIER Pro 8120 PS3
+- Lanier Pro 8120S
+- LANIER Pro 8120S PS3
+- Lanier Pro 8200S
+- LANIER Pro 8200S PS3
+- Lanier Pro 8210
+- LANIER Pro 8210 PS3
+- Lanier Pro 8210S
+- LANIER Pro 8210S PS3
+- Lanier Pro 8220
+- LANIER Pro 8220 PS3
+- Lanier Pro 8220S
+- LANIER Pro 8220S PS3
+- Lanier Pro 8300S
+- LANIER Pro 8300S PS3
+- Lanier Pro 8310
+- LANIER Pro 8310 PS3
+- Lanier Pro 8310S
+- LANIER Pro 8310S PS3
+- Lanier Pro 8320
+- LANIER Pro 8320 PS3
+- Lanier Pro 8320S
+- LANIER Pro 8320S PS3
+- Lanier Pro 906EX
+- LANIER Pro 906EX PS3
+- Lanier Pro 907EX
+- LANIER Pro 907EX PS3
+- Lanier Pro C5100S
+- LANIER Pro C5100S PS3
+- Lanier Pro C5110S
+- LANIER Pro C5110S PS3
+- Lanier Pro C5200S
+- LANIER Pro C5200S PS3
+- Lanier Pro C5210S
+- LANIER Pro C5210S PS3
+- Lanier Pro C5300S
+- LANIER Pro C5300S PS3
+- Lanier Pro C5310S
+- LANIER Pro C5310S PS3
+- Lanier Pro C7100
+- LANIER Pro C7100 PS3
+- Lanier Pro C7100S
+- LANIER Pro C7100S PS3
+- Lanier Pro C7110
+- LANIER Pro C7110 PS3
+- Lanier Pro C7110S
+- LANIER Pro C7110S PS3
+- Lanier Pro C7200
+- LANIER Pro C7200 PS3
+- Lanier Pro C7200S
+- Lanier Pro C7200S Light
+- LANIER Pro C7200S Light PS3
+- LANIER Pro C7200S PS3
+- Lanier Pro C7210
+- LANIER Pro C7210 PS3
+- Lanier Pro C7210S
+- LANIER Pro C7210S PS3
+- Lanier SP 3400N
+- Lanier SP 3400SF
+- Lanier SP 3410DN
+- Lanier SP 3410SF
+- Lanier SP 3600DN
+- LANIER SP 3600DN PS3
+- Lanier SP 3600SF
+- LANIER SP 3600SF PS3
+- Lanier SP 3610SF
+- LANIER SP 3610SF PS3
+- Lanier SP 4100N
+- LANIER SP 4100N PS3
+- Lanier SP 4100NL
+- LANIER SP 4100NL PS3
+- Lanier SP 4110N
+- LANIER SP 4110N PS3
+- Lanier SP 4210N
+- LANIER SP 4210N PS3
+- Lanier SP 4310N
+- LANIER SP 4310N PS3
+- Lanier SP 4510DN
+- LANIER SP 4510DN PS3
+- Lanier SP 4510SF
+- LANIER SP 4510SF PS3
+- Lanier SP 4520DN
+- LANIER SP 4520DN PS3
+- Lanier SP 5200DN
+- LANIER SP 5200DN PS3
+- Lanier SP 5200S
+- LANIER SP 5200S PS3
+- Lanier SP 5210DN
+- LANIER SP 5210DN PS3
+- Lanier SP 5210SF
+- LANIER SP 5210SF PS3
+- Lanier SP 5210SR
+- LANIER SP 5210SR PS3
+- Lanier SP 5300
+- LANIER SP 5300 PS3
+- Lanier SP 5310
+- LANIER SP 5310 PS3
+- Lanier SP 6330N
+- LANIER SP 6330N PS3
+- Lanier SP 6430DN
+- LANIER SP 6430DN PS3
+- Lanier SP 8300DN
+- LANIER SP 8300DN PS3
+- Lanier SP 8400DN
+- LANIER SP 8400DN PS3
+- Lanier SP 9100/LP275
+- LANIER SP 9100/LP275 PS3
+- Lanier SP C221N
+- Lanier SP C221N PS3
+- Lanier SP C222DN
+- Lanier SP C222DN PS3
+- Lanier SP C222SF
+- Lanier SP C222SF PS3
+- Lanier SP C231N
+- Lanier SP C231N PS3
+- Lanier SP C232DN
+- Lanier SP C232DN PS3
+- Lanier SP C232SF
+- Lanier SP C232SF PS3
+- Lanier SP C311N
+- Lanier SP C311N PS3
+- Lanier SP C312DN
+- Lanier SP C312DN PS3
+- Lanier SP C320DN
+- LANIER SP C320DN PS3
+- Lanier SP C340DN
+- LANIER SP C340DN PS3
+- Lanier SP C342DN
+- LANIER SP C342DN PS3
+- Lanier SP C352DN
+- LANIER SP C352DN PS3
+- Lanier SP C360DNw
+- LANIER SP C360DNw PS3
+- Lanier SP C360SFNw
+- LANIER SP C360SFNw PS3
+- Lanier SP C361SFNw
+- LANIER SP C361SFNw PS3
+- Lanier SP C400DN
+- LANIER SP C400DN PS3
+- Lanier SP C430DN
+- LANIER SP C430DN PS3
+- Lanier SP C431DN
+- LANIER SP C431DN PS3
+- Lanier SP C435DN
+- LANIER SP C435DN PS3
+- Lanier SP C440DN
+- LANIER SP C440DN PS3
+- Lanier SP C730DN
+- LANIER SP C730DN PS3
+- Lanier SP C830DN
+- LANIER SP C830DN PS3
+- Lanier SP C831DN
+- LANIER SP C831DN PS3
+- Lanier SP C840DN
+- LANIER SP C840DN PS3
+- Lanier SP C842DN
+- LANIER SP C842DN PS3
+
+### Foomatic: Lexmark
+
+- Lexmark 6500e
+- Lexmark 6500e Series
+- Lexmark B2300 Series
+- Lexmark B2338dn
+- Lexmark B2338dw
+- Lexmark B2400 Series
+- Lexmark B2442dn
+- Lexmark B2442dw
+- Lexmark B2500 Series
+- Lexmark B2546dn
+- Lexmark B2600 Series
+- Lexmark B2650dn
+- Lexmark B2860 Series
+- Lexmark B2865dw
+- Lexmark C2100 Series
+- Lexmark C2132
+- Lexmark C2200 Series
+- Lexmark C2240
+- Lexmark C2300 Series
+- Lexmark C2325dw
+- Lexmark C2400 Series
+- Lexmark C2425dw
+- Lexmark C2500 Series
+- Lexmark C2535dw
+- Lexmark C3400 Series
+- Lexmark C3426dw
+- Lexmark C4100 Series
+- Lexmark C4150
+- Lexmark C510
+- Lexmark C520
+- Lexmark C522
+- Lexmark C524
+- Lexmark C540
+- Lexmark C543
+- Lexmark C544
+- Lexmark C546
+- Lexmark C6100 Series
+- Lexmark C6160de
+- Lexmark C734
+- Lexmark C736
+- Lexmark C740 Series
+- Lexmark C746
+- Lexmark C748
+- Lexmark C750
+- Lexmark C752
+- Lexmark C780
+- Lexmark C782
+- Lexmark C790 Series
+- Lexmark C792
+- Lexmark C910
+- Lexmark C912
+- Lexmark C920 Series
+- Lexmark C9200 Series
+- Lexmark C9235
+- Lexmark C925
+- Lexmark C930
+- Lexmark C935
+- Lexmark C950
+- Lexmark C950 Series
+- Lexmark CS310 Series
+- Lexmark CS310dn
+- Lexmark CS310n
+- Lexmark CS410 Series
+- Lexmark CS410dn
+- Lexmark CS410n
+- Lexmark CS420 Series
+- Lexmark CS421dn
+- Lexmark CS430 Series
+- Lexmark CS431dw
+- Lexmark CS510 Series
+- Lexmark CS510de
+- Lexmark CS520 Series
+- Lexmark CS521dn
+- Lexmark CS620 Series
+- Lexmark CS622de
+- Lexmark CS720 Series
+- Lexmark CS720de
+- Lexmark CS720dte
+- Lexmark CS725 Series
+- Lexmark CS725de
+- Lexmark CS725dte
+- Lexmark CS727de
+- Lexmark CS728de
+- Lexmark CS820 Series
+- Lexmark CS820de
+- Lexmark CS820dte
+- Lexmark CS820dtfe
+- Lexmark CS827de
+- Lexmark CS920 Series
+- Lexmark CS921de
+- Lexmark CS923de
+- Lexmark CS927de
+- Lexmark CX310 Series
+- Lexmark CX310dn
+- Lexmark CX310n
+- Lexmark CX410 Series
+- Lexmark CX410de
+- Lexmark CX410e
+- Lexmark CX420 Series
+- Lexmark CX421adn
+- Lexmark CX430 Series
+- Lexmark CX431adw
+- Lexmark CX510 Series
+- Lexmark CX510de
+- Lexmark CX520 Series
+- Lexmark CX522ade
+- Lexmark CX620 Series
+- Lexmark CX622ade
+- Lexmark CX622adhe
+- Lexmark CX625 Series
+- Lexmark CX625ade
+- Lexmark CX625adhe
+- Lexmark CX625adthe
+- Lexmark CX725 Series
+- Lexmark CX725de
+- Lexmark CX725dhe
+- Lexmark CX725dthe
+- Lexmark CX727de
+- Lexmark CX820 Series
+- Lexmark CX820de
+- Lexmark CX820dtfe
+- Lexmark CX825 Series
+- Lexmark CX825de
+- Lexmark CX825dte
+- Lexmark CX825dtfe
+- Lexmark CX825dtpe
+- Lexmark CX827de
+- Lexmark CX860 Series
+- Lexmark CX860de
+- Lexmark CX860dte
+- Lexmark CX860dtfe
+- Lexmark CX860dtpe
+- Lexmark CX920 Series
+- Lexmark CX920de
+- Lexmark CX921de
+- Lexmark CX922de
+- Lexmark CX923dte
+- Lexmark CX923dxe
+- Lexmark CX924dte
+- Lexmark CX924dxe
+- Lexmark CX927de
+- Lexmark E260
+- Lexmark E260d
+- Lexmark E260dn
+- Lexmark E350d
+- Lexmark E352dn
+- Lexmark E360d
+- Lexmark E360dn
+- Lexmark E460dn
+- Lexmark E460dw
+- Lexmark E462dtn
+- Lexmark EG460dn
+- Lexmark M1100 Series
+- Lexmark M1140
+- Lexmark M1140 Plus
+- Lexmark M1145
+- Lexmark M1200 Series
+- Lexmark M1242
+- Lexmark M1246
+- Lexmark M3100 Series
+- Lexmark M3150
+- Lexmark M3200 Series
+- Lexmark M3250
+- Lexmark M5100 Series
+- Lexmark M5155
+- Lexmark M5163
+- Lexmark M5170
+- Lexmark M5200 Series
+- Lexmark M5255
+- Lexmark M5265
+- Lexmark M5270
+- Lexmark MB2300 Series
+- Lexmark MB2338adn
+- Lexmark MB2338adw
+- Lexmark MB2338dw
+- Lexmark MB2400 Series
+- Lexmark MB2442ade
+- Lexmark MB2442adwe
+- Lexmark MB2500 Series
+- Lexmark MB2546ade
+- Lexmark MB2600 Series
+- Lexmark MB2650ade
+- Lexmark MB2700 Series
+- Lexmark MB2770adwhe
+- Lexmark MC2300 Series
+- Lexmark MC2325adw
+- Lexmark MC2400 Series
+- Lexmark MC2425adw
+- Lexmark MC2500 Series
+- Lexmark MC2535adwe
+- Lexmark MC2600 Series
+- Lexmark MC2640adwe
+- Lexmark MC3400 Series
+- Lexmark MC3426adw
+- Lexmark MS310 Series
+- Lexmark MS310d
+- Lexmark MS310dn
+- Lexmark MS312dn
+- Lexmark MS315dn
+- Lexmark MS320 Series
+- Lexmark MS321dn
+- Lexmark MS410 Series
+- Lexmark MS410d
+- Lexmark MS410dn
+- Lexmark MS415dn
+- Lexmark MS420 Series
+- Lexmark MS421dn
+- Lexmark MS421dw
+- Lexmark MS510 Series
+- Lexmark MS510dn
+- Lexmark MS520 Series
+- Lexmark MS521dn
+- Lexmark MS610 Series
+- Lexmark MS610de
+- Lexmark MS610dn
+- Lexmark MS620 Series
+- Lexmark MS621dn
+- Lexmark MS621dtn
+- Lexmark MS622de
+- Lexmark MS622dte
+- Lexmark MS710
+- Lexmark MS710 Series
+- Lexmark MS711
+- Lexmark MS725 Series
+- Lexmark MS725dvn
+- Lexmark MS810
+- Lexmark MS810 Series
+- Lexmark MS811
+- Lexmark MS812
+- Lexmark MS820 Series
+- Lexmark MS821dn
+- Lexmark MS821dtn
+- Lexmark MS821n
+- Lexmark MS822de
+- Lexmark MS823dn
+- Lexmark MS823n
+- Lexmark MS824de
+- Lexmark MS824dtn
+- Lexmark MS825dn
+- Lexmark MS826de
+- Lexmark MS826dtn
+- Lexmark MS910
+- Lexmark MS910 Series
+- Lexmark MS911de
+- Lexmark MX310 Series
+- Lexmark MX310dn
+- Lexmark MX320 Series
+- Lexmark MX321adn
+- Lexmark MX321adw
+- Lexmark MX410 Series
+- Lexmark MX410de
+- Lexmark MX420 Series
+- Lexmark MX421ade
+- Lexmark MX510 Series
+- Lexmark MX510de
+- Lexmark MX511de
+- Lexmark MX511dhe
+- Lexmark MX520 Series
+- Lexmark MX521ade
+- Lexmark MX521adte
+- Lexmark MX521de
+- Lexmark MX522adhe
+- Lexmark MX610 Series
+- Lexmark MX610de
+- Lexmark MX611de
+- Lexmark MX611dhe
+- Lexmark MX620 Series
+- Lexmark MX622ade
+- Lexmark MX622adhe
+- Lexmark MX622adthe
+- Lexmark MX6500e
+- Lexmark MX6500e Series
+- Lexmark MX710
+- Lexmark MX710 Series
+- Lexmark MX711
+- Lexmark MX720 Series
+- Lexmark MX721ade
+- Lexmark MX721adhe
+- Lexmark MX722ade
+- Lexmark MX722adhe
+- Lexmark MX725 Series
+- Lexmark MX725adve
+- Lexmark MX810
+- Lexmark MX810 Series
+- Lexmark MX811
+- Lexmark MX812
+- Lexmark MX820 Series
+- Lexmark MX822ade
+- Lexmark MX822adtfe
+- Lexmark MX822adxe
+- Lexmark MX824ade
+- Lexmark MX824adtfe
+- Lexmark MX824adxe
+- Lexmark MX826ade
+- Lexmark MX826adtfe
+- Lexmark MX826adxe
+- Lexmark MX910
+- Lexmark MX910 Series
+- Lexmark MX910de
+- Lexmark MX911
+- Lexmark MX911dte
+- Lexmark MX912
+- Lexmark MX912dxe
+- Lexmark T650
+- Lexmark T652
+- Lexmark T654
+- Lexmark T656
+- Lexmark TG654
+- Lexmark W850
+- Lexmark X203n
+- Lexmark X204n
+- Lexmark X264dn
+- Lexmark X363dn
+- Lexmark X364dn
+- Lexmark X364dw
+- Lexmark X463de
+- Lexmark X464de
+- Lexmark X466de
+- Lexmark X466dte
+- Lexmark X466dwe
+- Lexmark X543
+- Lexmark X544
+- Lexmark X546
+- Lexmark X548
+- Lexmark X548 Series
+- Lexmark X651de
+- Lexmark X652de
+- Lexmark X654de
+- Lexmark X656de
+- Lexmark X658de
+- Lexmark X734de
+- Lexmark X736de
+- Lexmark X738de
+- Lexmark X740 Series
+- Lexmark X746
+- Lexmark X748
+- Lexmark X790 Series
+- Lexmark X792
+- Lexmark X860de
+- Lexmark X862de
+- Lexmark X864de
+- Lexmark X920 Series
+- Lexmark X925
+- Lexmark X940e
+- Lexmark X945e
+- Lexmark X950
+- Lexmark X950 Series
+- Lexmark X952
+- Lexmark X954
+- Lexmark XC2100 Series
+- Lexmark XC2130
+- Lexmark XC2132
+- Lexmark XC2200 Series
+- Lexmark XC2235
+- Lexmark XC2240
+- Lexmark XC4100 Series
+- Lexmark XC4140
+- Lexmark XC4150
+- Lexmark XC4200 Series
+- Lexmark XC4240
+- Lexmark XC6100 Series
+- Lexmark XC6152de
+- Lexmark XC6152dtfe
+- Lexmark XC8100 Series
+- Lexmark XC8155de
+- Lexmark XC8155dte
+- Lexmark XC8160de
+- Lexmark XC8160dte
+- Lexmark XC9200 Series
+- Lexmark XC9225
+- Lexmark XC9235
+- Lexmark XC9245
+- Lexmark XC9255
+- Lexmark XC9265
+- Lexmark XM1100 Series
+- Lexmark XM1135
+- Lexmark XM1140
+- Lexmark XM1145
+- Lexmark XM1200 Series
+- Lexmark XM1242
+- Lexmark XM1246
+- Lexmark XM3100 Series
+- Lexmark XM3150
+- Lexmark XM3200 Series
+- Lexmark XM3250
+- Lexmark XM5100 Series
+- Lexmark XM5163
+- Lexmark XM5170
+- Lexmark XM5300 Series
+- Lexmark XM5365
+- Lexmark XM5370
+- Lexmark XM7100 Series
+- Lexmark XM7155
+- Lexmark XM7163
+- Lexmark XM7170
+- Lexmark XM7300 Series
+- Lexmark XM7355
+- Lexmark XM7365
+- Lexmark XM7370
+- Lexmark XM9100
+- Lexmark XM9100 Series
+- Lexmark XM9145
+- Lexmark XM9155
+- Lexmark XM9165
+
+### Foomatic: NRG
+
+- NRG 10515/10518/10512
+- NRG 10515/10518/10512 PS3
+- NRG 2205/2238/2212
+- NRG 2205/2238/2212 PS3
+- NRG 2705/2738/2712
+- NRG 2705/2738/2712 PS3
+- NRG 3205/3238/3212
+- NRG 3205/3238/3212 PS3
+- NRG 3525/3508/3502
+- NRG 3525/3508/3502 PS3
+- NRG 3545/3518/3532
+- NRG 3545/3518/3532 PS3
+- NRG 4525/4508/4502
+- NRG 4525/4508/4502 PS3
+- NRG 4545/4518/4532
+- NRG 4545/4518/4532 PS3
+- NRG 6002/6005/6008
+- NRG 6002/6005/6008 PS3
+- NRG 7502/7505/7508
+- NRG 7502/7505/7508 PS3
+- NRG 9005/9008/9002
+- NRG 9005/9008/9002 PS3
+- NRG C7010
+- NRG C7010 PS3
+- NRG C7116
+- NRG C7116 PS3
+- NRG C7416
+- NRG C7416 PS3
+- NRG C7425dn
+- NRG C7425dn PS3
+- NRG C7425hdn
+- NRG C7425hdn PS3
+- NRG C7435n
+- NRG C7435n PS3
+- NRG C7521n
+- NRG C7521n PS3
+- NRG C7528n
+- NRG C7528n PS3
+- NRG C7535hdn
+- NRG C7535hdn PS3
+- NRG CC7417
+- NRG CC7417 PS3
+- NRG CS555
+- NRG CS555 PS3
+- NRG DSc224
+- NRG DSc224 PS3
+- NRG DSc232
+- NRG DSc232 PS3
+- NRG DSc328
+- NRG DSc328 PS3
+- NRG DSc332
+- NRG DSc332 PS3
+- NRG DSc338
+- NRG DSc338 PS3
+- NRG DSc38
+- NRG DSc38 PS3
+- NRG DSc38u
+- NRG DSc38u PS3
+- NRG DSc424
+- NRG DSc424 PS3
+- NRG DSc428
+- NRG DSc428 PS3
+- NRG DSc432
+- NRG DSc432 PS3
+- NRG DSc435
+- NRG DSc435 PS3
+- NRG DSc445
+- NRG DSc445 PS3
+- NRG DSc460
+- NRG DSc460 PS3
+- NRG DSm415
+- NRG DSm415 PS3
+- NRG DSm615
+- NRG DSm615 PS3
+- NRG DSm616
+- NRG DSm616 PS3
+- NRG DSm618
+- NRG DSm618 PS3
+- NRG DSm618d
+- NRG DSm618d PS3
+- NRG DSm620
+- NRG DSm620 PS3
+- NRG DSm620d
+- NRG DSm620d PS3
+- NRG DSm622
+- NRG DSm622 PS3
+- NRG DSm627
+- NRG DSm627 PS3
+- NRG DSm632
+- NRG DSm632 PS3
+- NRG DSm635
+- NRG DSm635 PS3
+- NRG DSm645
+- NRG DSm645 PS3
+- NRG DSm651
+- NRG DSm651 PS3
+- NRG DSm660
+- NRG DSm660 PS3
+- NRG DSm675
+- NRG DSm675 PS3
+- NRG DSm725
+- NRG DSm725 PS3
+- NRG DSm730
+- NRG DSm730 PS3
+- NRG DSm735
+- NRG DSm735 PS3
+- NRG DSm745
+- NRG DSm745 PS3
+- NRG IM 2500
+- NRG IM 2500 PS3
+- NRG IM 2702
+- NRG IM 2702 PS3
+- NRG IM 3000
+- NRG IM 3000 PS3
+- NRG IM 350
+- NRG IM 350 PS3
+- NRG IM 3500
+- NRG IM 3500 PS3
+- NRG IM 370
+- NRG IM 370 PS3
+- NRG IM 4000
+- NRG IM 4000 PS3
+- NRG IM 430
+- NRG IM 430 PS3
+- NRG IM 460
+- NRG IM 460 PS3
+- NRG IM 5000
+- NRG IM 5000 PS3
+- NRG IM 550
+- NRG IM 550 PS3
+- NRG IM 600
+- NRG IM 600 PS3
+- NRG IM 6000
+- NRG IM 6000 PS3
+- NRG IM 600SR
+- NRG IM 600SR PS3
+- NRG IM 7000
+- NRG IM 7000 PS3
+- NRG IM 8000
+- NRG IM 8000 PS3
+- NRG IM 9000
+- NRG IM 9000 PS3
+- NRG IM C2000
+- NRG IM C2000 PS3
+- NRG IM C2010
+- NRG IM C2010 PS3
+- NRG IM C2500
+- NRG IM C2500 PS3
+- NRG IM C2510
+- NRG IM C2510 PS3
+- NRG IM C300
+- NRG IM C300 PS3
+- NRG IM C3000
+- NRG IM C3000 PS3
+- NRG IM C3010
+- NRG IM C3010 PS3
+- NRG IM C3500
+- NRG IM C3500 PS3
+- NRG IM C3510
+- NRG IM C3510 PS3
+- NRG IM C400
+- NRG IM C400 PS3
+- NRG IM C400SR
+- NRG IM C400SR PS3
+- NRG IM C4500
+- NRG IM C4500 PS3
+- NRG IM C4510
+- NRG IM C4510 PS3
+- NRG IM C530F
+- NRG IM C530F PS3
+- NRG IM C530FB
+- NRG IM C530FB PS3
+- NRG IM C5500
+- NRG IM C5500 PS3
+- NRG IM C5510
+- NRG IM C5510 PS3
+- NRG IM C6000
+- NRG IM C6000 PS3
+- NRG IM C6010
+- NRG IM C6010 PS3
+- NRG IM C6500
+- NRG IM C6500 PS3
+- NRG IM C8000
+- NRG IM C8000 PS3
+- NRG IM CW2200
+- NRG IM CW2200 PS3
+- NRG IP CW2200
+- NRG IP CW2200 PS3
+- NRG MP 1100
+- NRG MP 1100 PS3
+- NRG MP 1350
+- NRG MP 1350 PS3
+- NRG MP 1600
+- NRG MP 1600 PS3
+- NRG MP 161
+- NRG MP 161 PS3
+- NRG MP 171
+- NRG MP 171 PS3
+- NRG MP 2000
+- NRG MP 2000 PS3
+- NRG MP 2001
+- NRG MP 2001 PS3
+- NRG MP 201
+- NRG MP 201 PS3
+- NRG MP 2352
+- NRG MP 2352 PS3
+- NRG MP 2500
+- NRG MP 2500 PS3
+- NRG MP 2501
+- NRG MP 2501 PS3
+- NRG MP 2510
+- NRG MP 2510 PS3
+- NRG MP 2550
+- NRG MP 2550 PS3
+- NRG MP 2550B
+- NRG MP 2550B PS3
+- NRG MP 2553
+- NRG MP 2553 PS3
+- NRG MP 2554
+- NRG MP 2554 PS3
+- NRG MP 2555
+- NRG MP 2555 PS3
+- NRG MP 2851
+- NRG MP 2851 PS3
+- NRG MP 2852
+- NRG MP 2852 PS3
+- NRG MP 301
+- NRG MP 301 PS3
+- NRG MP 3010
+- NRG MP 3010 PS3
+- NRG MP 305+
+- NRG MP 305+ PS3
+- NRG MP 3053
+- NRG MP 3053 PS3
+- NRG MP 3054
+- NRG MP 3054 PS3
+- NRG MP 3055
+- NRG MP 3055 PS3
+- NRG MP 3350
+- NRG MP 3350 PS3
+- NRG MP 3350B
+- NRG MP 3350B PS3
+- NRG MP 3351
+- NRG MP 3351 PS3
+- NRG MP 3352
+- NRG MP 3352 PS3
+- NRG MP 3353
+- NRG MP 3353 PS3
+- NRG MP 3500
+- NRG MP 3500 PS3
+- NRG MP 3554
+- NRG MP 3554 PS3
+- NRG MP 3555
+- NRG MP 3555 PS3
+- NRG MP 4000
+- NRG MP 4000 PS3
+- NRG MP 4000B
+- NRG MP 4000B PS3
+- NRG MP 4001
+- NRG MP 4001 PS3
+- NRG MP 4002
+- NRG MP 4002 PS3
+- NRG MP 402SPF
+- NRG MP 402SPF PS3
+- NRG MP 4054
+- NRG MP 4054 PS3
+- NRG MP 4055
+- NRG MP 4055 PS3
+- NRG MP 4500
+- NRG MP 4500 PS3
+- NRG MP 5000
+- NRG MP 5000 PS3
+- NRG MP 5000B
+- NRG MP 5000B PS3
+- NRG MP 5001
+- NRG MP 5001 PS3
+- NRG MP 5002
+- NRG MP 5002 PS3
+- NRG MP 501
+- NRG MP 501 PS3
+- NRG MP 5054
+- NRG MP 5054 PS3
+- NRG MP 5055
+- NRG MP 5055 PS3
+- NRG MP 5500
+- NRG MP 5500 PS3
+- NRG MP 6000
+- NRG MP 6000 PS3
+- NRG MP 6001
+- NRG MP 6001 PS3
+- NRG MP 6002
+- NRG MP 6002 PS3
+- NRG MP 601
+- NRG MP 601 PS3
+- NRG MP 6054
+- NRG MP 6054 PS3
+- NRG MP 6055
+- NRG MP 6055 PS3
+- NRG MP 6500
+- NRG MP 6500 PS3
+- NRG MP 6503
+- NRG MP 6503 PS3
+- NRG MP 7000
+- NRG MP 7000 PS3
+- NRG MP 7001
+- NRG MP 7001 PS3
+- NRG MP 7500
+- NRG MP 7500 PS3
+- NRG MP 7502
+- NRG MP 7502 PS3
+- NRG MP 7503
+- NRG MP 7503 PS3
+- NRG MP 8000
+- NRG MP 8000 PS3
+- NRG MP 8001
+- NRG MP 8001 PS3
+- NRG MP 9000
+- NRG MP 9000 PS3
+- NRG MP 9001
+- NRG MP 9001 PS3
+- NRG MP 9002
+- NRG MP 9002 PS3
+- NRG MP 9003
+- NRG MP 9003 PS3
+- NRG MP C1500sp
+- NRG MP C1500sp PS3
+- NRG MP C2003
+- NRG MP C2003 PS3
+- NRG MP C2003Z
+- NRG MP C2003Z PS3
+- NRG MP C2004
+- NRG MP C2004 PS3
+- NRG MP C2004ex
+- NRG MP C2004ex PS3
+- NRG MP C2011
+- NRG MP C2011 PS3
+- NRG MP C2050
+- NRG MP C2050 PS3
+- NRG MP C2051
+- NRG MP C2051 PS3
+- NRG MP C2500
+- NRG MP C2500 PS3
+- NRG MP C2503
+- NRG MP C2503 PS3
+- NRG MP C2503Z
+- NRG MP C2503Z PS3
+- NRG MP C2504
+- NRG MP C2504 PS3
+- NRG MP C2504ex
+- NRG MP C2504ex PS3
+- NRG MP C2550
+- NRG MP C2550 PS3
+- NRG MP C2551
+- NRG MP C2551 PS3
+- NRG MP C2800
+- NRG MP C2800 PS3
+- NRG MP C300
+- NRG MP C300 PS3
+- NRG MP C3000
+- NRG MP C3000 PS3
+- NRG MP C3001
+- NRG MP C3001 PS3
+- NRG MP C3002
+- NRG MP C3002 PS3
+- NRG MP C3003
+- NRG MP C3003 PS3
+- NRG MP C3004
+- NRG MP C3004 PS3
+- NRG MP C3004ex
+- NRG MP C3004ex PS3
+- NRG MP C300SR
+- NRG MP C300SR PS3
+- NRG MP C305
+- NRG MP C305 PS3
+- NRG MP C306Z
+- NRG MP C306Z PS3
+- NRG MP C307
+- NRG MP C307 PS3
+- NRG MP C3300
+- NRG MP C3300 PS3
+- NRG MP C3500
+- NRG MP C3500 PS3
+- NRG MP C3501
+- NRG MP C3501 PS3
+- NRG MP C3502
+- NRG MP C3502 PS3
+- NRG MP C3503
+- NRG MP C3503 PS3
+- NRG MP C3504
+- NRG MP C3504 PS3
+- NRG MP C3504ex
+- NRG MP C3504ex PS3
+- NRG MP C400
+- NRG MP C400 PS3
+- NRG MP C4000
+- NRG MP C4000 PS3
+- NRG MP C400SR
+- NRG MP C400SR PS3
+- NRG MP C401
+- NRG MP C401 PS3
+- NRG MP C401SR
+- NRG MP C401SR PS3
+- NRG MP C406Z
+- NRG MP C406Z PS3
+- NRG MP C407
+- NRG MP C407 PS3
+- NRG MP C4500
+- NRG MP C4500 PS3
+- NRG MP C4501
+- NRG MP C4501 PS3
+- NRG MP C4501A
+- NRG MP C4501A PS3
+- NRG MP C4502
+- NRG MP C4502 PS3
+- NRG MP C4502A
+- NRG MP C4502A PS3
+- NRG MP C4503
+- NRG MP C4503 PS3
+- NRG MP C4504
+- NRG MP C4504 PS3
+- NRG MP C4504ex
+- NRG MP C4504ex PS3
+- NRG MP C5000
+- NRG MP C5000 PS3
+- NRG MP C501
+- NRG MP C501 PS3
+- NRG MP C5501
+- NRG MP C5501 PS3
+- NRG MP C5501A
+- NRG MP C5501A PS3
+- NRG MP C5502
+- NRG MP C5502 PS3
+- NRG MP C5502A
+- NRG MP C5502A PS3
+- NRG MP C5503
+- NRG MP C5503 PS3
+- NRG MP C5504
+- NRG MP C5504 PS3
+- NRG MP C5504ex
+- NRG MP C5504ex PS3
+- NRG MP C6000
+- NRG MP C6000 PS3
+- NRG MP C6003
+- NRG MP C6003 PS3
+- NRG MP C6004
+- NRG MP C6004 PS3
+- NRG MP C6004ex
+- NRG MP C6004ex PS3
+- NRG MP C6501
+- NRG MP C6501 PS3
+- NRG MP C6502
+- NRG MP C6502 PS3
+- NRG MP C6503
+- NRG MP C6503 PS3
+- NRG MP C7500
+- NRG MP C7500 PS3
+- NRG MP C7501
+- NRG MP C7501 PS3
+- NRG MP C8002
+- NRG MP C8002 PS3
+- NRG MP C8003
+- NRG MP C8003 PS3
+- NRG MP CW2200
+- NRG MP CW2200 PS3
+- NRG MP CW2201
+- NRG MP CW2201 PS3
+- NRG MP W2400
+- NRG MP W2400 PS3
+- NRG MP W2401
+- NRG MP W2401 PS3
+- NRG MP W3600
+- NRG MP W3600 PS3
+- NRG MP W3601
+- NRG MP W3601 PS3
+- NRG MP W5100
+- NRG MP W5100 PS3
+- NRG MP W6700
+- NRG MP W6700 PS3
+- NRG MP W7100
+- NRG MP W7100 PS3
+- NRG MP W7140
+- NRG MP W7140 PS3
+- NRG MP W8140
+- NRG MP W8140 PS3
+- NRG P 800
+- NRG P 800 PS3
+- NRG P 801
+- NRG P 801 PS3
+- NRG P7026
+- NRG P7026 PS3
+- NRG P7026N
+- NRG P7026N PS3
+- NRG P7032
+- NRG P7032 PS3
+- NRG P7126
+- NRG P7126 PS3
+- NRG P7126N
+- NRG P7126N PS3
+- NRG P7132N
+- NRG P7132N PS3
+- NRG P7145
+- NRG P7145 PS3
+- NRG P7325
+- NRG P7325 PS3
+- NRG P7325N
+- NRG P7325N PS3
+- NRG P7431cn
+- NRG P7431cn PS3
+- NRG P7527
+- NRG P7527 PS3
+- NRG P7527n
+- NRG P7527n PS3
+- NRG P7535n
+- NRG P7535n PS3
+- NRG P7575
+- NRG P7575 PS3
+- NRG Pro 1106EX
+- NRG Pro 1106EX PS3
+- NRG Pro 1107EX
+- NRG Pro 1107EX PS3
+- NRG Pro 1356EX
+- NRG Pro 1356EX PS3
+- NRG Pro 1357EX
+- NRG Pro 1357EX PS3
+- NRG Pro 8100S
+- NRG Pro 8100S PS3
+- NRG Pro 8110
+- NRG Pro 8110 PS3
+- NRG Pro 8110S
+- NRG Pro 8110S PS3
+- NRG Pro 8120
+- NRG Pro 8120 PS3
+- NRG Pro 8120S
+- NRG Pro 8120S PS3
+- NRG Pro 8200S
+- NRG Pro 8200S PS3
+- NRG Pro 8210
+- NRG Pro 8210 PS3
+- NRG Pro 8210S
+- NRG Pro 8210S PS3
+- NRG Pro 8220
+- NRG Pro 8220 PS3
+- NRG Pro 8220S
+- NRG Pro 8220S PS3
+- NRG Pro 8300S
+- NRG Pro 8300S PS3
+- NRG Pro 8310
+- NRG Pro 8310 PS3
+- NRG Pro 8310S
+- NRG Pro 8310S PS3
+- NRG Pro 8320
+- NRG Pro 8320 PS3
+- NRG Pro 8320S
+- NRG Pro 8320S PS3
+- NRG Pro 906EX
+- NRG Pro 906EX PS3
+- NRG Pro 907EX
+- NRG Pro 907EX PS3
+- NRG Pro C5100S
+- NRG Pro C5100S PS3
+- NRG Pro C5110S
+- NRG Pro C5110S PS3
+- NRG Pro C5200S
+- NRG Pro C5200S PS3
+- NRG Pro C5210S
+- NRG Pro C5210S PS3
+- NRG Pro C5300S
+- NRG Pro C5300S PS3
+- NRG Pro C5300SL
+- NRG Pro C5300SL PS3
+- NRG Pro C5310S
+- NRG Pro C5310S PS3
+- NRG Pro C7100
+- NRG Pro C7100 PS3
+- NRG Pro C7100S
+- NRG Pro C7100S PS3
+- NRG Pro C7110
+- NRG Pro C7110 PS3
+- NRG Pro C7110S
+- NRG Pro C7110S PS3
+- NRG Pro C7200
+- NRG Pro C7200 PS3
+- NRG Pro C7200S
+- NRG Pro C7200S Light
+- NRG Pro C7200S Light PS3
+- NRG Pro C7200S PS3
+- NRG Pro C7210
+- NRG Pro C7210 PS3
+- NRG Pro C7210S
+- NRG Pro C7210S PS3
+- NRG SP 3400N
+- NRG SP 3400SF
+- NRG SP 3410DN
+- NRG SP 3410SF
+- NRG SP 3500N
+- NRG SP 3500SF
+- NRG SP 3510DN
+- NRG SP 3510SF
+- NRG SP 3600DN
+- NRG SP 3600DN PS3
+- NRG SP 3600SF
+- NRG SP 3600SF PS3
+- NRG SP 3610SF
+- NRG SP 3610SF PS3
+- NRG SP 4100N
+- NRG SP 4100N PS3
+- NRG SP 4100NL
+- NRG SP 4100NL PS3
+- NRG SP 4110N
+- NRG SP 4110N PS3
+- NRG SP 4210N
+- NRG SP 4210N PS3
+- NRG SP 4310N
+- NRG SP 4310N PS3
+- NRG SP 4510DN
+- NRG SP 4510DN PS3
+- NRG SP 4510SF
+- NRG SP 4510SF PS3
+- NRG SP 5200DN
+- NRG SP 5200DN PS3
+- NRG SP 5200S
+- NRG SP 5200S PS3
+- NRG SP 5210DN
+- NRG SP 5210DN PS3
+- NRG SP 5210SF
+- NRG SP 5210SF PS3
+- NRG SP 5210SR
+- NRG SP 5210SR PS3
+- NRG SP 5300
+- NRG SP 5300 PS3
+- NRG SP 5310
+- NRG SP 5310 PS3
+- NRG SP 6330N
+- NRG SP 6330N PS3
+- NRG SP 6430DN
+- NRG SP 6430DN PS3
+- NRG SP 8100DN
+- NRG SP 8100DN PS3
+- NRG SP 8200DN
+- NRG SP 8200DN PS3
+- NRG SP 8300DN
+- NRG SP 8300DN PS3
+- NRG SP 8400DN
+- NRG SP 8400DN PS3
+- NRG SP 9100DN
+- NRG SP 9100DN PS3
+- NRG SP C221N
+- NRG SP C221N PS3
+- NRG SP C222DN
+- NRG SP C222DN PS3
+- NRG SP C222SF
+- NRG SP C222SF PS3
+- NRG SP C231N
+- NRG SP C231N PS3
+- NRG SP C232DN
+- NRG SP C232DN PS3
+- NRG SP C232SF
+- NRG SP C232SF PS3
+- NRG SP C242DN
+- NRG SP C242DN PS3
+- NRG SP C242SF
+- NRG SP C242SF PS3
+- NRG SP C311N
+- NRG SP C311N PS3
+- NRG SP C312DN
+- NRG SP C312DN PS3
+- NRG SP C320DN
+- NRG SP C320DN PS3
+- NRG SP C340DN
+- NRG SP C340DN PS3
+- NRG SP C342DN
+- NRG SP C342DN PS3
+- NRG SP C352DN
+- NRG SP C352DN PS3
+- NRG SP C360SFNw
+- NRG SP C360SFNw PS3
+- NRG SP C360SNw
+- NRG SP C360SNw PS3
+- NRG SP C361SFNw
+- NRG SP C361SFNw PS3
+- NRG SP C410DN
+- NRG SP C410DN PS3
+- NRG SP C411DN
+- NRG SP C411DN PS3
+- NRG SP C420DN
+- NRG SP C420DN PS3
+- NRG SP C430DN
+- NRG SP C430DN PS3
+- NRG SP C431DN
+- NRG SP C431DN PS3
+- NRG SP C440DN
+- NRG SP C440DN PS3
+- NRG SP C730DN
+- NRG SP C730DN PS3
+- NRG SP C811DN
+- NRG SP C811DN PS3
+- NRG SP C820DN
+- NRG SP C820DN PS3
+- NRG SP C821DN
+- NRG SP C821DN PS3
+- NRG SP C830DN
+- NRG SP C830DN PS3
+- NRG SP C831DN
+- NRG SP C831DN PS3
+- NRG SP C840DN
+- NRG SP C840DN PS3
+- NRG SP C842DN
+- NRG SP C842DN PS3
+- NRG SP W2470
+- NRG SP W2470 PS3
+
+### Foomatic: Oce
+
+- Oce 3145
+- Oce 3155
+- Oce 3165
+- Oce 8445
+- Oce 8445 PS2
+- Oce 8445 PS3
+- Oce 8465
+- Oce 8465 PS2
+- Oce 8465 PS3
+- Oce 9230
+- Oce 9230 Series PS2
+- Oce 9245
+- Oce 9245 Series PS2
+- Oce 9260
+- Oce 9260 Series PS2
+- Oce NC3145 PS2
+- Oce NC3145 PS3
+- Oce NC3155 PS2
+- Oce NC3155 PS3
+- Oce NC3165 PS2
+- Oce NC3165 PS3
+- Oce PPC for 3073
+- Oce PPC for 3073 PS3
+- Oce PPC for 3074
+- Oce PPC for 3074 PS3
+- Oce PPC for 3093
+- Oce PPC for 3093 PS3
+- Oce PPC for 3094
+- Oce PPC for 3094 PS3
+- Oce PPC for 3113
+- Oce PPC for 3113 PS3
+- Oce PPC for 3114
+- Oce PPC for 3114 PS3
+- Oce PPC for 5115
+- Oce PPC for 5115 PS2
+- Oce PPC for 5160
+- Oce PPC for 5160 PS2
+- Oce VarioPrint 2045
+- Oce VarioPrint 2045 PS3
+- Oce VarioPrint 2050
+- Oce VarioPrint 2050 PS3
+- Oce VarioPrint 2055
+- Oce VarioPrint 2055 PS3
+- Oce VarioPrint 2060
+- Oce VarioPrint 2060 PS3
+- Oce VarioPrint 2065
+- Oce VarioPrint 2065 PS3
+- Oce VarioPrint 2070
+- Oce VarioPrint 2070 PS3
+- Oce VarioPrint 2090 PS3
+- Oce VarioPrint 2100 PS3
+- Oce VarioPrint 2105 PS3
+- Oce VarioPrint 2110 PS3
+- Oce VP2105 PS3
+
+### Foomatic: Oki
+
+- OKI B430
+- OKI B4300
+- OKI B4350
+- OKI B440
+- Oki C321
+- Oki C331
+- OKI C5300
+- Oki C531
+- OKI C5400
+- OKI C5450
+- OKI C5700
+- OKI C5900
+- OKI C6100
+- OKI C7100
+- OKI C7200
+- OKI C7300
+- OKI C7400
+- OKI C7500
+- OKI C8800
+- OKI C9200
+- OKI C9300
+- OKI C9400
+- OKI C9500
+- OKI C9600
+- OKI DATA CORP C321
+- OKI DATA CORP C331
+- OKI DATA CORP C531
+- OKI DATA CORP MC362
+- Oki MC362
+- Oki OKIPAGE 14i
+
+### Foomatic: Ricoh
+
+- Ricoh Aficio 1022
+- RICOH Aficio 1022 PS3
+- Ricoh Aficio 1027
+- RICOH Aficio 1027 PS3
+- Ricoh Aficio 1032
+- RICOH Aficio 1032 PS3
+- Ricoh Aficio 1035
+- RICOH Aficio 1035 PS3
+- Ricoh Aficio 1045
+- RICOH Aficio 1045 PS3
+- Ricoh Aficio 1060
+- RICOH Aficio 1060 PS3
+- Ricoh Aficio 1075
+- RICOH Aficio 1075 PS3
+- Ricoh Aficio 1224C
+- RICOH Aficio 1224C PS3
+- Ricoh Aficio 1232C
+- RICOH Aficio 1232C PS3
+- Ricoh Aficio 1515
+- RICOH Aficio 1515 PS3
+- Ricoh Aficio 2015
+- RICOH Aficio 2015 PS3
+- Ricoh Aficio 2016
+- RICOH Aficio 2016 PS3
+- Ricoh Aficio 2018
+- RICOH Aficio 2018 PS3
+- Ricoh Aficio 2018D
+- RICOH Aficio 2018D PS3
+- Ricoh Aficio 2020
+- RICOH Aficio 2020 PS3
+- Ricoh Aficio 2020D
+- RICOH Aficio 2020D PS3
+- Ricoh Aficio 2022
+- RICOH Aficio 2022 PS3
+- Ricoh Aficio 2027
+- RICOH Aficio 2027 PS3
+- Ricoh Aficio 2032
+- RICOH Aficio 2032 PS3
+- Ricoh Aficio 2035
+- RICOH Aficio 2035 PS3
+- Ricoh Aficio 2035e
+- RICOH Aficio 2035e PS3
+- Ricoh Aficio 2045
+- RICOH Aficio 2045 PS3
+- Ricoh Aficio 2045e
+- RICOH Aficio 2045e PS3
+- Ricoh Aficio 2051
+- RICOH Aficio 2051 PS3
+- Ricoh Aficio 2060
+- RICOH Aficio 2060 PS3
+- Ricoh Aficio 2075
+- RICOH Aficio 2075 PS3
+- Ricoh Aficio 2090
+- RICOH Aficio 2090 PS3
+- Ricoh Aficio 2105
+- RICOH Aficio 2105 PS3
+- Ricoh Aficio 2228C
+- RICOH Aficio 2228C PS3
+- Ricoh Aficio 2232C
+- RICOH Aficio 2232C PS3
+- Ricoh Aficio 2238C
+- RICOH Aficio 2238C PS3
+- Ricoh Aficio 3025
+- RICOH Aficio 3025 PS3
+- Ricoh Aficio 3030
+- RICOH Aficio 3030 PS3
+- Ricoh Aficio 3035
+- RICOH Aficio 3035 PS3
+- Ricoh Aficio 3045
+- RICOH Aficio 3045 PS3
+- Ricoh Aficio 3224C
+- RICOH Aficio 3224C PS3
+- Ricoh Aficio 3228C
+- RICOH Aficio 3228C PS3
+- Ricoh Aficio 3232C
+- RICOH Aficio 3232C PS3
+- Ricoh Aficio 3235C
+- RICOH Aficio 3235C PS3
+- Ricoh Aficio 3245C
+- RICOH Aficio 3245C PS3
+- Ricoh Aficio 3260C
+- RICOH Aficio 3260C PS3
+- Ricoh Aficio AP2600
+- RICOH Aficio AP2600 PS3
+- Ricoh Aficio AP2600N
+- RICOH Aficio AP2600N PS3
+- Ricoh Aficio AP2610
+- RICOH Aficio AP2610 PS3
+- Ricoh Aficio AP2610N
+- RICOH Aficio AP2610N PS3
+- Ricoh Aficio AP3200
+- RICOH Aficio AP3200 PS3
+- Ricoh Aficio AP3800C
+- RICOH Aficio AP3800C PS3
+- Ricoh Aficio AP400
+- RICOH Aficio AP400 PS3
+- Ricoh Aficio AP400N
+- RICOH Aficio AP400N PS3
+- Ricoh Aficio AP410
+- RICOH Aficio AP410 PS3
+- Ricoh Aficio AP410N
+- RICOH Aficio AP410N PS3
+- Ricoh Aficio AP4510
+- RICOH Aficio AP4510 PS3
+- Ricoh Aficio AP600N
+- RICOH Aficio AP600N PS3
+- Ricoh Aficio AP610N
+- RICOH Aficio AP610N PS3
+- Ricoh Aficio AP900
+- RICOH Aficio AP900 PS3
+- Ricoh Aficio CL1000N
+- RICOH Aficio CL1000N PS3
+- Ricoh Aficio CL2000
+- RICOH Aficio CL2000 PS3
+- Ricoh Aficio CL3000
+- RICOH Aficio CL3000 PS3
+- Ricoh Aficio CL3000e
+- RICOH Aficio CL3000e PS3
+- Ricoh Aficio CL3100
+- RICOH Aficio CL3100 PS3
+- Ricoh Aficio CL3500N
+- RICOH Aficio CL3500N PS3
+- Ricoh Aficio CL4000DN
+- RICOH Aficio CL4000DN PS3
+- Ricoh Aficio CL4000HDN
+- RICOH Aficio CL4000HDN PS3
+- Ricoh Aficio CL5000
+- RICOH Aficio CL5000 PS3
+- Ricoh Aficio CL7000
+- RICOH Aficio CL7000 PS3
+- Ricoh Aficio CL7100
+- RICOH Aficio CL7100 PS3
+- Ricoh Aficio CL7200
+- RICOH Aficio CL7200 PS3
+- Ricoh Aficio CL7300
+- RICOH Aficio CL7300 PS3
+- Ricoh Aficio Color5560
+- RICOH Aficio Color5560 PS3
+- Ricoh Aficio MP 1100
+- RICOH Aficio MP 1100 PS3
+- Ricoh Aficio MP 1350
+- RICOH Aficio MP 1350 PS3
+- Ricoh Aficio MP 1600
+- RICOH Aficio MP 1600 PS3
+- Ricoh Aficio MP 161
+- RICOH Aficio MP 161 PS3
+- Ricoh Aficio MP 171
+- RICOH Aficio MP 171 PS3
+- Ricoh Aficio MP 2000
+- RICOH Aficio MP 2000 PS3
+- Ricoh Aficio MP 201
+- RICOH Aficio MP 201 PS3
+- Ricoh Aficio MP 2352
+- RICOH Aficio MP 2352 PS3
+- Ricoh Aficio MP 2500
+- RICOH Aficio MP 2500 PS3
+- Ricoh Aficio MP 2510
+- RICOH Aficio MP 2510 PS3
+- Ricoh Aficio MP 2550
+- RICOH Aficio MP 2550 PS3
+- Ricoh Aficio MP 2550B
+- RICOH Aficio MP 2550B PS3
+- Ricoh Aficio MP 2851
+- RICOH Aficio MP 2851 PS3
+- Ricoh Aficio MP 2852
+- RICOH Aficio MP 2852 PS3
+- Ricoh Aficio MP 301
+- RICOH Aficio MP 301 PS3
+- Ricoh Aficio MP 3010
+- RICOH Aficio MP 3010 PS3
+- Ricoh Aficio MP 3350
+- RICOH Aficio MP 3350 PS3
+- Ricoh Aficio MP 3350B
+- RICOH Aficio MP 3350B PS3
+- Ricoh Aficio MP 3351
+- RICOH Aficio MP 3351 PS3
+- Ricoh Aficio MP 3352
+- RICOH Aficio MP 3352 PS3
+- Ricoh Aficio MP 3500
+- RICOH Aficio MP 3500 PS3
+- Ricoh Aficio MP 4000
+- RICOH Aficio MP 4000 PS3
+- Ricoh Aficio MP 4000B
+- RICOH Aficio MP 4000B PS3
+- Ricoh Aficio MP 4001
+- RICOH Aficio MP 4001 PS3
+- Ricoh Aficio MP 4002
+- RICOH Aficio MP 4002 PS3
+- Ricoh Aficio MP 4500
+- RICOH Aficio MP 4500 PS3
+- Ricoh Aficio MP 5000
+- RICOH Aficio MP 5000 PS3
+- Ricoh Aficio MP 5000B
+- RICOH Aficio MP 5000B PS3
+- Ricoh Aficio MP 5001
+- RICOH Aficio MP 5001 PS3
+- Ricoh Aficio MP 5002
+- RICOH Aficio MP 5002 PS3
+- Ricoh Aficio MP 5500
+- RICOH Aficio MP 5500 PS3
+- Ricoh Aficio MP 6000
+- RICOH Aficio MP 6000 PS3
+- Ricoh Aficio MP 6001
+- RICOH Aficio MP 6001 PS3
+- Ricoh Aficio MP 6002
+- RICOH Aficio MP 6002 PS3
+- Ricoh Aficio MP 6500
+- RICOH Aficio MP 6500 PS3
+- Ricoh Aficio MP 7000
+- RICOH Aficio MP 7000 PS3
+- Ricoh Aficio MP 7001
+- RICOH Aficio MP 7001 PS3
+- Ricoh Aficio MP 7500
+- RICOH Aficio MP 7500 PS3
+- Ricoh Aficio MP 7502
+- RICOH Aficio MP 7502 PS3
+- Ricoh Aficio MP 8000
+- RICOH Aficio MP 8000 PS3
+- Ricoh Aficio MP 8001
+- RICOH Aficio MP 8001 PS3
+- Ricoh Aficio MP 9000
+- RICOH Aficio MP 9000 PS3
+- Ricoh Aficio MP 9001
+- RICOH Aficio MP 9001 PS3
+- Ricoh Aficio MP 9002
+- RICOH Aficio MP 9002 PS3
+- Ricoh Aficio MP C2050
+- RICOH Aficio MP C2050 PS3
+- Ricoh Aficio MP C2051
+- RICOH Aficio MP C2051 PS3
+- Ricoh Aficio MP C2500
+- RICOH Aficio MP C2500 PS3
+- Ricoh Aficio MP C2550
+- RICOH Aficio MP C2550 PS3
+- Ricoh Aficio MP C2551
+- RICOH Aficio MP C2551 PS3
+- Ricoh Aficio MP C2800
+- RICOH Aficio MP C2800 PS3
+- Ricoh Aficio MP C300
+- RICOH Aficio MP C300 PS3
+- Ricoh Aficio MP C3000
+- RICOH Aficio MP C3000 PS3
+- Ricoh Aficio MP C3001
+- RICOH Aficio MP C3001 PS3
+- Ricoh Aficio MP C3002
+- RICOH Aficio MP C3002 PS3
+- Ricoh Aficio MP C300SR
+- RICOH Aficio MP C300SR PS3
+- Ricoh Aficio MP C305
+- RICOH Aficio MP C305 PS3
+- Ricoh Aficio MP C3300
+- RICOH Aficio MP C3300 PS3
+- Ricoh Aficio MP C3500
+- RICOH Aficio MP C3500 PS3
+- Ricoh Aficio MP C3501
+- RICOH Aficio MP C3501 PS3
+- Ricoh Aficio MP C3502
+- RICOH Aficio MP C3502 PS3
+- Ricoh Aficio MP C400
+- RICOH Aficio MP C400 PS3
+- Ricoh Aficio MP C4000
+- RICOH Aficio MP C4000 PS3
+- Ricoh Aficio MP C400SR
+- RICOH Aficio MP C400SR PS3
+- Ricoh Aficio MP C4500
+- RICOH Aficio MP C4500 PS3
+- Ricoh Aficio MP C4501
+- RICOH Aficio MP C4501 PS3
+- Ricoh Aficio MP C4501A
+- RICOH Aficio MP C4501A PS3
+- Ricoh Aficio MP C4502
+- RICOH Aficio MP C4502 PS3
+- Ricoh Aficio MP C4502A
+- RICOH Aficio MP C4502A PS3
+- Ricoh Aficio MP C5000
+- RICOH Aficio MP C5000 PS3
+- Ricoh Aficio MP C5501
+- RICOH Aficio MP C5501 PS3
+- Ricoh Aficio MP C5501A
+- RICOH Aficio MP C5501A PS3
+- Ricoh Aficio MP C5502
+- RICOH Aficio MP C5502 PS3
+- Ricoh Aficio MP C5502A
+- RICOH Aficio MP C5502A PS3
+- Ricoh Aficio MP C6000
+- RICOH Aficio MP C6000 PS3
+- Ricoh Aficio MP C6501
+- RICOH Aficio MP C6501 PS3
+- Ricoh Aficio MP C7500
+- RICOH Aficio MP C7500 PS3
+- Ricoh Aficio MP C7501
+- RICOH Aficio MP C7501 PS3
+- Ricoh Aficio MP W2400
+- RICOH Aficio MP W2400 PS3
+- Ricoh Aficio MP W2401
+- RICOH Aficio MP W2401 PS3
+- Ricoh Aficio MP W3600
+- RICOH Aficio MP W3600 PS3
+- Ricoh Aficio MP W3601
+- RICOH Aficio MP W3601 PS3
+- Ricoh Aficio MP W5100
+- RICOH Aficio MP W5100 PS3
+- Ricoh Aficio MP W7140
+- RICOH Aficio MP W7140 PS3
+- Ricoh Aficio SP 300DN
+- Ricoh Aficio SP 3400N
+- Ricoh Aficio SP 3400SF
+- Ricoh Aficio SP 3410DN
+- Ricoh Aficio SP 3410SF
+- Ricoh Aficio SP 3500N
+- Ricoh Aficio SP 3500SF
+- Ricoh Aficio SP 3510DN
+- Ricoh Aficio SP 3510SF
+- Ricoh Aficio SP 4100N
+- RICOH Aficio SP 4100N PS3
+- Ricoh Aficio SP 4100NL
+- RICOH Aficio SP 4100NL PS3
+- Ricoh Aficio SP 4110N
+- RICOH Aficio SP 4110N PS3
+- Ricoh Aficio SP 4210N
+- RICOH Aficio SP 4210N PS3
+- Ricoh Aficio SP 4310N
+- RICOH Aficio SP 4310N PS3
+- Ricoh Aficio SP 5200DN
+- RICOH Aficio SP 5200DN PS3
+- Ricoh Aficio SP 5200S
+- RICOH Aficio SP 5200S PS3
+- Ricoh Aficio SP 5210DN
+- RICOH Aficio SP 5210DN PS3
+- Ricoh Aficio SP 5210SF
+- RICOH Aficio SP 5210SF PS3
+- Ricoh Aficio SP 5210SR
+- RICOH Aficio SP 5210SR PS3
+- Ricoh Aficio SP 6330N
+- RICOH Aficio SP 6330N PS3
+- Ricoh Aficio SP 8100DN
+- RICOH Aficio SP 8100DN PS3
+- Ricoh Aficio SP 8200DN
+- RICOH Aficio SP 8200DN PS3
+- Ricoh Aficio SP 8300DN
+- RICOH Aficio SP 8300DN PS3
+- Ricoh Aficio SP 9100DN
+- RICOH Aficio SP 9100DN PS3
+- Ricoh Aficio SP C221N
+- Ricoh Aficio SP C221N PS3
+- Ricoh Aficio SP C222DN
+- Ricoh Aficio SP C222DN PS3
+- Ricoh Aficio SP C222SF
+- Ricoh Aficio SP C222SF PS3
+- Ricoh Aficio SP C231N
+- Ricoh Aficio SP C231N PS3
+- Ricoh Aficio SP C232DN
+- Ricoh Aficio SP C232DN PS3
+- Ricoh Aficio SP C232SF
+- Ricoh Aficio SP C232SF PS3
+- Ricoh Aficio SP C242DN
+- Ricoh Aficio SP C242DN PS3
+- Ricoh Aficio SP C242SF
+- Ricoh Aficio SP C242SF PS3
+- Ricoh Aficio SP C311N
+- Ricoh Aficio SP C311N PS3
+- Ricoh Aficio SP C312DN
+- Ricoh Aficio SP C312DN PS3
+- Ricoh Aficio SP C320DN
+- RICOH Aficio SP C320DN PS3
+- Ricoh Aficio SP C400DN
+- RICOH Aficio SP C400DN PS3
+- Ricoh Aficio SP C410DN
+- RICOH Aficio SP C410DN PS3
+- Ricoh Aficio SP C411DN
+- RICOH Aficio SP C411DN PS3
+- Ricoh Aficio SP C420DN
+- RICOH Aficio SP C420DN PS3
+- Ricoh Aficio SP C430DN
+- RICOH Aficio SP C430DN PS3
+- Ricoh Aficio SP C431DN
+- RICOH Aficio SP C431DN PS3
+- Ricoh Aficio SP C730DN
+- RICOH Aficio SP C730DN PS3
+- Ricoh Aficio SP C811DN
+- RICOH Aficio SP C811DN PS3
+- Ricoh Aficio SP C820DN
+- RICOH Aficio SP C820DN PS3
+- Ricoh Aficio SP C821DN
+- RICOH Aficio SP C821DN PS3
+- Ricoh Aficio SP C830DN
+- RICOH Aficio SP C830DN PS3
+- Ricoh Aficio SP C831DN
+- RICOH Aficio SP C831DN PS3
+- Ricoh Aficio SP W2470
+- RICOH Aficio SP W2470 PS3
+- Ricoh ColorLaser AP828
+- RICOH ColorLaser AP828 PS3
+- Ricoh DDP 70
+- Ricoh DDP 92
+- Ricoh EMP 156
+- Ricoh EMP156
+- Ricoh FAX5510L/5510NF
+- RICOH FAX5510L/5510NF PS3
+- Ricoh Generic PS Printer
+- Ricoh Generic PS Printer PS3
+- Ricoh IM 2500
+- Ricoh IM 2500 JPN
+- RICOH IM 2500 PS3
+- Ricoh IM 2509J
+- RICOH IM 2509J PS3
+- Ricoh IM 2702
+- RICOH IM 2702 PS3
+- Ricoh IM 3000
+- RICOH IM 3000 PS3
+- Ricoh IM 3009J
+- RICOH IM 3009J PS3
+- Ricoh IM 350
+- RICOH IM 350 PS3
+- Ricoh IM 3500
+- Ricoh IM 3500 JPN
+- RICOH IM 3500 PS3
+- Ricoh IM 3509J
+- RICOH IM 3509J PS3
+- Ricoh IM 370
+- RICOH IM 370 PS3
+- Ricoh IM 370F JPN
+- Ricoh IM 4000
+- Ricoh IM 4000 JPN
+- RICOH IM 4000 PS3
+- Ricoh IM 430
+- RICOH IM 430 PS3
+- Ricoh IM 430F
+- Ricoh IM 460
+- RICOH IM 460 PS3
+- Ricoh IM 460F JPN
+- Ricoh IM 460FTL
+- RICOH IM 460FTL PS3
+- Ricoh IM 5000
+- Ricoh IM 5000 JPN
+- RICOH IM 5000 PS3
+- Ricoh IM 550
+- RICOH IM 550 PS3
+- Ricoh IM 600
+- RICOH IM 600 PS3
+- Ricoh IM 6000
+- Ricoh IM 6000 JPN
+- RICOH IM 6000 PS3
+- Ricoh IM 600SR
+- RICOH IM 600SR PS3
+- Ricoh IM 7000
+- Ricoh IM 7000 JPN
+- RICOH IM 7000 PS3
+- Ricoh IM 8000
+- Ricoh IM 8000 JPN
+- RICOH IM 8000 PS3
+- Ricoh IM 9000
+- Ricoh IM 9000 JPN
+- RICOH IM 9000 PS3
+- Ricoh IM 9000T JPN
+- Ricoh IM C2000
+- Ricoh IM C2000 JPN
+- RICOH IM C2000 PS3
+- Ricoh IM C2010
+- RICOH IM C2010 JPN
+- RICOH IM C2010 PS3
+- Ricoh IM C2500
+- Ricoh IM C2500 JPN
+- RICOH IM C2500 PS3
+- Ricoh IM C2509J
+- RICOH IM C2509J PS3
+- Ricoh IM C2510
+- RICOH IM C2510 JPN
+- RICOH IM C2510 PS3
+- Ricoh IM C2519J
+- RICOH IM C2519J PS3
+- Ricoh IM C300
+- Ricoh IM C300 JPN
+- RICOH IM C300 PS3
+- Ricoh IM C3000
+- Ricoh IM C3000 JPN
+- RICOH IM C3000 PS3
+- Ricoh IM C3010
+- RICOH IM C3010 JPN
+- RICOH IM C3010 PS3
+- Ricoh IM C3500
+- Ricoh IM C3500 JPN
+- RICOH IM C3500 PS3
+- Ricoh IM C3509J
+- RICOH IM C3509J PS3
+- Ricoh IM C3510
+- RICOH IM C3510 JPN
+- RICOH IM C3510 PS3
+- Ricoh IM C3519J
+- RICOH IM C3519J PS3
+- Ricoh IM C400
+- RICOH IM C400 PS3
+- Ricoh IM C400SR
+- RICOH IM C400SR PS3
+- Ricoh IM C4500
+- Ricoh IM C4500 JPN
+- RICOH IM C4500 PS3
+- Ricoh IM C4500A JPN
+- Ricoh IM C4510
+- RICOH IM C4510 JPN
+- RICOH IM C4510 PS3
+- RICOH IM C4510A JPN
+- Ricoh IM C530F
+- RICOH IM C530F PS3
+- Ricoh IM C530FB
+- RICOH IM C530FB PS3
+- Ricoh IM C5500
+- Ricoh IM C5500 JPN
+- RICOH IM C5500 PS3
+- Ricoh IM C5500A JPN
+- Ricoh IM C5510
+- RICOH IM C5510 JPN
+- RICOH IM C5510 PS3
+- RICOH IM C5510A JPN
+- Ricoh IM C6000
+- Ricoh IM C6000 JPN
+- RICOH IM C6000 PS3
+- Ricoh IM C6010
+- RICOH IM C6010 JPN
+- RICOH IM C6010 PS3
+- Ricoh IM C6500
+- Ricoh IM C6500 JPN
+- RICOH IM C6500 PS3
+- Ricoh IM C8000
+- Ricoh IM C8000 JPN
+- RICOH IM C8000 PS3
+- RICOH IM CW1200 JPN
+- Ricoh IM CW2200
+- RICOH IM CW2200 JPN
+- RICOH IM CW2200 PS3
+- Ricoh imagio MP 1100
+- Ricoh imagio MP 1350
+- Ricoh imagio MP 2550
+- Ricoh imagio MP 2552
+- Ricoh imagio MP 3350
+- Ricoh imagio MP 3352
+- Ricoh imagio MP 4000
+- Ricoh imagio MP 4002
+- Ricoh imagio MP 5000
+- Ricoh imagio MP 5002
+- Ricoh imagio MP 6000
+- Ricoh imagio MP 6001
+- Ricoh imagio MP 6001GP
+- Ricoh imagio MP 6002
+- Ricoh imagio MP 6002GP
+- Ricoh imagio MP 7500
+- Ricoh imagio MP 7500T
+- Ricoh imagio MP 7501
+- Ricoh imagio MP 7502
+- Ricoh imagio MP 8000
+- Ricoh imagio MP 8000T
+- Ricoh imagio MP 9000
+- Ricoh imagio MP 9001
+- Ricoh imagio MP 9001T
+- Ricoh imagio MP 9002
+- Ricoh imagio MP 9002T
+- Ricoh imagio MP C1800
+- Ricoh imagio MP C2200
+- Ricoh imagio MP C2201
+- Ricoh imagio MP C2500
+- Ricoh imagio MP C2800
+- Ricoh imagio MP C2801
+- Ricoh imagio MP C2802
+- Ricoh imagio MP C3000
+- Ricoh imagio MP C3300
+- Ricoh imagio MP C3301
+- Ricoh imagio MP C3302
+- Ricoh imagio MP C3500
+- Ricoh imagio MP C3500it
+- Ricoh imagio MP C4000
+- Ricoh imagio MP C4000it
+- Ricoh imagio MP C4001
+- Ricoh imagio MP C4001A
+- Ricoh imagio MP C4001it
+- Ricoh imagio MP C4002
+- Ricoh imagio MP C4002A
+- Ricoh imagio MP C4500
+- Ricoh imagio MP C4500it
+- Ricoh imagio MP C5000
+- Ricoh imagio MP C5000it
+- Ricoh imagio MP C5001
+- Ricoh imagio MP C5001A
+- Ricoh imagio MP C5001A it
+- Ricoh imagio MP C5001it
+- Ricoh imagio MP C5002
+- Ricoh imagio MP C5002A
+- Ricoh imagio MP C6000
+- Ricoh imagio MP C6001
+- Ricoh imagio MP C7500
+- Ricoh imagio MP C7501
+- Ricoh imagio Neo 452
+- Ricoh imagio Neo 453
+- Ricoh IP 500SF
+- RICOH IP C6020 JPN
+- RICOH IP C6020M JPN
+- Ricoh IP CW2200
+- RICOH IP CW2200 PS3
+- Ricoh IPSiO SP 4210
+- Ricoh IPSiO SP 4300
+- Ricoh IPSiO SP 4310
+- Ricoh IPSiO SP 6110
+- Ricoh IPSiO SP 6120
+- Ricoh IPSiO SP 6210
+- Ricoh IPSiO SP 6220
+- Ricoh IPSiO SP 6310
+- Ricoh IPSiO SP 6320
+- Ricoh IPSiO SP 6330
+- Ricoh IPSiO SP 8100
+- Ricoh IPSiO SP 8100M
+- Ricoh IPSiO SP 8200
+- Ricoh IPSiO SP 8200M
+- Ricoh IPSiO SP 8300
+- Ricoh IPSiO SP 8300M
+- Ricoh IPSiO SP C320
+- Ricoh IPSiO SP C411
+- Ricoh IPSiO SP C411-ME
+- Ricoh IPSiO SP C420
+- Ricoh IPSiO SP C420-ME
+- Ricoh IPSiO SP C711
+- Ricoh IPSiO SP C721
+- Ricoh IPSiO SP C721M
+- Ricoh IPSiO SP C730
+- Ricoh IPSiO SP C730M
+- Ricoh IPSiO SP C731
+- Ricoh IPSiO SP C731M
+- Ricoh IPSiO SP C810
+- Ricoh IPSiO SP C810M
+- Ricoh IPSiO SP C811
+- Ricoh IPSiO SP C811M
+- Ricoh IPSiO SP C820
+- Ricoh IPSiO SP C820M
+- Ricoh IPSiO SP C821
+- Ricoh IPSiO SP C821M
+- Ricoh IPSiO SP C830
+- Ricoh IPSiO SP C830M
+- Ricoh IPSiO SP C831
+- Ricoh IPSiO SP C831M
+- Ricoh LASER AP2600
+- RICOH LASER AP2600 PS3
+- Ricoh LASER AP2600N
+- RICOH LASER AP2600N PS3
+- Ricoh LASER AP2610
+- RICOH LASER AP2610 PS3
+- Ricoh LASER AP2610N
+- RICOH LASER AP2610N PS3
+- Ricoh M C2001
+- RICOH M C2001 PS3
+- Ricoh M C250FW
+- RICOH M C250FW PS3
+- Ricoh M C250FWB
+- RICOH M C250FWB PS3
+- Ricoh MP 1301 JPN
+- Ricoh MP 1601 JPN
+- Ricoh MP 2001
+- RICOH MP 2001 PS3
+- Ricoh MP 2001J
+- RICOH MP 2001J PS3
+- Ricoh MP 2501
+- RICOH MP 2501 PS3
+- Ricoh MP 2553
+- Ricoh MP 2553 JPN
+- RICOH MP 2553 PS3
+- Ricoh MP 2554
+- Ricoh MP 2554 JPN
+- RICOH MP 2554 PS3
+- Ricoh MP 2554J
+- RICOH MP 2554J PS3
+- Ricoh MP 2555
+- Ricoh MP 2555 JPN
+- RICOH MP 2555 PS3
+- Ricoh MP 2595J
+- RICOH MP 2595J PS3
+- Ricoh MP 305+
+- Ricoh MP 305+ JPN
+- RICOH MP 305+ PS3
+- Ricoh MP 305+ SPF JPN
+- Ricoh MP 3053
+- RICOH MP 3053 PS3
+- Ricoh MP 3054
+- RICOH MP 3054 PS3
+- Ricoh MP 3054J
+- RICOH MP 3054J PS3
+- Ricoh MP 3055
+- RICOH MP 3055 PS3
+- Ricoh MP 3095J
+- RICOH MP 3095J PS3
+- Ricoh MP 3353
+- Ricoh MP 3353 JPN
+- RICOH MP 3353 PS3
+- Ricoh MP 3554
+- Ricoh MP 3554 JPN
+- RICOH MP 3554 PS3
+- Ricoh MP 3554J
+- RICOH MP 3554J PS3
+- Ricoh MP 3555
+- Ricoh MP 3555 JPN
+- RICOH MP 3555 PS3
+- Ricoh MP 3595J
+- RICOH MP 3595J PS3
+- Ricoh MP 401SPF
+- Ricoh MP 401SPF JPN
+- RICOH MP 401SPF PS3
+- Ricoh MP 402SPF
+- RICOH MP 402SPF PS3
+- Ricoh MP 4054
+- Ricoh MP 4054 JPN
+- RICOH MP 4054 PS3
+- Ricoh MP 4055
+- Ricoh MP 4055 JPN
+- RICOH MP 4055 PS3
+- Ricoh MP 501
+- RICOH MP 501 PS3
+- Ricoh MP 5054
+- Ricoh MP 5054 JPN
+- RICOH MP 5054 PS3
+- Ricoh MP 5055
+- Ricoh MP 5055 JPN
+- RICOH MP 5055 PS3
+- Ricoh MP 601
+- RICOH MP 601 PS3
+- Ricoh MP 6054
+- Ricoh MP 6054 JPN
+- RICOH MP 6054 PS3
+- Ricoh MP 6055
+- Ricoh MP 6055 JPN
+- RICOH MP 6055 PS3
+- Ricoh MP 6503
+- Ricoh MP 6503 JPN
+- RICOH MP 6503 PS3
+- Ricoh MP 7503
+- Ricoh MP 7503 JPN
+- RICOH MP 7503 PS3
+- Ricoh MP 9003
+- Ricoh MP 9003 JPN
+- RICOH MP 9003 PS3
+- Ricoh MP C1500/615C
+- RICOH MP C1500/615C PS3
+- Ricoh MP C1803 JPN
+- Ricoh MP C2003
+- RICOH MP C2003 PS3
+- Ricoh MP C2003J
+- RICOH MP C2003J PS3
+- Ricoh MP C2003Z
+- RICOH MP C2003Z PS3
+- Ricoh MP C2004
+- RICOH MP C2004 PS3
+- Ricoh MP C2004ex
+- RICOH MP C2004ex PS3
+- Ricoh MP C2011
+- RICOH MP C2011 PS3
+- Ricoh MP C2094exJ
+- RICOH MP C2094exJ PS3
+- Ricoh MP C2094J
+- RICOH MP C2094J PS3
+- Ricoh MP C2503
+- Ricoh MP C2503 JPN
+- RICOH MP C2503 PS3
+- Ricoh MP C2503J
+- RICOH MP C2503J PS3
+- Ricoh MP C2503Z
+- RICOH MP C2503Z PS3
+- Ricoh MP C2504
+- Ricoh MP C2504 JPN
+- RICOH MP C2504 PS3
+- Ricoh MP C2504ex
+- RICOH MP C2504ex PS3
+- Ricoh MP C2594exJ
+- RICOH MP C2594exJ PS3
+- Ricoh MP C2594J
+- RICOH MP C2594J PS3
+- Ricoh MP C3003
+- Ricoh MP C3003 JPN
+- RICOH MP C3003 PS3
+- Ricoh MP C3004
+- Ricoh MP C3004 JPN
+- RICOH MP C3004 PS3
+- Ricoh MP C3004ex
+- RICOH MP C3004ex PS3
+- Ricoh MP C305 SP JPN
+- Ricoh MP C306 JPN
+- Ricoh MP C306Z
+- RICOH MP C306Z PS3
+- Ricoh MP C307
+- Ricoh MP C307 JPN
+- RICOH MP C307 PS3
+- Ricoh MP C3503
+- Ricoh MP C3503 JPN
+- RICOH MP C3503 PS3
+- Ricoh MP C3504
+- Ricoh MP C3504 JPN
+- RICOH MP C3504 PS3
+- Ricoh MP C3504ex
+- RICOH MP C3504ex PS3
+- Ricoh MP C401
+- RICOH MP C401 PS3
+- Ricoh MP C401SR
+- RICOH MP C401SR PS3
+- Ricoh MP C406Z
+- RICOH MP C406Z PS3
+- Ricoh MP C407
+- RICOH MP C407 PS3
+- Ricoh MP C4503
+- Ricoh MP C4503 JPN
+- RICOH MP C4503 PS3
+- Ricoh MP C4504
+- Ricoh MP C4504 JPN
+- RICOH MP C4504 PS3
+- Ricoh MP C4504ex
+- RICOH MP C4504ex PS3
+- Ricoh MP C501
+- RICOH MP C501 PS3
+- Ricoh MP C5503
+- Ricoh MP C5503 JPN
+- RICOH MP C5503 PS3
+- Ricoh MP C5504
+- Ricoh MP C5504 JPN
+- RICOH MP C5504 PS3
+- Ricoh MP C5504ex
+- RICOH MP C5504ex PS3
+- Ricoh MP C6003
+- Ricoh MP C6003 JPN
+- RICOH MP C6003 PS3
+- Ricoh MP C6004
+- Ricoh MP C6004 JPN
+- RICOH MP C6004 PS3
+- Ricoh MP C6004ex
+- RICOH MP C6004ex PS3
+- Ricoh MP C6502
+- Ricoh MP C6502 JPN
+- RICOH MP C6502 PS3
+- Ricoh MP C6503
+- Ricoh MP C6503 JPN
+- RICOH MP C6503 PS3
+- Ricoh MP C8002
+- Ricoh MP C8002 JPN
+- RICOH MP C8002 PS3
+- Ricoh MP C8003
+- Ricoh MP C8003 JPN
+- RICOH MP C8003 PS3
+- Ricoh MP CW2200
+- RICOH MP CW2200 PS3
+- Ricoh MP CW2201
+- RICOH MP CW2201 PS3
+- Ricoh MP W6700
+- RICOH MP W6700 PS3
+- Ricoh MP W7100
+- RICOH MP W7100 PS3
+- Ricoh MP W8140
+- RICOH MP W8140 PS3
+- Ricoh P 500 JPN
+- Ricoh P 501
+- Ricoh P 501 JPN
+- RICOH P 501 PS3
+- Ricoh P 502
+- RICOH P 502 PS3
+- Ricoh P 6000 JPN
+- Ricoh P 6010 JPN
+- Ricoh P 6010M JPN
+- Ricoh P 6020 JPN
+- Ricoh P 6020M JPN
+- Ricoh P 6030 JPN
+- Ricoh P 6030M JPN
+- Ricoh P 6500 JPN
+- Ricoh P 6510 JPN
+- Ricoh P 6510M JPN
+- Ricoh P 6520 JPN
+- Ricoh P 6520M JPN
+- Ricoh P 800
+- RICOH P 800 PS3
+- Ricoh P 801
+- RICOH P 801 PS3
+- Ricoh P C300W
+- RICOH P C300W PS3
+- Ricoh P C301
+- RICOH P C301 PS3
+- Ricoh P C301SF
+- RICOH P C301SF PS3
+- Ricoh P C301W
+- RICOH P C301W PS3
+- Ricoh P C600
+- RICOH P C600 PS3
+- RICOH P C6010 JPN
+- RICOH P C6010M JPN
+- Ricoh Pro 1106EX
+- RICOH Pro 1106EX PS3
+- Ricoh Pro 1107EX
+- RICOH Pro 1107EX PS3
+- Ricoh Pro 1107EXP
+- Ricoh Pro 1356EX
+- RICOH Pro 1356EX PS3
+- Ricoh Pro 1357EX
+- RICOH Pro 1357EX PS3
+- Ricoh Pro 1357EXP
+- Ricoh Pro 6100 JPN
+- Ricoh Pro 6100HT JPN
+- Ricoh Pro 8100S
+- Ricoh Pro 8100S JPN
+- RICOH Pro 8100S PS3
+- Ricoh Pro 8110
+- RICOH Pro 8110 PS3
+- Ricoh Pro 8110HT JPN
+- Ricoh Pro 8110S
+- Ricoh Pro 8110S JPN
+- RICOH Pro 8110S PS3
+- Ricoh Pro 8110Y JPN
+- Ricoh Pro 8120
+- RICOH Pro 8120 PS3
+- Ricoh Pro 8120HT JPN
+- Ricoh Pro 8120S
+- Ricoh Pro 8120S JPN
+- RICOH Pro 8120S PS3
+- Ricoh Pro 8120Y JPN
+- Ricoh Pro 8200S
+- Ricoh Pro 8200S JPN
+- RICOH Pro 8200S PS3
+- Ricoh Pro 8210
+- RICOH Pro 8210 PS3
+- Ricoh Pro 8210HT JPN
+- Ricoh Pro 8210S
+- Ricoh Pro 8210S JPN
+- RICOH Pro 8210S PS3
+- Ricoh Pro 8210Y JPN
+- Ricoh Pro 8220
+- RICOH Pro 8220 PS3
+- Ricoh Pro 8220HT JPN
+- Ricoh Pro 8220S
+- Ricoh Pro 8220S JPN
+- RICOH Pro 8220S PS3
+- Ricoh Pro 8220Y JPN
+- Ricoh Pro 8300S
+- Ricoh Pro 8300S JPN
+- RICOH Pro 8300S PS3
+- Ricoh Pro 8310
+- RICOH Pro 8310 PS3
+- Ricoh Pro 8310HT JPN
+- Ricoh Pro 8310S
+- Ricoh Pro 8310S JPN
+- RICOH Pro 8310S PS3
+- Ricoh Pro 8310Y JPN
+- Ricoh Pro 8320
+- RICOH Pro 8320 PS3
+- Ricoh Pro 8320HT JPN
+- Ricoh Pro 8320S
+- Ricoh Pro 8320S JPN
+- RICOH Pro 8320S PS3
+- Ricoh Pro 8320Y JPN
+- Ricoh Pro 906EX
+- RICOH Pro 906EX PS3
+- Ricoh Pro 907EX
+- RICOH Pro 907EX PS3
+- Ricoh Pro 907EXP
+- Ricoh Pro C5100S
+- Ricoh Pro C5100S JPN
+- RICOH Pro C5100S PS3
+- Ricoh Pro C5110S
+- Ricoh Pro C5110S JPN
+- RICOH Pro C5110S PS3
+- Ricoh Pro C5200S
+- Ricoh Pro C5200S JPN
+- RICOH Pro C5200S PS3
+- Ricoh Pro C5210S
+- Ricoh Pro C5210S JPN
+- RICOH Pro C5210S PS3
+- Ricoh Pro C5300S
+- Ricoh Pro C5300S JPN
+- RICOH Pro C5300S PS3
+- Ricoh Pro C5300SL
+- RICOH Pro C5300SL PS3
+- Ricoh Pro C5310S
+- Ricoh Pro C5310S JPN
+- RICOH Pro C5310S PS3
+- Ricoh Pro C7100
+- RICOH Pro C7100 PS3
+- Ricoh Pro C7100S
+- Ricoh Pro C7100S JPN
+- RICOH Pro C7100S PS3
+- Ricoh Pro C7110
+- Ricoh Pro C7110 JPN
+- RICOH Pro C7110 PS3
+- Ricoh Pro C7110S
+- Ricoh Pro C7110S JPN
+- RICOH Pro C7110S PS3
+- Ricoh Pro C7200
+- RICOH Pro C7200 PS3
+- Ricoh Pro C7200S
+- Ricoh Pro C7200S JPN
+- Ricoh Pro C7200S Light
+- RICOH Pro C7200S Light PS3
+- RICOH Pro C7200S PS3
+- Ricoh Pro C7210
+- RICOH Pro C7210 PS3
+- Ricoh Pro C7210S
+- Ricoh Pro C7210S JPN
+- RICOH Pro C7210S PS3
+- Ricoh PS Printer
+- Ricoh SP 330DN
+- Ricoh SP 330SFN
+- Ricoh SP 330SN
+- Ricoh SP 3600DN
+- RICOH SP 3600DN PS3
+- Ricoh SP 3600SF
+- RICOH SP 3600SF PS3
+- Ricoh SP 3610SF
+- RICOH SP 3610SF PS3
+- Ricoh SP 3700
+- Ricoh SP 3700SF
+- Ricoh SP 3710DN
+- Ricoh SP 3710SF
+- Ricoh SP 400DN
+- RICOH SP 400DN PS3
+- Ricoh SP 4500 JPN
+- Ricoh SP 450DN
+- RICOH SP 450DN PS3
+- Ricoh SP 4510 JPN
+- Ricoh SP 4510DN
+- RICOH SP 4510DN PS3
+- Ricoh SP 4510SF
+- Ricoh SP 4510SF JPN
+- RICOH SP 4510SF PS3
+- Ricoh SP 4520DN
+- RICOH SP 4520DN PS3
+- Ricoh SP 5300
+- RICOH SP 5300 PS3
+- Ricoh SP 5310
+- RICOH SP 5310 PS3
+- Ricoh SP 6410 JPN
+- Ricoh SP 6420 JPN
+- Ricoh SP 6420M JPN
+- Ricoh SP 6430 JPN
+- Ricoh SP 6430DN
+- RICOH SP 6430DN PS3
+- Ricoh SP 6430M JPN
+- Ricoh SP 6440 JPN
+- Ricoh SP 6440M JPN
+- Ricoh SP 6450 JPN
+- Ricoh SP 8400 JPN
+- Ricoh SP 8400a1 JPN
+- Ricoh SP 8400DN
+- RICOH SP 8400DN PS3
+- Ricoh SP 8400M a1 JPN
+- Ricoh SP 8400M JPN
+- Ricoh SP C250DN
+- Ricoh SP C250DN PS3
+- Ricoh SP C250SF
+- Ricoh SP C250SF PS3
+- Ricoh SP C252DN
+- Ricoh SP C252DN PS3
+- Ricoh SP C252SF
+- Ricoh SP C252SF PS3
+- Ricoh SP C261DNw
+- Ricoh SP C261DNw PS3
+- Ricoh SP C261SFNw
+- Ricoh SP C261SFNw PS3
+- Ricoh SP C262DNw
+- Ricoh SP C262DNw PS3
+- Ricoh SP C262SFNw
+- Ricoh SP C262SFNw PS3
+- Ricoh SP C340DN
+- RICOH SP C340DN PS3
+- Ricoh SP C341 JPN
+- Ricoh SP C342 JPN
+- Ricoh SP C342DN
+- RICOH SP C342DN PS3
+- Ricoh SP C342M JPN
+- Ricoh SP C352DN
+- RICOH SP C352DN PS3
+- Ricoh SP C360DNw
+- RICOH SP C360DNw PS3
+- Ricoh SP C360SFNw
+- RICOH SP C360SFNw PS3
+- Ricoh SP C360SNw
+- RICOH SP C360SNw PS3
+- Ricoh SP C361SFNw
+- RICOH SP C361SFNw PS3
+- Ricoh SP C420e JPN
+- Ricoh SP C420e M JPN
+- Ricoh SP C420e ME JPN
+- Ricoh SP C435DN
+- RICOH SP C435DN PS3
+- Ricoh SP C440DN
+- RICOH SP C440DN PS3
+- Ricoh SP C750 JPN
+- Ricoh SP C750M JPN
+- Ricoh SP C751 JPN
+- Ricoh SP C751M JPN
+- Ricoh SP C840 JPN
+- Ricoh SP C840a1 JPN
+- Ricoh SP C840DN
+- RICOH SP C840DN PS3
+- Ricoh SP C840M a1 JPN
+- Ricoh SP C840M JPN
+- Ricoh SP C841 JPN
+- Ricoh SP C841a1 JPN
+- Ricoh SP C841M a1 JPN
+- Ricoh SP C841M JPN
+- Ricoh SP C842DN
+- RICOH SP C842DN PS3
+
+### Foomatic: Samsung
+
+- Samsung C140x Series
+- Samsung C145x Series
+- Samsung C1810 Series
+- Samsung C1860 Series
+- Samsung C2620 Series
+- Samsung C2670 Series
+- Samsung C268x Series
+- Samsung C460 Series
+- Samsung C470 Series
+- Samsung C4820 Series
+- Samsung C48x Series
+- Samsung CLP-350 Series
+- Samsung CLP-410 Series
+- Samsung CLP-660 Series
+- Samsung CLP-670 Series
+- Samsung CLP-680 Series
+- Samsung CLP-770 Series
+- Samsung CLP-775 Series
+- Samsung CLX-3300 Series
+- Samsung CLX-4190 Series
+- Samsung CLX-6200 Series
+- Samsung CLX-6220 Series
+- Samsung CLX-6240 Series
+- Samsung CLX-6250 Series
+- Samsung CLX-6260 Series
+- Samsung CLX-8380 Series
+- Samsung CLX-8385 Series
+- Samsung CLX-8385X Series
+- Samsung CLX-8540 Series
+- Samsung CLX-8640 8650 Series
+- Samsung CLX-9250 9350 Series
+- Samsung CLX-9252 9352 Series
+- Samsung CLX-92x1 93x1 Series
+- Samsung CLX-981x Series
+- Samsung CLX-982x Series
+- Samsung K3250 Series
+- Samsung K401 Series
+- Samsung K4350 Series
+- Samsung K703 Series
+- Samsung K7600 Series
+- Samsung M337x 387x 407x Series
+- Samsung M403x Series
+- Samsung M408x Series
+- Samsung M4370 5370 Series
+- Samsung M453x Series
+- Samsung M458x Series
+- Samsung M5270 Series
+- Samsung ML-2150
+- Samsung ML-2150 Series
+- Samsung ML-2550
+- Samsung ML-2550 Series
+- Samsung ML-2570 Series
+- Samsung ML-2850 Series
+- Samsung ML-2853 Series
+- Samsung ML-2855 Series
+- Samsung ML-3470 Series
+- Samsung ML-3475 Series
+- Samsung ML-371x Series
+- Samsung ML-375x Series
+- Samsung ML-4050 Series
+- Samsung ML-4055 Series
+- Samsung ML-451x 501x Series
+- Samsung ML-4550 Series
+- Samsung ML-4555 Series
+- Samsung ML-551x 651x Series
+- Samsung ML-8850 8950 Series
+- Samsung ML-8x00 Series
+- Samsung SCX-483x 5x3x Series
+- Samsung SCX-4x28 Series
+- Samsung SCX-5635 Series
+- Samsung SCX-5835 5935 Series
+- Samsung SCX-5835 5935X Series
+- Samsung SCX-6545 Series
+- Samsung SCX-6545X Series
+- Samsung SCX-681x Series
+- Samsung SCX-6x20 Series
+- Samsung SCX-6x22 Series
+- Samsung SCX-6x22 Series PS
+- Samsung SCX-6x45 Series
+- Samsung SCX-6x55 Series
+- Samsung SCX-6x55X Series
+- Samsung SCX-8030 8040 Series
+- Samsung SCX-8123 8128 Series
+- Samsung SCX-8230 8240 Series
+- Samsung SCX-881x Series
+- Samsung SCX-882x Series
+- Samsung X3220 Series
+- Samsung X401 Series
+- Samsung X4300 Series
+- Samsung X703 Series
+- Samsung X7600 Series
+
+### Foomatic: Savin
+
+- Savin 2404WD
+- SAVIN 2404WD PS3
+- Savin 2404WDP
+- SAVIN 2404WDP PS3
+- Savin 2406WD
+- SAVIN 2406WD PS3
+- Savin 2522
+- SAVIN 2522 PS3
+- Savin 2527
+- SAVIN 2527 PS3
+- Savin 2532
+- SAVIN 2532 PS3
+- Savin 2535/2235
+- SAVIN 2535/2235 PS3
+- Savin 2545/2245
+- SAVIN 2545/2245 PS3
+- Savin 2560
+- SAVIN 2560 PS3
+- Savin 2575
+- SAVIN 2575 PS3
+- Savin 3406WD
+- SAVIN 3406WD PS3
+- Savin 3515
+- SAVIN 3515 PS3
+- Savin 40105
+- SAVIN 40105 PS3
+- Savin 4015
+- SAVIN 4015 PS3
+- Savin 4018
+- SAVIN 4018 PS3
+- Savin 4018d
+- SAVIN 4018d PS3
+- Savin 4022
+- SAVIN 4022 PS3
+- Savin 4027
+- SAVIN 4027 PS3
+- Savin 4035/4135g
+- SAVIN 4035/4135g PS3
+- Savin 4035e/4135eG
+- SAVIN 4035e/4135eG PS3
+- Savin 4045/4145g
+- SAVIN 4045/4145g PS3
+- Savin 4045e/4145eG
+- SAVIN 4045e/4145eG PS3
+- Savin 4051
+- SAVIN 4051 PS3
+- Savin 4060
+- SAVIN 4060 PS3
+- Savin 4075
+- SAVIN 4075 PS3
+- Savin 4090
+- SAVIN 4090 PS3
+- Savin 5100WD
+- SAVIN 5100WD PS3
+- Savin 7025
+- SAVIN 7025 PS3
+- Savin 7140WD
+- SAVIN 7140WD PS3
+- Savin 8016
+- SAVIN 8016 PS3
+- Savin 8020
+- SAVIN 8020 PS3
+- Savin 8020d
+- SAVIN 8020d PS3
+- Savin 8025
+- SAVIN 8025 PS3
+- Savin 8025e
+- SAVIN 8025e PS3
+- Savin 8030
+- SAVIN 8030 PS3
+- Savin 8030e
+- SAVIN 8030e PS3
+- Savin 8035/8035g
+- SAVIN 8035/8035g PS3
+- Savin 8035e
+- SAVIN 8035e PS3
+- Savin 8045/8045g
+- SAVIN 8045/8045g PS3
+- Savin 8045e
+- SAVIN 8045e PS3
+- Savin 8055
+- SAVIN 8055 PS3
+- Savin 8060
+- SAVIN 8060 PS3
+- Savin 8065
+- SAVIN 8065 PS3
+- Savin 8070
+- SAVIN 8070 PS3
+- Savin 8075
+- SAVIN 8075 PS3
+- Savin 8080
+- SAVIN 8080 PS3
+- Savin 8090
+- SAVIN 8090 PS3
+- Savin 8110
+- SAVIN 8110 PS3
+- Savin 8135
+- SAVIN 8135 PS3
+- Savin 816
+- SAVIN 816 PS3
+- Savin 9016
+- SAVIN 9016 PS3
+- Savin 9021d
+- SAVIN 9021d PS3
+- Savin 9025
+- SAVIN 9025 PS3
+- Savin 9025b
+- SAVIN 9025b PS3
+- Savin 9033
+- SAVIN 9033 PS3
+- Savin 9033b
+- SAVIN 9033b PS3
+- Savin 9040
+- SAVIN 9040 PS3
+- Savin 9040b
+- SAVIN 9040b PS3
+- Savin 9050
+- SAVIN 9050 PS3
+- Savin 9050b
+- SAVIN 9050b PS3
+- Savin 9060
+- SAVIN 9060 PS3
+- Savin 9070
+- SAVIN 9070 PS3
+- Savin 9080
+- SAVIN 9080 PS3
+- Savin 9090
+- SAVIN 9090 PS3
+- Savin 917
+- SAVIN 917 PS3
+- Savin 920
+- SAVIN 920 PS3
+- Savin 9228
+- SAVIN 9228 PS3
+- Savin 9233
+- SAVIN 9233 PS3
+- Savin 9240
+- SAVIN 9240 PS3
+- Savin 9250
+- SAVIN 9250 PS3
+- Savin C 230
+- SAVIN C 230 PS3
+- Savin C 230SR
+- SAVIN C 230SR PS3
+- Savin C 240
+- SAVIN C 240 PS3
+- Savin C 240SR
+- SAVIN C 240SR PS3
+- Savin C2408
+- SAVIN C2408 PS3
+- Savin C2410
+- SAVIN C2410 PS3
+- Savin C2524
+- SAVIN C2524 PS3
+- Savin C2525
+- SAVIN C2525 PS3
+- Savin C2532
+- SAVIN C2532 PS3
+- Savin C2820
+- SAVIN C2820 PS3
+- Savin C2824
+- SAVIN C2824 PS3
+- Savin C2828
+- SAVIN C2828 PS3
+- Savin C3030
+- SAVIN C3030 PS3
+- Savin C3210
+- SAVIN C3210 PS3
+- Savin C3210e
+- SAVIN C3210e PS3
+- Savin C3224
+- SAVIN C3224 PS3
+- Savin C3333
+- SAVIN C3333 PS3
+- Savin C3528
+- SAVIN C3528 PS3
+- Savin C3535
+- SAVIN C3535 PS3
+- Savin C3828
+- SAVIN C3828 PS3
+- Savin C4040
+- SAVIN C4040 PS3
+- Savin C4535
+- SAVIN C4535 PS3
+- Savin C4540
+- SAVIN C4540 PS3
+- Savin C5050
+- SAVIN C5050 PS3
+- Savin C6045
+- SAVIN C6045 PS3
+- Savin C6055
+- SAVIN C6055 PS3
+- Savin C7570
+- SAVIN C7570 PS3
+- Savin C9020
+- SAVIN C9020 PS3
+- Savin C9025
+- SAVIN C9025 PS3
+- Savin C9065
+- SAVIN C9065 PS3
+- Savin C9075
+- SAVIN C9075 PS3
+- Savin C9120
+- SAVIN C9120 PS3
+- Savin C9125
+- SAVIN C9125 PS3
+- Savin C9130
+- SAVIN C9130 PS3
+- Savin C9135
+- SAVIN C9135 PS3
+- Savin C9145
+- SAVIN C9145 PS3
+- Savin C9145A
+- SAVIN C9145A PS3
+- Savin C9155
+- SAVIN C9155 PS3
+- Savin C9155A
+- SAVIN C9155A PS3
+- Savin CLP1036
+- SAVIN CLP1036 PS3
+- Savin CLP128
+- SAVIN CLP128 PS3
+- Savin CLP131DN
+- SAVIN CLP131DN PS3
+- Savin CLP135
+- SAVIN CLP135 PS3
+- Savin CLP1620
+- SAVIN CLP1620 PS3
+- Savin CLP17
+- SAVIN CLP17 PS3
+- Savin CLP18
+- SAVIN CLP18 PS3
+- Savin CLP22
+- SAVIN CLP22 PS3
+- Savin CLP240D
+- SAVIN CLP240D PS3
+- Savin CLP26DN
+- SAVIN CLP26DN PS3
+- Savin CLP27DN
+- SAVIN CLP27DN PS3
+- Savin CLP28
+- SAVIN CLP28 PS3
+- Savin CLP31DN
+- SAVIN CLP31DN PS3
+- Savin CLP340D
+- SAVIN CLP340D PS3
+- Savin CLP35
+- SAVIN CLP35 PS3
+- Savin CLP350D
+- SAVIN CLP350D PS3
+- Savin CLP37DN
+- SAVIN CLP37DN PS3
+- Savin CLP42DN
+- SAVIN CLP42DN PS3
+- Savin CLP831
+- SAVIN CLP831 PS3
+- Savin FAX3799/3799nf
+- SAVIN FAX3799/3799nf PS3
+- Savin IM 2500
+- SAVIN IM 2500 PS3
+- Savin IM 3000
+- SAVIN IM 3000 PS3
+- Savin IM 350
+- SAVIN IM 350 PS3
+- Savin IM 3500
+- SAVIN IM 3500 PS3
+- Savin IM 4000
+- SAVIN IM 4000 PS3
+- Savin IM 430
+- SAVIN IM 430 PS3
+- Savin IM 5000
+- SAVIN IM 5000 PS3
+- Savin IM 550
+- SAVIN IM 550 PS3
+- Savin IM 600
+- SAVIN IM 600 PS3
+- Savin IM 6000
+- SAVIN IM 6000 PS3
+- Savin IM 600SR
+- SAVIN IM 600SR PS3
+- Savin IM 7000
+- SAVIN IM 7000 PS3
+- Savin IM 8000
+- SAVIN IM 8000 PS3
+- Savin IM 9000
+- SAVIN IM 9000 PS3
+- Savin IM C2000
+- SAVIN IM C2000 PS3
+- Savin IM C2500
+- SAVIN IM C2500 PS3
+- Savin IM C300
+- SAVIN IM C300 PS3
+- Savin IM C3000
+- SAVIN IM C3000 PS3
+- Savin IM C3500
+- SAVIN IM C3500 PS3
+- Savin IM C400
+- SAVIN IM C400 PS3
+- Savin IM C400SR
+- SAVIN IM C400SR PS3
+- Savin IM C4500
+- SAVIN IM C4500 PS3
+- Savin IM C530F
+- SAVIN IM C530F PS3
+- Savin IM C530FB
+- SAVIN IM C530FB PS3
+- Savin IM C6000
+- SAVIN IM C6000 PS3
+- Savin IM C6500
+- SAVIN IM C6500 PS3
+- Savin IM C8000
+- SAVIN IM C8000 PS3
+- Savin IM CW2200
+- SAVIN IM CW2200 PS3
+- Savin IP CW2200
+- SAVIN IP CW2200 PS3
+- Savin MLP145
+- SAVIN MLP145 PS3
+- Savin MLP150DN
+- SAVIN MLP150DN PS3
+- Savin MLP175n
+- SAVIN MLP175n PS3
+- Savin MLP235n
+- SAVIN MLP235n PS3
+- Savin MLP25
+- SAVIN MLP25 PS3
+- Savin MLP25n
+- SAVIN MLP25n PS3
+- Savin MLP26
+- SAVIN MLP26 PS3
+- Savin MLP26n
+- SAVIN MLP26n PS3
+- Savin MLP28
+- SAVIN MLP28 PS3
+- Savin MLP28n
+- SAVIN MLP28n PS3
+- Savin MLP31n
+- SAVIN MLP31n PS3
+- Savin MLP31nL
+- SAVIN MLP31nL PS3
+- Savin MLP32
+- SAVIN MLP32 PS3
+- Savin MLP35n
+- SAVIN MLP35n PS3
+- Savin MLP36n
+- SAVIN MLP36n PS3
+- Savin MLP37N
+- SAVIN MLP37N PS3
+- Savin MLP45
+- SAVIN MLP45 PS3
+- Savin MLP75n
+- SAVIN MLP75n PS3
+- Savin MP 2352
+- SAVIN MP 2352 PS3
+- Savin MP 2501
+- SAVIN MP 2501 PS3
+- Savin MP 2553
+- SAVIN MP 2553 PS3
+- Savin MP 2554
+- SAVIN MP 2554 PS3
+- Savin MP 2555
+- SAVIN MP 2555 PS3
+- Savin MP 2852
+- SAVIN MP 2852 PS3
+- Savin MP 301
+- SAVIN MP 301 PS3
+- Savin MP 305+
+- SAVIN MP 305+ PS3
+- Savin MP 3053
+- SAVIN MP 3053 PS3
+- Savin MP 3054
+- SAVIN MP 3054 PS3
+- Savin MP 3055
+- SAVIN MP 3055 PS3
+- Savin MP 3352
+- SAVIN MP 3352 PS3
+- Savin MP 3353
+- SAVIN MP 3353 PS3
+- Savin MP 3554
+- SAVIN MP 3554 PS3
+- Savin MP 3555
+- SAVIN MP 3555 PS3
+- Savin MP 4002
+- SAVIN MP 4002 PS3
+- Savin MP 401SPF
+- SAVIN MP 401SPF PS3
+- Savin MP 402SPF
+- SAVIN MP 402SPF PS3
+- Savin MP 4054
+- SAVIN MP 4054 PS3
+- Savin MP 4055
+- SAVIN MP 4055 PS3
+- Savin MP 5002
+- SAVIN MP 5002 PS3
+- Savin MP 501
+- SAVIN MP 501 PS3
+- Savin MP 5054
+- SAVIN MP 5054 PS3
+- Savin MP 5055
+- SAVIN MP 5055 PS3
+- Savin MP 6002
+- SAVIN MP 6002 PS3
+- Savin MP 601
+- SAVIN MP 601 PS3
+- Savin MP 6054
+- SAVIN MP 6054 PS3
+- Savin MP 6055
+- SAVIN MP 6055 PS3
+- Savin MP 6503
+- SAVIN MP 6503 PS3
+- Savin MP 7502
+- SAVIN MP 7502 PS3
+- Savin MP 7503
+- SAVIN MP 7503 PS3
+- Savin MP 9002
+- SAVIN MP 9002 PS3
+- Savin MP 9003
+- SAVIN MP 9003 PS3
+- Savin MP C2003
+- SAVIN MP C2003 PS3
+- Savin MP C2004
+- SAVIN MP C2004 PS3
+- Savin MP C2004ex
+- SAVIN MP C2004ex PS3
+- Savin MP C2503
+- SAVIN MP C2503 PS3
+- Savin MP C2504
+- SAVIN MP C2504 PS3
+- Savin MP C2504ex
+- SAVIN MP C2504ex PS3
+- Savin MP C3002
+- SAVIN MP C3002 PS3
+- Savin MP C3003
+- SAVIN MP C3003 PS3
+- Savin MP C3004
+- SAVIN MP C3004 PS3
+- Savin MP C3004ex
+- SAVIN MP C3004ex PS3
+- Savin MP C305
+- SAVIN MP C305 PS3
+- Savin MP C306Z
+- SAVIN MP C306Z PS3
+- Savin MP C307
+- SAVIN MP C307 PS3
+- Savin MP C3502
+- SAVIN MP C3502 PS3
+- Savin MP C3503
+- SAVIN MP C3503 PS3
+- Savin MP C3504
+- SAVIN MP C3504 PS3
+- Savin MP C3504ex
+- SAVIN MP C3504ex PS3
+- Savin MP C401
+- SAVIN MP C401 PS3
+- Savin MP C401SR
+- SAVIN MP C401SR PS3
+- Savin MP C406Z
+- SAVIN MP C406Z PS3
+- Savin MP C407
+- SAVIN MP C407 PS3
+- Savin MP C4502
+- SAVIN MP C4502 PS3
+- Savin MP C4502A
+- SAVIN MP C4502A PS3
+- Savin MP C4503
+- SAVIN MP C4503 PS3
+- Savin MP C4504
+- SAVIN MP C4504 PS3
+- Savin MP C4504ex
+- SAVIN MP C4504ex PS3
+- Savin MP C501
+- SAVIN MP C501 PS3
+- Savin MP C5502
+- SAVIN MP C5502 PS3
+- Savin MP C5502A
+- SAVIN MP C5502A PS3
+- Savin MP C5503
+- SAVIN MP C5503 PS3
+- Savin MP C5504ex
+- SAVIN MP C5504ex PS3
+- Savin MP C6003
+- SAVIN MP C6003 PS3
+- Savin MP C6004
+- SAVIN MP C6004 PS3
+- Savin MP C6004ex
+- SAVIN MP C6004ex PS3
+- Savin MP C6502
+- SAVIN MP C6502 PS3
+- Savin MP C6503
+- SAVIN MP C6503 PS3
+- Savin MP C8002
+- SAVIN MP C8002 PS3
+- Savin MP C8003
+- SAVIN MP C8003 PS3
+- Savin MP CW2200
+- SAVIN MP CW2200 PS3
+- Savin MP CW2201
+- SAVIN MP CW2201 PS3
+- Savin MP W6700
+- SAVIN MP W6700 PS3
+- Savin MP W7100
+- SAVIN MP W7100 PS3
+- Savin MP W8140
+- SAVIN MP W8140 PS3
+- Savin P 501
+- SAVIN P 501 PS3
+- Savin P 502
+- SAVIN P 502 PS3
+- Savin P 800
+- SAVIN P 800 PS3
+- Savin P 801
+- SAVIN P 801 PS3
+- Savin P C600
+- SAVIN P C600 PS3
+- Savin Pro 1106EX
+- SAVIN Pro 1106EX PS3
+- Savin Pro 1107EX
+- SAVIN Pro 1107EX PS3
+- Savin Pro 1356EX
+- SAVIN Pro 1356EX PS3
+- Savin Pro 1357EX
+- SAVIN Pro 1357EX PS3
+- Savin Pro 8100S
+- SAVIN Pro 8100S PS3
+- Savin Pro 8110
+- SAVIN Pro 8110 PS3
+- Savin Pro 8110S
+- SAVIN Pro 8110S PS3
+- Savin Pro 8120
+- SAVIN Pro 8120 PS3
+- Savin Pro 8120S
+- SAVIN Pro 8120S PS3
+- Savin Pro 8200S
+- SAVIN Pro 8200S PS3
+- Savin Pro 8210
+- SAVIN Pro 8210 PS3
+- Savin Pro 8210S
+- SAVIN Pro 8210S PS3
+- Savin Pro 8220
+- SAVIN Pro 8220 PS3
+- Savin Pro 8220S
+- SAVIN Pro 8220S PS3
+- Savin Pro 8300S
+- SAVIN Pro 8300S PS3
+- Savin Pro 8310
+- SAVIN Pro 8310 PS3
+- Savin Pro 8310S
+- SAVIN Pro 8310S PS3
+- Savin Pro 8320
+- SAVIN Pro 8320 PS3
+- Savin Pro 8320S
+- SAVIN Pro 8320S PS3
+- Savin Pro 906EX
+- SAVIN Pro 906EX PS3
+- Savin Pro 907EX
+- SAVIN Pro 907EX PS3
+- Savin Pro C5100S
+- SAVIN Pro C5100S PS3
+- Savin Pro C5110S
+- SAVIN Pro C5110S PS3
+- Savin Pro C5200S
+- SAVIN Pro C5200S PS3
+- Savin Pro C5210S
+- SAVIN Pro C5210S PS3
+- Savin Pro C5300S
+- SAVIN Pro C5300S PS3
+- Savin Pro C5310S
+- SAVIN Pro C5310S PS3
+- Savin Pro C7100
+- SAVIN Pro C7100 PS3
+- Savin Pro C7100S
+- SAVIN Pro C7100S PS3
+- Savin Pro C7110
+- SAVIN Pro C7110 PS3
+- Savin Pro C7110S
+- SAVIN Pro C7110S PS3
+- Savin Pro C7200
+- SAVIN Pro C7200 PS3
+- Savin Pro C7200S
+- Savin Pro C7200S Light
+- SAVIN Pro C7200S Light PS3
+- SAVIN Pro C7200S PS3
+- Savin Pro C7210
+- SAVIN Pro C7210 PS3
+- Savin Pro C7210S
+- SAVIN Pro C7210S PS3
+- Savin SDC555
+- SAVIN SDC555 PS3
+- Savin SGC 1506
+- SAVIN SGC 1506 PS3
+- Savin SLP26
+- SAVIN SLP26 PS3
+- Savin SLP26n
+- SAVIN SLP26n PS3
+- Savin SLP32
+- SAVIN SLP32 PS3
+- Savin SLP38c
+- SAVIN SLP38c PS3
+- Savin SP 3600DN
+- SAVIN SP 3600DN PS3
+- Savin SP 3600SF
+- SAVIN SP 3600SF PS3
+- Savin SP 3610SF
+- SAVIN SP 3610SF PS3
+- Savin SP 4310N
+- SAVIN SP 4310N PS3
+- Savin SP 4510DN
+- SAVIN SP 4510DN PS3
+- Savin SP 4510SF
+- SAVIN SP 4510SF PS3
+- Savin SP 4520DN
+- SAVIN SP 4520DN PS3
+- Savin SP 5200DN
+- SAVIN SP 5200DN PS3
+- Savin SP 5200S
+- SAVIN SP 5200S PS3
+- Savin SP 5210DN
+- SAVIN SP 5210DN PS3
+- Savin SP 5210SF
+- SAVIN SP 5210SF PS3
+- Savin SP 5210SR
+- SAVIN SP 5210SR PS3
+- Savin SP 5300
+- SAVIN SP 5300 PS3
+- Savin SP 5310
+- SAVIN SP 5310 PS3
+- Savin SP 6430DN
+- SAVIN SP 6430DN PS3
+- Savin SP 8300DN
+- SAVIN SP 8300DN PS3
+- Savin SP 8400DN
+- SAVIN SP 8400DN PS3
+- Savin SP C320DN
+- SAVIN SP C320DN PS3
+- Savin SP C340DN
+- SAVIN SP C340DN PS3
+- Savin SP C342DN
+- SAVIN SP C342DN PS3
+- Savin SP C352DN
+- SAVIN SP C352DN PS3
+- Savin SP C360DNw
+- SAVIN SP C360DNw PS3
+- Savin SP C360SFNw
+- SAVIN SP C360SFNw PS3
+- Savin SP C361SFNw
+- SAVIN SP C361SFNw PS3
+- Savin SP C400DN
+- SAVIN SP C400DN PS3
+- Savin SP C435DN
+- SAVIN SP C435DN PS3
+- Savin SP C440DN
+- SAVIN SP C440DN PS3
+- Savin SP C730DN
+- SAVIN SP C730DN PS3
+- Savin SP C830DN
+- SAVIN SP C830DN PS3
+- Savin SP C831DN
+- SAVIN SP C831DN PS3
+- Savin SP C840DN
+- SAVIN SP C840DN PS3
+- Savin SP C842DN
+- SAVIN SP C842DN PS3
+
+### Foomatic: Sharp
+
+- Sharp AR-155FG
+- Sharp AR-155FG PS
+- Sharp AR-160M
+- Sharp AR-160M PS
+- Sharp AR-163FG
+- Sharp AR-163FG PS
+- Sharp AR-163G
+- Sharp AR-163G PS
+- Sharp AR-168D
+- Sharp AR-168D PS
+- Sharp AR-168S
+- Sharp AR-168S PS
+- Sharp AR-200M
+- Sharp AR-200M PS
+- Sharp AR-205FG
+- Sharp AR-205FG PS
+- Sharp AR-205G
+- Sharp AR-205G PS
+- Sharp AR-208D
+- Sharp AR-208D PS
+- Sharp AR-208S
+- Sharp AR-208S PS
+- Sharp AR-266FP
+- Sharp AR-266FP PS
+- Sharp AR-266S
+- Sharp AR-266S PS
+- Sharp AR-311FP
+- Sharp AR-311FP PS
+- Sharp AR-311N
+- Sharp AR-311N PS
+- Sharp AR-311S
+- Sharp AR-311S PS
+- Sharp AR-351FP
+- Sharp AR-351FP PS
+- Sharp AR-351N
+- Sharp AR-351N PS
+- Sharp AR-351S
+- Sharp AR-351S PS
+- Sharp AR-451FP
+- Sharp AR-451FP PS
+- Sharp AR-451N
+- Sharp AR-451N PS
+- Sharp AR-451S
+- Sharp AR-451S PS
+- Sharp AR-5220
+- Sharp AR-5220 PS
+- Sharp AR-555M
+- Sharp AR-555M PS
+- Sharp AR-555S
+- Sharp AR-555S PS
+- Sharp AR-625M
+- Sharp AR-625M PS
+- Sharp AR-625S
+- Sharp AR-625S PS
+- Sharp AR-705M
+- Sharp AR-705M PS
+- Sharp AR-705S
+- Sharp AR-705S PS
+- Sharp AR-BC260
+- Sharp AR-BC260 PS
+- Sharp AR-BC320
+- Sharp AR-BC320 PS
+- Sharp AR-C170FP
+- Sharp AR-C170FP PS
+- Sharp AR-C170M
+- Sharp AR-C170M PS
+- Sharp AR-C172FP
+- Sharp AR-C172FP PS
+- Sharp AR-C172M
+- Sharp AR-C172M PS
+- Sharp AR-C260
+- Sharp AR-C260 PS
+- Sharp AR-C260F
+- Sharp AR-C260F PS
+- Sharp AR-C260FP
+- Sharp AR-C260FP PS
+- Sharp AR-C260M
+- Sharp AR-C260M PS
+- Sharp AR-C260P
+- Sharp AR-C260P PS
+- Sharp AR-C260S
+- Sharp AR-C260S PS
+- Sharp AR-C261F
+- Sharp AR-C261F PS
+- Sharp AR-C261FP
+- Sharp AR-C261FP PS
+- Sharp AR-C261M
+- Sharp AR-C261M PS
+- Sharp AR-C261S
+- Sharp AR-C261S PS
+- Sharp AR-C262FP
+- Sharp AR-C262FP PS
+- Sharp AR-C262M
+- Sharp AR-C262M PS
+- Sharp AR-C262S
+- Sharp AR-C262S PS
+- Sharp AR-M150
+- Sharp AR-M150 PS
+- Sharp AR-M155
+- Sharp AR-M155 PS
+- Sharp AR-M160
+- Sharp AR-M160 PS
+- Sharp AR-M161
+- Sharp AR-M161 PS
+- Sharp AR-M162
+- Sharp AR-M162 PS
+- Sharp AR-M165
+- Sharp AR-M165 PS
+- Sharp AR-M200
+- Sharp AR-M200 PS
+- Sharp AR-M201
+- Sharp AR-M201 PS
+- Sharp AR-M205
+- Sharp AR-M205 PS
+- Sharp AR-M206
+- Sharp AR-M206 PS
+- Sharp AR-M207
+- Sharp AR-M207 PS
+- Sharp AR-M236
+- Sharp AR-M236 PS
+- Sharp AR-M237
+- Sharp AR-M237 PS
+- Sharp AR-M276
+- Sharp AR-M276 PS
+- Sharp AR-M277
+- Sharp AR-M277 PS
+- Sharp AR-M351N
+- Sharp AR-M351N PS
+- Sharp AR-M351U
+- Sharp AR-M351U PS
+- Sharp AR-M355N
+- Sharp AR-M355N PS
+- Sharp AR-M355U
+- Sharp AR-M355U PS
+- Sharp AR-M451N
+- Sharp AR-M451N PS
+- Sharp AR-M451U
+- Sharp AR-M451U PS
+- Sharp AR-M455N
+- Sharp AR-M455N PS
+- Sharp AR-M455U
+- Sharp AR-M455U PS
+- Sharp AR-M550N
+- Sharp AR-M550N PS
+- Sharp AR-M550U
+- Sharp AR-M550U PS
+- Sharp AR-M620N
+- Sharp AR-M620N PS
+- Sharp AR-M620U
+- Sharp AR-M620U PS
+- Sharp AR-M700N
+- Sharp AR-M700N PS
+- Sharp AR-M700U
+- Sharp AR-M700U PS
+- Sharp AR-N182FG
+- Sharp AR-N182FG PS
+- Sharp AR-N182G
+- Sharp AR-N182G PS
+- Sharp AR-N202FP
+- Sharp AR-N202FP PS
+- Sharp MX-1810U
+- Sharp MX-1810U PS
+- Sharp MX-2010U
+- Sharp MX-2010U PS
+- Sharp MX-2300FG
+- Sharp MX-2300FG PS
+- Sharp MX-2300G
+- Sharp MX-2300G PS
+- Sharp MX-2300N
+- Sharp MX-2300N PS
+- Sharp MX-2310F
+- Sharp MX-2310F PS
+- Sharp MX-2310U
+- Sharp MX-2310U PS
+- Sharp MX-2314N
+- Sharp MX-2314N PS
+- Sharp MX-2314NR
+- Sharp MX-2314NR PS
+- Sharp MX-2514FN
+- Sharp MX-2514FN PS
+- Sharp MX-2610FN
+- Sharp MX-2610FN PS
+- Sharp MX-2610N
+- Sharp MX-2610N PS
+- Sharp MX-2614N
+- Sharp MX-2614N PS
+- Sharp MX-2614NR
+- Sharp MX-2614NR PS
+- Sharp MX-2615N
+- Sharp MX-2615N PS
+- Sharp MX-2616N
+- Sharp MX-2616N PS
+- Sharp MX-2640FN
+- Sharp MX-2640FN PS
+- Sharp MX-2640N
+- Sharp MX-2640N PS
+- Sharp MX-2700FG
+- Sharp MX-2700FG PS
+- Sharp MX-2700G
+- Sharp MX-2700G PS
+- Sharp MX-2700N
+- Sharp MX-2700N PS
+- Sharp MX-3110FN
+- Sharp MX-3110FN PS
+- Sharp MX-3110N
+- Sharp MX-3110N PS
+- Sharp MX-3111F
+- Sharp MX-3111F PS
+- Sharp MX-3111U
+- Sharp MX-3111U PS
+- Sharp MX-3114FN
+- Sharp MX-3114FN PS
+- Sharp MX-3114N
+- Sharp MX-3114N PS
+- Sharp MX-3114NR
+- Sharp MX-3114NR PS
+- Sharp MX-3115N
+- Sharp MX-3115N PS
+- Sharp MX-3116N
+- Sharp MX-3116N PS
+- Sharp MX-3140FN
+- Sharp MX-3140FN PS
+- Sharp MX-3140N
+- Sharp MX-3140N PS
+- Sharp MX-3500FN
+- Sharp MX-3500FN PS
+- Sharp MX-3500N
+- Sharp MX-3500N PS
+- Sharp MX-3501FN
+- Sharp MX-3501FN PS
+- Sharp MX-3501N
+- Sharp MX-3501N PS
+- Sharp MX-3610FN
+- Sharp MX-3610FN PS
+- Sharp MX-3610N
+- Sharp MX-3610N PS
+- Sharp MX-3611F
+- Sharp MX-3611F PS
+- Sharp MX-3614FN
+- Sharp MX-3614FN PS
+- Sharp MX-3640FN
+- Sharp MX-3640FN PS
+- Sharp MX-3640N
+- Sharp MX-3640N PS
+- Sharp MX-4110FN
+- Sharp MX-4110FN PS
+- Sharp MX-4110N
+- Sharp MX-4110N PS
+- Sharp MX-4111FN
+- Sharp MX-4111FN PS
+- Sharp MX-4111N
+- Sharp MX-4111N PS
+- Sharp MX-4112N
+- Sharp MX-4112N PS
+- Sharp MX-4140FN
+- Sharp MX-4140FN PS
+- Sharp MX-4140N
+- Sharp MX-4140N PS
+- Sharp MX-4141FN
+- Sharp MX-4141FN PS
+- Sharp MX-4141N
+- Sharp MX-4141N PS
+- Sharp MX-4500FN
+- Sharp MX-4500FN PS
+- Sharp MX-4500N
+- Sharp MX-4500N PS
+- Sharp MX-4501FN
+- Sharp MX-4501FN PS
+- Sharp MX-4501N
+- Sharp MX-4501N PS
+- Sharp MX-5110FN
+- Sharp MX-5110FN PS
+- Sharp MX-5110N
+- Sharp MX-5110N PS
+- Sharp MX-5111FN
+- Sharp MX-5111FN PS
+- Sharp MX-5111N
+- Sharp MX-5111N PS
+- Sharp MX-5112N
+- Sharp MX-5112N PS
+- Sharp MX-5140FN
+- Sharp MX-5140FN PS
+- Sharp MX-5140N
+- Sharp MX-5140N PS
+- Sharp MX-5141FN
+- Sharp MX-5141FN PS
+- Sharp MX-5141N
+- Sharp MX-5141N PS
+- Sharp MX-5500N
+- Sharp MX-5500N PS
+- Sharp MX-6200N
+- Sharp MX-6200N PS
+- Sharp MX-6240N
+- Sharp MX-6240N PS
+- Sharp MX-6500N
+- Sharp MX-6500N PS
+- Sharp MX-6540FN
+- Sharp MX-6540FN PS
+- Sharp MX-7000N
+- Sharp MX-7000N PS
+- Sharp MX-7040N
+- Sharp MX-7040N PS
+- Sharp MX-7500N
+- Sharp MX-7500N PS
+- Sharp MX-B201
+- Sharp MX-B201 PS
+- Sharp MX-B201D
+- Sharp MX-B201D PS
+- Sharp MX-C250
+- Sharp MX-C250 PS
+- Sharp MX-C250E
+- Sharp MX-C250E PS
+- Sharp MX-C250F
+- Sharp MX-C250F PS
+- Sharp MX-C250FE
+- Sharp MX-C250FE PS
+- Sharp MX-C250FR
+- Sharp MX-C250FR PS
+- Sharp MX-C300
+- Sharp MX-C300 PS
+- Sharp MX-C300E
+- Sharp MX-C300E PS
+- Sharp MX-C300F
+- Sharp MX-C300F PS
+- Sharp MX-C300P
+- Sharp MX-C300P PS
+- Sharp MX-C300PE
+- Sharp MX-C300PE PS
+- Sharp MX-C300PL
+- Sharp MX-C300PL PS
+- Sharp MX-C300W
+- Sharp MX-C300W PS
+- Sharp MX-C300WE
+- Sharp MX-C300WE PS
+- Sharp MX-C300WR
+- Sharp MX-C300WR PS
+- Sharp MX-C301
+- Sharp MX-C301 PS
+- Sharp MX-C301F
+- Sharp MX-C301F PS
+- Sharp MX-C301W
+- Sharp MX-C301W PS
+- Sharp MX-M1054
+- Sharp MX-M1054 PS
+- Sharp MX-M1100
+- Sharp MX-M1100 PS
+- Sharp MX-M1204
+- Sharp MX-M1204 PS
+- Sharp MX-M182
+- Sharp MX-M182 PS
+- Sharp MX-M182D
+- Sharp MX-M182D PS
+- Sharp MX-M202D
+- Sharp MX-M202D PS
+- Sharp MX-M232D
+- Sharp MX-M232D PS
+- Sharp MX-M260
+- Sharp MX-M260 PS
+- Sharp MX-M260FP
+- Sharp MX-M260FP PS
+- Sharp MX-M260N
+- Sharp MX-M260N PS
+- Sharp MX-M264FP
+- Sharp MX-M264FP PS
+- Sharp MX-M264N
+- Sharp MX-M264N PS
+- Sharp MX-M264NR
+- Sharp MX-M264NR PS
+- Sharp MX-M264NV
+- Sharp MX-M264NV PS
+- Sharp MX-M264U
+- Sharp MX-M264U PS
+- Sharp MX-M310
+- Sharp MX-M310 PS
+- Sharp MX-M310FP
+- Sharp MX-M310FP PS
+- Sharp MX-M310N
+- Sharp MX-M310N PS
+- Sharp MX-M314FP
+- Sharp MX-M314FP PS
+- Sharp MX-M314N
+- Sharp MX-M314N PS
+- Sharp MX-M314NR
+- Sharp MX-M314NR PS
+- Sharp MX-M314NV
+- Sharp MX-M314NV PS
+- Sharp MX-M314U
+- Sharp MX-M314U PS
+- Sharp MX-M354FP
+- Sharp MX-M354FP PS
+- Sharp MX-M354N
+- Sharp MX-M354N PS
+- Sharp MX-M354NR
+- Sharp MX-M354NR PS
+- Sharp MX-M354U
+- Sharp MX-M354U PS
+- Sharp MX-M364N
+- Sharp MX-M364N PS
+- Sharp MX-M365FN
+- Sharp MX-M365FN PS
+- Sharp MX-M365N
+- Sharp MX-M365N PS
+- Sharp MX-M464FN
+- Sharp MX-M464FN PS
+- Sharp MX-M464N
+- Sharp MX-M464N PS
+- Sharp MX-M465FN
+- Sharp MX-M465FN PS
+- Sharp MX-M465N
+- Sharp MX-M465N PS
+- Sharp MX-M564FN
+- Sharp MX-M564FN PS
+- Sharp MX-M564N
+- Sharp MX-M564N PS
+- Sharp MX-M565FN
+- Sharp MX-M565FN PS
+- Sharp MX-M565N
+- Sharp MX-M565N PS
+- Sharp MX-M654FN
+- Sharp MX-M654FN PS
+- Sharp MX-M654N
+- Sharp MX-M654N PS
+- Sharp MX-M754FN
+- Sharp MX-M754FN PS
+- Sharp MX-M754N
+- Sharp MX-M754N PS
+- Sharp MX-M850
+- Sharp MX-M850 PS
+- Sharp MX-M860
+- Sharp MX-M860 PS
+- Sharp MX-M904
+- Sharp MX-M904 PS
+- Sharp MX-M950
+- Sharp MX-M950 PS
+
+### Foomatic: TOSHIBA
+
+- TOSHIBA e-ST280/282Series PS
+- TOSHIBA e-ST450/452Series PS
+- TOSHIBA e-ST4511/451cSeries PS
+- TOSHIBA e-STUDIO165
+- TOSHIBA e-STUDIO200L
+- TOSHIBA e-STUDIO202L
+- TOSHIBA e-STUDIO205
+- TOSHIBA e-STUDIO205Series PS
+- TOSHIBA e-STUDIO230
+- TOSHIBA e-STUDIO232
+- TOSHIBA e-STUDIO2500c
+- TOSHIBA e-STUDIO280
+- TOSHIBA e-STUDIO281c
+- TOSHIBA e-STUDIO282
+- TOSHIBA e-STUDIO350
+- TOSHIBA e-STUDIO3500c
+- TOSHIBA e-STUDIO3510c
+- TOSHIBA e-STUDIO3510cSeries PS
+- TOSHIBA e-STUDIO3511
+- TOSHIBA e-STUDIO351c
+- TOSHIBA e-STUDIO352
+- TOSHIBA e-STUDIO450
+- TOSHIBA e-STUDIO4511
+- TOSHIBA e-STUDIO451c
+- TOSHIBA e-STUDIO452
+- TOSHIBA e-STUDIO520
+- TOSHIBA e-STUDIO600
+- TOSHIBA e-STUDIO720
+- TOSHIBA e-STUDIO850
+- TOSHIBA e-STUDIO850Series PS
+
+### Foomatic: TOSHIBA TEC Corp.
+
+- Toshiba GL-1010
+- Toshiba GL-1020
+- TOSHIBA TEC Corp. GL-1010
+- TOSHIBA TEC Corp. GL-1020
+
+### Foomatic: UTAX
+
+- UTAX 300ci
+- UTAX 300ci KPDL
+- UTAX 301ci
+- UTAX 301ci KPDL
+- UTAX 350ci
+- UTAX 350ci KPDL
+- UTAX 400ci
+- UTAX 400ci KPDL
+
+### Foomatic: UTAX/TA
+
+- UTAX/TA 2506ci
+- UTAX/TA 2506ci KPDL
+- UTAX/TA 3206ci
+- UTAX/TA 3206ci KPDL
+- UTAX/TA 3262i
+- UTAX/TA 3262i KPDL
+- UTAX/TA 356ci
+- UTAX/TA 356ci KPDL
+- UTAX/TA 4006ci
+- UTAX/TA 4006ci KPDL
+- UTAX/TA 4056i
+- UTAX/TA 4056i KPDL
+- UTAX/TA 4062i
+- UTAX/TA 4062i KPDL
+- UTAX/TA 5006ci
+- UTAX/TA 5006ci KPDL
+- UTAX/TA 5056i
+- UTAX/TA 5056i KPDL
+- UTAX/TA 6006ci
+- UTAX/TA 6006ci KPDL
+- UTAX/TA 6056i
+- UTAX/TA 6056i KPDL
+- UTAX/TA Kyocera TASKalfa 6002i
+- UTAX/TA Kyocera TASKalfa 6052ci
+- UTAX/TA P-C3062DN
+- UTAX/TA P-C3062DN KPDL
+- UTAX/TA P-C3062i MFP
+- UTAX/TA P-C3062i MFP KPDL
+- UTAX/TA P-C3066i MFP
+- UTAX/TA P-C3066i MFP KPDL
+- UTAX/TA P-C3562DN
+- UTAX/TA P-C3562DN KPDL
+- UTAX/TA P-C3562i MFP
+- UTAX/TA P-C3562i MFP KPDL
+- UTAX/TA P-C3566i MFP
+- UTAX/TA P-C3566i MFP KPDL
+- UTAX/TA P-C4072DN
+- UTAX/TA P-C4072DN KPDL
+
+### Foomatic: UTAX_TA
+
+- UTAX_TA P-4531 MFP
+- UTAX_TA P-4531 MFP KPDL
+- UTAX_TA P-4531i MFP
+- UTAX_TA P-4531i MFP KPDL
+- UTAX_TA P-4536 MFP
+- UTAX_TA P-4536 MFP KPDL
+- UTAX_TA P-4536i MFP
+- UTAX_TA P-4536i MFP KPDL
+- UTAX_TA P-5536i MFP
+- UTAX_TA P-5536i MFP KPDL
+- UTAX_TA P-6036i MFP
+- UTAX_TA P-6036i MFP KPDL
+
+## HPLIP PostScript PPDs
+
+### HPLIP: HP
+
+- Hewlett-Packard HP Business Inkjet 2250
+- Hewlett-Packard HP Business Inkjet 2280
+- Hewlett-Packard hp business inkjet 2300
+- Hewlett-Packard hp business inkjet 2600
+- Hewlett-Packard HP Business Inkjet 2800
+- Hewlett-Packard hp business inkjet 3000
+- Hewlett-Packard HP CM8050 Color MFP
+- Hewlett-Packard HP CM8050 MFP with Edgeline
+- Hewlett-Packard HP CM8060 Color MFP
+- Hewlett-Packard HP CM8060 MFP with Edgeline
+- Hewlett-Packard HP Color LaserJet
+- Hewlett-Packard hp color LaserJet 2500
+- Hewlett-Packard hp color LaserJet 2550 series
+- Hewlett-Packard HP Color LaserJet 2605
+- Hewlett-Packard HP Color LaserJet 2605dn
+- Hewlett-Packard HP Color LaserJet 2605dtn
+- Hewlett-Packard HP Color LaserJet 2700
+- Hewlett-Packard HP Color LaserJet 2700n
+- Hewlett-Packard HP Color LaserJet 2820
+- Hewlett-Packard HP Color LaserJet 2830
+- Hewlett-Packard HP Color LaserJet 2840
+- Hewlett-Packard HP Color LaserJet 3000
+- Hewlett-Packard hp color LaserJet 3700
+- Hewlett-Packard HP Color LaserJet 3800
+- Hewlett-Packard HP Color LaserJet 4500
+- Hewlett-Packard HP Color LaserJet 4550
+- Hewlett-Packard hp color LaserJet 4600
+- Hewlett-Packard hp color LaserJet 4650
+- Hewlett-Packard HP Color LaserJet 4700
+- Hewlett-Packard HP Color LaserJet 4730mfp
+- Hewlett-Packard HP Color LaserJet 5/5M
+- Hewlett-Packard hp color LaserJet 5500
+- Hewlett-Packard hp color LaserJet 5550
+- Hewlett-Packard HP Color LaserJet 8500
+- Hewlett-Packard HP Color LaserJet 8550
+- Hewlett-Packard hp color LaserJet 9500
+- Hewlett-Packard hp color LaserJet 9500 MFP
+- Hewlett-Packard HP Color LaserJet CM1015
+- Hewlett-Packard HP Color LaserJet CM1017
+- Hewlett-Packard HP Color LaserJet CM1312 MFP
+- Hewlett-Packard HP Color LaserJet CM1312cb MFP
+- Hewlett-Packard HP Color LaserJet CM1312ci MFP
+- Hewlett-Packard HP Color LaserJet CM1312eb MFP
+- Hewlett-Packard HP Color LaserJet CM1312ei MFP
+- Hewlett-Packard HP Color LaserJet CM1312f MFP
+- Hewlett-Packard HP Color LaserJet CM1312nfi MFP
+- Hewlett-Packard HP Color LaserJet CM1312wb MFP
+- Hewlett-Packard HP Color LaserJet CM1312wi MFP
+- Hewlett-Packard HP Color LaserJet CM2320cb MFP
+- Hewlett-Packard HP Color LaserJet CM2320cbb MFP
+- Hewlett-Packard HP Color LaserJet CM2320ci MFP
+- Hewlett-Packard HP Color LaserJet CM2320eb MFP
+- Hewlett-Packard HP Color LaserJet CM2320ebb MFP
+- Hewlett-Packard HP Color LaserJet CM2320ei MFP
+- Hewlett-Packard HP Color LaserJet CM2320fxi MFP
+- Hewlett-Packard HP Color LaserJet CM2320n MFP
+- Hewlett-Packard HP Color LaserJet CM2320nf MFP
+- Hewlett-Packard HP Color LaserJet CM2320wb MFP
+- Hewlett-Packard HP Color LaserJet CM2320wbb MFP
+- Hewlett-Packard HP Color LaserJet CM2320wi MFP
+- Hewlett-Packard HP Color LaserJet CM3530 MFP
+- Hewlett-Packard HP Color LaserJet CM4730 MFP
+- Hewlett-Packard HP Color LaserJet CM6030 MFP
+- Hewlett-Packard HP Color LaserJet CM6040 MFP
+- Hewlett-Packard HP Color LaserJet CM6049 MFP
+- Hewlett-Packard HP Color LaserJet CP1515n
+- Hewlett-Packard HP Color LaserJet CP1518ni
+- Hewlett-Packard HP Color LaserJet CP2024
+- Hewlett-Packard HP Color LaserJet CP2024dn
+- Hewlett-Packard HP Color LaserJet CP2024n
+- Hewlett-Packard HP Color LaserJet CP2025
+- Hewlett-Packard HP Color LaserJet CP2025dn
+- Hewlett-Packard HP Color LaserJet CP2025n
+- Hewlett-Packard HP Color LaserJet CP2025x
+- Hewlett-Packard HP Color LaserJet CP2026
+- Hewlett-Packard HP Color LaserJet CP2026dn
+- Hewlett-Packard HP Color LaserJet CP2026n
+- Hewlett-Packard HP Color LaserJet CP2027
+- Hewlett-Packard HP Color LaserJet CP2027dn
+- Hewlett-Packard HP Color LaserJet CP2027n
+- Hewlett-Packard HP Color LaserJet CP3505
+- Hewlett-Packard HP Color LaserJet CP3525
+- Hewlett-Packard HP Color LaserJet CP4005
+- Hewlett-Packard HP Color LaserJet CP4020 Series
+- Hewlett-Packard HP Color LaserJet CP4520 Series
+- Hewlett-Packard HP Color LaserJet CP5221
+- Hewlett-Packard HP Color LaserJet CP5221dn
+- Hewlett-Packard HP Color LaserJet CP5221n
+- Hewlett-Packard HP Color LaserJet CP5223
+- Hewlett-Packard HP Color LaserJet CP5223dn
+- Hewlett-Packard HP Color LaserJet CP5223n
+- Hewlett-Packard HP Color LaserJet CP5225
+- Hewlett-Packard HP Color LaserJet CP5225dn
+- Hewlett-Packard HP Color LaserJet CP5225n
+- Hewlett-Packard HP Color LaserJet CP5227
+- Hewlett-Packard HP Color LaserJet CP5227dn
+- Hewlett-Packard HP Color LaserJet CP5227n
+- Hewlett-Packard HP Color LaserJet CP5229
+- Hewlett-Packard HP Color LaserJet CP5229dn
+- Hewlett-Packard HP Color LaserJet CP5229n
+- Hewlett-Packard HP Color LaserJet CP6015
+- Hewlett-Packard HP Designjet Z5200 PostScript
+- Hewlett-Packard HP Designjet Z5200 PostScript (44'' sized)
+- Hewlett-Packard HP LaserJet 1200
+- Hewlett-Packard HP LaserJet 1220
+- Hewlett-Packard hp LaserJet 1300
+- Hewlett-Packard hp LaserJet 1300n
+- Hewlett-Packard hp LaserJet 1320 series
+- Hewlett-Packard HP LaserJet 2100 Series
+- Hewlett-Packard HP LaserJet 2200
+- Hewlett-Packard hp LaserJet 2300 series
+- Hewlett-Packard hp LaserJet 2300L
+- Hewlett-Packard hp LaserJet 2410
+- Hewlett-Packard hp LaserJet 2420
+- Hewlett-Packard hp LaserJet 2430
+- Hewlett-Packard hp LaserJet 3015
+- Hewlett-Packard hp LaserJet 3020
+- Hewlett-Packard hp LaserJet 3030
+- Hewlett-Packard HP LaserJet 3050
+- Hewlett-Packard HP LaserJet 3052
+- Hewlett-Packard HP LaserJet 3055
+- Hewlett-Packard HP LaserJet 3200m
+- Hewlett-Packard HP LaserJet 3300/3310/3320
+- Hewlett-Packard HP LaserJet 3330
+- Hewlett-Packard hp LaserJet 3380
+- Hewlett-Packard HP LaserJet 3390
+- Hewlett-Packard HP LaserJet 4 Plus
+- Hewlett-Packard HP LaserJet 4000 Series
+- Hewlett-Packard HP LaserJet 4050 Series
+- Hewlett-Packard HP LaserJet 4100 MFP
+- Hewlett-Packard HP LaserJet 4100 Series
+- Hewlett-Packard hp LaserJet 4200
+- Hewlett-Packard hp LaserJet 4200L
+- Hewlett-Packard hp LaserJet 4240
+- Hewlett-Packard hp LaserJet 4240N
+- Hewlett-Packard hp LaserJet 4250
+- Hewlett-Packard hp LaserJet 4250L
+- Hewlett-Packard hp LaserJet 4300
+- Hewlett-Packard hp LaserJet 4345 mfp
+- Hewlett-Packard hp LaserJet 4350
+- Hewlett-Packard hp LaserJet 4350L
+- Hewlett-Packard HP LaserJet 4ML
+- Hewlett-Packard HP LaserJet 4MP
+- Hewlett-Packard HP LaserJet 4Si
+- Hewlett-Packard HP LaserJet 4V
+- Hewlett-Packard HP LaserJet 5000 Series
+- Hewlett-Packard HP LaserJet 5100 Series
+- Hewlett-Packard hp LaserJet 5200
+- Hewlett-Packard hp LaserJet 5200L
+- Hewlett-Packard hp LaserJet 5200LX
+- Hewlett-Packard HP LaserJet 5P
+- Hewlett-Packard HP LaserJet 5Si
+- Hewlett-Packard HP LaserJet 6P
+- Hewlett-Packard HP LaserJet 8000 Series
+- Hewlett-Packard HP LaserJet 8100 Series
+- Hewlett-Packard HP LaserJet 8150 Series
+- Hewlett-Packard HP LaserJet 9000 MFP
+- Hewlett-Packard HP LaserJet 9000 Series
+- Hewlett-Packard HP LaserJet 9000L MFP
+- Hewlett-Packard hp LaserJet 9040
+- Hewlett-Packard hp LaserJet 9040 MFP
+- Hewlett-Packard hp LaserJet 9050
+- Hewlett-Packard hp LaserJet 9050 MFP
+- Hewlett-Packard hp LaserJet 9055mfp
+- Hewlett-Packard hp LaserJet 9065mfp
+- Hewlett-Packard HP LaserJet M1522 MFP Series
+- Hewlett-Packard HP LaserJet M1522n MFP
+- Hewlett-Packard HP LaserJet M1522nf MFP
+- Hewlett-Packard HP LaserJet M2727 MFP Series
+- Hewlett-Packard HP LaserJet M2727nf MFP
+- Hewlett-Packard HP LaserJet M2727nfs MFP
+- Hewlett-Packard HP LaserJet M3027 MFP
+- Hewlett-Packard HP LaserJet M3035 MFP
+- Hewlett-Packard HP LaserJet M4345 MFP
+- Hewlett-Packard HP LaserJet M4349 MFP
+- Hewlett-Packard hp LaserJet M5025 MFP
+- Hewlett-Packard hp LaserJet M5035 MFP
+- Hewlett-Packard HP LaserJet M9040 MFP
+- Hewlett-Packard HP LaserJet M9050 MFP
+- Hewlett-Packard HP LaserJet M9059 MFP
+- Hewlett-Packard HP LaserJet P2015 Series
+- Hewlett-Packard HP LaserJet P2055
+- Hewlett-Packard HP LaserJet P2055d
+- Hewlett-Packard HP LaserJet P2055dn
+- Hewlett-Packard HP LaserJet P2055n
+- Hewlett-Packard HP LaserJet P2055x
+- Hewlett-Packard HP LaserJet P3004
+- Hewlett-Packard HP LaserJet P3005
+- Hewlett-Packard HP LaserJet P3010 Series
+- Hewlett-Packard HP LaserJet P3011
+- Hewlett-Packard HP LaserJet P3015
+- Hewlett-Packard HP LaserJet P4014
+- Hewlett-Packard HP LaserJet P4015
+- Hewlett-Packard HP LaserJet P4515
+- Hewlett-Packard HP Mopier 240
+- Hewlett-Packard HP Mopier 320
+- HP Business Inkjet 2250
+- HP Business Inkjet 2250 PS
+- HP Business Inkjet 2280
+- HP Business Inkjet 2280 PS
+- hp business inkjet 2300
+- HP Business Inkjet 2300 PS
+- hp business inkjet 2600
+- HP Business Inkjet 2600 PS
+- HP Business Inkjet 2800
+- HP Business Inkjet 2800 PS
+- hp business inkjet 3000
+- HP Business Inkjet 3000 PS
+- HP CM8050 CM8060 Color MFP with Edgeline Technology
+- HP CM8050 Color MFP
+- HP CM8050 MFP with Edgeline
+- HP CM8060 Color MFP
+- HP CM8060 MFP with Edgeline
+- HP Color LaserJet
+- HP Color LaserJet 2500
+- HP color LaserJet 2500 series
+- HP color LaserJet 2550
+- HP Color LaserJet 2550 Series
+- HP Color LaserJet 2605
+- HP Color LaserJet 2605dn
+- HP Color LaserJet 2605dtn
+- HP Color LaserJet 2700
+- HP Color LaserJet 2700n
+- hp color laserjet 2800
+- HP Color LaserJet 2800 Series
+- HP Color LaserJet 2820
+- HP Color LaserJet 2830
+- HP Color LaserJet 2840
+- HP Color LaserJet 3000
+- HP Color LaserJet 3700
+- hp color laserjet 3700n
+- HP Color LaserJet 3800
+- HP Color LaserJet 4500
+- HP Color LaserJet 4550
+- HP Color LaserJet 4600
+- hp color laserjet 4600 series
+- HP Color LaserJet 4610
+- HP Color LaserJet 4650
+- HP Color LaserJet 4700
+- HP Color LaserJet 4730mfp
+- HP Color LaserJet 5/5M
+- HP Color LaserJet 5500
+- HP Color LaserJet 5550
+- HP Color LaserJet 5700
+- HP Color LaserJet 5M
+- HP Color LaserJet 6700
+- HP Color LaserJet 6701
+- HP Color LaserJet 8500
+- HP Color LaserJet 8550
+- HP Color LaserJet 9500
+- HP Color LaserJet 9500 MFP
+- HP Color LaserJet CM1015
+- HP Color LaserJet CM1017
+- HP Color LaserJet CM1312 MFP
+- HP Color LaserJet CM1312 MFP Series
+- HP Color LaserJet CM1312cb MFP
+- HP Color LaserJet CM1312ci MFP
+- HP Color LaserJet CM1312eb MFP
+- HP Color LaserJet CM1312ei MFP
+- HP Color LaserJet CM1312f MFP
+- HP Color LaserJet CM1312nfi MFP
+- HP Color LaserJet CM1312wb MFP
+- HP Color LaserJet CM1312wi MFP
+- hp color laserjet cm2320 mfp
+- HP Color LaserJet CM2320 MFP Series
+- HP Color LaserJet CM2320cb MFP
+- HP Color LaserJet CM2320cbb MFP
+- HP Color LaserJet CM2320ci MFP
+- HP Color LaserJet CM2320eb MFP
+- HP Color LaserJet CM2320ebb MFP
+- HP Color LaserJet CM2320ei MFP
+- HP Color LaserJet CM2320fxi MFP
+- HP Color LaserJet CM2320n MFP
+- HP Color LaserJet CM2320nf MFP
+- HP Color LaserJet CM2320wb MFP
+- HP Color LaserJet CM2320wbb MFP
+- HP Color LaserJet CM2320wi MFP
+- HP Color LaserJet CM3530 MFP
+- HP Color LaserJet CM4540 MFP
+- HP Color LaserJet CM4730 MFP
+- HP Color LaserJet CM6030 MFP
+- HP Color LaserJet CM6040 MFP
+- HP Color LaserJet CM6049 MFP
+- HP Color LaserJet CP1510 Series
+- hp color laserjet cp1514n
+- HP Color LaserJet CP1515n
+- HP Color LaserJet CP1518ni
+- HP Color LaserJet CP2020 Series
+- HP Color LaserJet CP2024
+- HP Color LaserJet CP2024dn
+- HP Color LaserJet CP2024n
+- HP Color LaserJet CP2025
+- HP Color LaserJet CP2025dn
+- HP Color LaserJet CP2025n
+- HP Color LaserJet CP2025x
+- HP Color LaserJet CP2026
+- HP Color LaserJet CP2026dn
+- HP Color LaserJet CP2026n
+- HP Color LaserJet CP2027
+- HP Color LaserJet CP2027dn
+- HP Color LaserJet CP2027n
+- HP Color LaserJet CP3505
+- HP Color LaserJet CP3525
+- HP Color LaserJet CP4005
+- HP Color LaserJet CP4020 Series
+- HP Color LaserJet CP4020-CP4520 Series
+- HP Color LaserJet CP4520 Series
+- HP Color LaserJet CP5220 Series
+- HP Color LaserJet CP5221
+- HP Color LaserJet CP5221dn
+- HP Color LaserJet CP5221n
+- HP Color LaserJet CP5223
+- HP Color LaserJet CP5223dn
+- HP Color LaserJet CP5223n
+- HP Color LaserJet CP5225
+- HP Color LaserJet CP5225dn
+- HP Color LaserJet CP5225n
+- HP Color LaserJet CP5227
+- HP Color LaserJet CP5227dn
+- HP Color LaserJet CP5227n
+- HP Color LaserJet CP5229
+- HP Color LaserJet CP5229dn
+- HP Color LaserJet CP5229n
+- HP Color LaserJet CP5520 Series
+- HP Color LaserJet CP6015
+- HP Color LaserJet E45028
+- HP Color LaserJet E55040
+- HP Color LaserJet E65050
+- HP Color LaserJet E65050 E65060
+- HP Color LaserJet E65060
+- HP Color LaserJet E65150
+- HP Color LaserJet E65150 E65160
+- HP Color LaserJet E65160
+- HP Color LaserJet E67550 E67560
+- HP Color LaserJet E67650 E67660
+- HP Color LaserJet E75245
+- HP Color LaserJet E85055
+- HP Color LaserJet Flow 5800
+- HP Color LaserJet Flow 6800
+- HP Color LaserJet Flow 8801
+- HP Color LaserJet Flow E57540
+- HP Color LaserJet Flow E67560
+- HP Color LaserJet Flow E67660
+- HP Color LaserJet Flow E77822
+- HP Color LaserJet Flow E77825
+- HP Color LaserJet Flow E77830
+- HP Color LaserJet Flow E78323
+- HP Color LaserJet Flow E78325
+- HP Color LaserJet Flow E78330
+- HP Color LaserJet Flow E78625
+- HP Color LaserJet Flow E78630
+- HP Color LaserJet Flow E78635
+- HP Color LaserJet Flow E87640
+- HP Color LaserJet Flow E87650
+- HP Color LaserJet Flow E87660
+- HP Color LaserJet Flow E87740
+- HP Color LaserJet Flow E87750
+- HP Color LaserJet Flow E87760
+- HP Color LaserJet Flow E87770
+- HP Color LaserJet Flow MFP E786
+- HP Color LaserJet Flow MFP E877
+- HP Color Laserjet Flow MFP M577
+- HP Color LaserJet Flow MFP M680
+- HP Color LaserJet flow MFP M880
+- HP Color LaserJet Flow X579
+- HP Color LaserJet Flow X57945
+- HP Color LaserJet Flow x580
+- HP Color LaserJet FlowMFP M578
+- HP Color LaserJet FlowMFP M681
+- HP Color LaserJet FlowMFP M682
+- HP Color LaserJet FlowMFP M776
+- HP Color Laserjet M452
+- HP Color LaserJet M452dn
+- HP Color LaserJet M452dw
+- HP Color LaserJet M452nw
+- HP Color LaserJet M455
+- HP Color LaserJet M552
+- HP Color LaserJet M553
+- HP Color LaserJet M554
+- HP Color LaserJet M555
+- HP Color LaserJet M651
+- HP Color LaserJet M652
+- HP Color LaserJet M652 M653
+- HP Color LaserJet M653
+- HP Color LaserJet M750
+- HP Color LaserJet M751
+- HP Color LaserJet M855
+- HP Color LaserJet M856
+- HP Color LaserJet MFP 5800
+- HP Color LaserJet MFP 6800
+- HP Color LaserJet MFP 6801
+- HP Color LaserJet MFP 8801
+- HP Color LaserJet MFP E47528
+- HP Color LaserJet MFP E57540
+- HP Color LaserJet MFP E67550
+- HP Color LaserJet MFP E67650
+- HP Color LaserJet MFP E77422
+- HP Color LaserJet MFP E77428
+- HP Color LaserJet MFP E77822
+- HP Color LaserJet MFP E77825
+- HP Color LaserJet MFP E77830
+- HP Color LaserJet MFP E78223
+- HP Color LaserJet MFP E78228
+- HP Color LaserJet MFP E78323
+- HP Color LaserJet MFP E78323-25-30
+- HP Color LaserJet MFP E78325
+- HP Color LaserJet MFP E78330
+- HP Color LaserJet MFP E785
+- HP Color LaserJet MFP E78523
+- HP Color LaserJet MFP E78528
+- HP Color LaserJet MFP E786
+- HP Color LaserJet MFP E78625
+- HP Color LaserJet MFP E78630
+- HP Color LaserJet MFP E78635
+- HP Color LaserJet MFP E87640
+- HP Color LaserJet MFP E87650
+- HP Color LaserJet MFP E87660
+- HP Color LaserJet MFP E877
+- HP Color LaserJet MFP E87740
+- HP Color LaserJet MFP E87750
+- HP Color LaserJet MFP E87760
+- HP Color LaserJet MFP E87770
+- HP Color LaserJet MFP M274n
+- HP Color LaserJet MFP M277c1
+- HP Color LaserJet MFP M277c10
+- HP Color LaserJet MFP M277c2
+- HP Color LaserJet MFP M277c3
+- HP Color LaserJet MFP M277c4
+- HP Color LaserJet MFP M277c5
+- HP Color LaserJet MFP M277c6
+- HP Color LaserJet MFP M277c7
+- HP Color LaserJet MFP M277c8
+- HP Color LaserJet MFP M277c9
+- HP Color LaserJet MFP M277dw
+- HP Color LaserJet MFP M277n
+- HP Color LaserJet MFP M377dw
+- HP Color LaserJet MFP M476dn
+- HP Color LaserJet MFP M476dw
+- HP Color LaserJet MFP M476nw
+- HP Color LaserJet MFP M477fdn
+- HP Color LaserJet MFP M477fdw
+- HP Color LaserJet MFP M477fnw
+- HP Color LaserJet MFP M480
+- HP Color LaserJet MFP M577
+- HP Color LaserJet MFP M578
+- HP Color LaserJet MFP M680
+- HP Color LaserJet MFP M681
+- HP Color LaserJet MFP M681 M682
+- HP Color LaserJet MFP M776
+- HP Color LaserJet MFP X677
+- HP Color LaserJet MFP X67755
+- HP Color LaserJet MFP X67765
+- HP Color LaserJet MFP X77830
+- HP Color LaserJet Pro 4201
+- HP Color LaserJet Pro M252
+- HP Color LaserJet Pro M252c1
+- HP Color LaserJet Pro M252c10
+- HP Color LaserJet Pro M252c2
+- HP Color LaserJet Pro M252c3
+- HP Color LaserJet Pro M252c4
+- HP Color LaserJet Pro M252c5
+- HP Color LaserJet Pro M252c6
+- HP Color LaserJet Pro M252c7
+- HP Color LaserJet Pro M252c8
+- HP Color LaserJet Pro M252c9
+- HP Color LaserJet Pro M252dw
+- HP Color LaserJet Pro M252n
+- HP Color LaserJet Pro M452
+- HP Color LaserJet Pro M453-4
+- HP Color LaserJet Pro M478f-9f
+- HP Color LaserJet Pro M479
+- HP Color LaserJet Pro MFP M274
+- HP Color LaserJet Pro MFP M277
+- HP Color LaserJet Pro MFP M377
+- HP Color LaserJet Pro MFP M476
+- HP Color LaserJet Pro MFP M477
+- HP Color LaserJet Pro MFP M481
+- HP Color LaserJet X654
+- HP Color LaserJet X65455
+- HP Color LaserJet X65465
+- HP Color MFP 8801
+- HP Color MFP E786-25-30-35
+- HP Color MFP E78625-30-35
+- HP Color MFP E877-40-50-60-70
+- HP Color MFP E87740-50-60-70
+- HP ColorLaserJet M153-M154
+- HP ColorLaserJet M155-M156
+- HP ColorLaserJet M253-M254
+- HP ColorLaserJet M255-M256
+- HP ColorLaserJet MFP M178-M181
+- HP ColorLaserJet MFP M182-M185
+- HP ColorLaserJet MFP M278-M281
+- HP ColorLaserJet MFP M282-M285
+- HP D50352
+- HP Designjet 4000ps
+- HP Designjet 4000ps (42'' sized)
+- HP Designjet 4020ps
+- HP Designjet 4020ps (42'' sized)
+- HP Designjet 4500mfp
+- HP Designjet 4500mfp (42'' sized)
+- HP Designjet 4500ps
+- HP Designjet 4500ps (42'' sized)
+- HP Designjet 4520mfp
+- HP Designjet 4520mfp (42'' sized)
+- HP Designjet 4520ps
+- HP Designjet 4520ps (42'' sized)
+- HP Designjet D5800ps
+- HP Designjet D5800ps Photo
+- HP Designjet T1100ps 24in
+- HP Designjet T1100ps 24in (24'' sized)
+- HP Designjet T1100ps 44in
+- HP Designjet T1100ps 44in (44'' sized)
+- HP Designjet T1120ps 24in
+- HP Designjet T1120ps 24in (24'' sized)
+- HP Designjet T1120ps 44in
+- HP Designjet T1120ps 44in (44'' sized)
+- HP Designjet T1200 PostScript
+- HP Designjet T1200 PostScript (44'' sized)
+- HP Designjet T1300 PostScript
+- HP Designjet T1300 PostScript (44'' sized)
+- HP Designjet T1500 PostScript
+- HP Designjet T1500 PostScript (36'' sized)
+- HP DesignJet T1530ps
+- HP DesignJet T1530ps PS3
+- HP DesignJet T1600
+- HP DesignJet T1600 PS3
+- HP DesignJet T1600dr
+- HP DesignJet T1600dr PS3
+- HP DesignJet T1700 PostScript
+- HP DesignJet T1700dr PostScript
+- HP DesignJet T1708 PostScript
+- HP DesignJet T1708dr PostScript
+- HP Designjet T2300 PostScript
+- HP Designjet T2300 PostScript (44'' sized)
+- HP Designjet T2500 PostScript
+- HP Designjet T2500 PostScript (36'' sized)
+- HP DesignJet T2530ps
+- HP DesignJet T2530ps PS3
+- HP DesignJet T2600
+- HP DesignJet T2600 PS3
+- HP DesignJet T2600dr
+- HP DesignJet T2600dr PS3
+- HP Designjet T3500ps
+- HP Designjet T3500ps (36'' sized)
+- HP Designjet T7100ps
+- HP Designjet T7100ps (42'' sized)
+- HP Designjet T7100ps Monochrome
+- HP Designjet T7100ps Monochrome (42'' sized)
+- HP Designjet T7200ps
+- HP Designjet T7200ps (42'' sized)
+- HP Designjet T770 PostScript
+- HP Designjet T770 PostScript (44'' sized)
+- HP Designjet T770ps 24in
+- HP Designjet T770ps 24in (24'' sized)
+- HP Designjet T790ps 24in
+- HP Designjet T790ps 24in (24'' sized)
+- HP Designjet T790ps 44in
+- HP Designjet T790ps 44in (44'' sized)
+- HP Designjet T795ps 44in
+- HP Designjet T795ps 44in (44'' sized)
+- HP Designjet T920 PostScript
+- HP Designjet T920 PostScript (36'' sized)
+- HP DesignJet T930 PostScript
+- HP DesignJet T930 PostScript (36'' sized)
+- HP DesignJet XL 3600
+- HP DesignJet XL 3600 PS3
+- HP DesignJet XL 3800 MFP PS
+- HP DesignJet XL 3800 MFP PS36'' sized)
+- HP DesignJet Z2600 PostScript
+- HP DesignJet Z2600 PostScript (24'' sized)
+- HP Designjet Z5200 PostScript
+- HP Designjet Z5200 PostScript (44'' sized)
+- HP Designjet Z5400 PostScript
+- HP Designjet Z5400 PostScript (44'' sized)
+- HP DesignJet Z5600 PostScript
+- HP DesignJet Z5600 PostScript (44'' sized)
+- HP DesignJet Z6 24in
+- HP DesignJet Z6 24in PostScript
+- HP DesignJet Z6 44in
+- HP DesignJet Z6 44in PostScript
+- HP DesignJet Z6 Pro 64in
+- HP DesignJet Z6 Pro 64in PostScript
+- HP DesignJet Z6 Pro 64in PS
+- HP Designjet Z6100ps 42in Photo
+- HP Designjet Z6100ps 42in Photo (42'' sized)
+- HP Designjet Z6100ps 60in Photo
+- HP Designjet Z6100ps 60in Photo (60'' sized)
+- HP Designjet Z6200ps 42in Photo
+- HP Designjet Z6200ps 42in Photo (42'' sized)
+- HP Designjet Z6200ps 60in Photo
+- HP Designjet Z6200ps 60in Photo (60'' sized)
+- HP Designjet Z6600ps
+- HP Designjet Z6600ps (60'' sized)
+- HP DesignJet Z6610ps 60in
+- HP Designjet Z6800ps Photo
+- HP Designjet Z6800ps Photo (60'' sized)
+- HP DesignJet Z6810ps 42in
+- HP DesignJet Z6810ps 60in
+- HP DesignJet Z6dr 44in
+- HP DesignJet Z6dr 44in PostScript
+- HP DesignJet Z9 24in
+- HP DesignJet Z9 24in PostScript
+- HP DesignJet Z9 44in
+- HP DesignJet Z9 44in PostScript
+- HP DesignJet Z9 Pro 64in
+- HP DesignJet Z9 Pro 64in PostScript
+- HP DesignJet Z9 Pro 64in PS
+- HP DesignJet Z9dr 44in
+- HP DesignJet Z9dr 44in PostScript
+- HP DEX D50352
+- HP DEX MFP D53052
+- HP hp-color_laserjet_E65150_E65160
+- HP hp-color_laserjet_e67650_e67660
+- HP hp-color_laserjet_e75245
+- HP hp-color_laserjet_flowmfp_m578
+- HP hp-color_laserjet_m153-m154
+- HP hp-color_laserjet_M155-M156
+- HP hp-color_laserjet_m253-m254
+- HP hp-color_laserjet_M255-M256
+- HP hp-color_laserjet_m751
+- HP hp-color_laserjet_mfp_e47528
+- HP hp-color_laserjet_mfp_e77422
+- HP hp-color_laserjet_mfp_e77428
+- HP hp-color_laserjet_mfp_e785
+- HP hp-color_laserjet_mfp_e78523
+- HP hp-color_laserjet_mfp_e78528
+- HP hp-color_laserjet_mfp_m178-m181
+- HP hp-color_laserjet_mfp_M182-M185
+- HP hp-color_laserjet_mfp_m278-m281
+- HP hp-color_laserjet_mfp_M282-M285
+- HP hp-color_laserjet_mfp_m480
+- HP hp-color_laserjet_mfp_m578
+- HP hp-color_laserjet_pro_m453-4
+- HP hp-color_laserjet_pro_m478f-9f
+- HP hp-color_laserjet_pro_m479
+- HP hp-color_laserjet_pro_mfp_4301
+- HP hp-designjet_t1700_ps
+- HP hp-designjet_t1700dr_ps
+- HP hp-designjet_t1708_postscript
+- HP hp-designjet_t1708dr_postscript
+- HP hp-designjet_z2600_postscript
+- HP hp-designjet_z5600_postscript
+- HP hp-designjet_Z6_24in
+- HP hp-designjet_Z6_44in
+- HP hp-designjet_z6_pro_64in_ps
+- HP hp-designjet_Z6dr_44in
+- HP hp-designjet_Z9_24in
+- HP hp-designjet_Z9_44in
+- HP hp-designjet_z9_pro_64in_ps
+- HP hp-designjet_Z9dr_44in
+- HP hp-laserjet_e40040
+- HP hp-laserjet_e60155
+- HP hp-laserjet_e60175
+- HP hp-laserJet_e62655-e62675
+- HP hp-laserjet_m407
+- HP hp-laserjet_mfp_e42540
+- HP hp-laserjet_mfp_e72425
+- HP hp-laserjet_mfp_e72430
+- HP hp-laserjet_mfp_m430
+- HP hp-laserjet_mfp_m431
+- HP hp-laserjet_mfp_x530
+- HP hp-laserjet_pro_m118-m119
+- HP hp-laserjet_pro_m148-m149
+- HP hp-laserjet_pro_m148f-m149f
+- HP hp-laserjet_pro_m304-m305
+- HP hp-laserjet_pro_m404-m405
+- HP hp-laserjet_pro_m428-m429
+- HP hp-laserjet_pro_m428f-m429f
+- HP hp-laserjet_pro_mfp_m329
+- HP hp-laserjet_x504
+- HP hp-pagewide_color_755
+- HP hp-pagewide_color_mfp_774-779
+- HP hp-pagewide_color_P75250
+- HP hp-pagewide_P77440_P77940-60
+- HP hp-pagewide_xl_4000ps
+- HP hp-pagewide_xl_4000ps_mfp
+- HP hp-pagewide_xl_4500ps
+- HP hp-pagewide_xl_4500ps_mfp
+- HP hp-pagewide_xl_5000ps
+- HP hp-pagewide_xl_5000ps_blueprinter
+- HP hp-pagewide_xl_5000ps_mfp
+- HP hp-pagewide_xl_5100ps
+- HP hp-pagewide_xl_5100ps_mfp
+- HP hp-pagewide_xl_5100ps_mfp_blueprinter
+- HP hp-pagewide_xl_6000ps
+- HP hp-pagewide_xl_6000ps_mfp
+- HP hp-pagewide_xl_8000ps
+- HP hp-pagewide_xl_8000ps_blueprinter
+- HP hp-pagewide_xl_pro_5200_ps_mfp_series
+- HP hp-pagewide_xl_pro_8200_ps_mfp_series
+- HP HP2250
+- HP hp2280
+- HP hp2300
+- HP HP2600
+- HP hp3000
+- HP HP_Color_LaserJet_5700
+- HP HP_Color_LaserJet_6700
+- HP HP_Color_LaserJet_6701
+- HP hp_color_laserjet_e45028
+- HP hp_color_laserjet_e55040
+- HP HP_Color_LaserJet_E85055.ppd
+- HP HP_Color_LaserJet_Flow_5800
+- HP HP_Color_LaserJet_Flow_6800
+- HP HP_Color_LaserJet_Flow_E57540
+- HP hp_color_laserjet_flow_e78625
+- HP hp_color_laserjet_flow_E78630
+- HP hp_color_laserjet_flow_E78635
+- HP hp_color_laserjet_flow_e87740
+- HP hp_color_laserjet_flow_e87750
+- HP hp_color_laserjet_flow_e87760
+- HP hp_color_laserjet_flow_e87770
+- HP hp_color_laserjet_flow_mfp_e786
+- HP hp_color_laserjet_flow_mfp_e877
+- HP hp_color_laserjet_flow_mfp_m776
+- HP HP_Color_LaserJet_Flow_X579
+- HP HP_Color_LaserJet_Flow_X57945
+- HP HP_Color_LaserJet_Flow_x580
+- HP hp_color_laserjet_m455
+- HP hp_color_laserjet_m554
+- HP hp_color_laserjet_m555
+- HP HP_Color_LaserJet_M652_M653
+- HP HP_Color_LaserJet_M856.ppd
+- HP HP_Color_LaserJet_MFP_5800
+- HP HP_Color_LaserJet_MFP_6800
+- HP HP_Color_LaserJet_MFP_6801
+- HP hp_color_laserjet_mfp_8801
+- HP HP_Color_LaserJet_MFP_E57540
+- HP hp_Color_laserJet_MFP_E78223
+- HP hp_Color_laserJet_MFP_E78228
+- HP hp_color_laserjet_mfp_e78323-25-30
+- HP hp_color_laserjet_mfp_e78625
+- HP hp_color_laserjet_mfp_E78630
+- HP hp_color_laserjet_mfp_E78635
+- HP hp_color_laserjet_mfp_e877
+- HP hp_color_laserjet_mfp_e87740
+- HP hp_color_laserjet_mfp_e87750
+- HP hp_color_laserjet_mfp_e87760
+- HP hp_color_laserjet_mfp_e87770
+- HP hp_color_laserjet_mfp_m776
+- HP HP_Color_LaserJet_MFP_x677
+- HP HP_Color_LaserJet_MFP_x67755
+- HP HP_Color_LaserJet_MFP_x67765
+- HP HP_Color_LaserJet_MFP_X77830
+- HP hp_color_laserjet_pro_4201
+- HP HP_Color_LaserJet_x654
+- HP HP_Color_LaserJet_x65455
+- HP HP_Color_LaserJet_x65465
+- HP hp_designjet_xl_3800_mfp
+- HP hp_designjet_z6610ps_60in
+- HP hp_designjet_z6810ps_42in
+- HP hp_designjet_z6810ps_60in
+- HP HP_LaserJet_5501
+- HP HP_LaserJet_5502
+- HP HP_LaserJet_6500
+- HP HP_LaserJet_6501
+- HP hp_laserjet_8501
+- HP hp_laserjet_e50145
+- HP hp_laserjet_e60165
+- HP hp_laserjet_flow_8601
+- HP hp_laserjet_flow_e73130
+- HP hp_laserjet_flow_e73135
+- HP hp_laserjet_flow_e73140
+- HP hp_laserjet_flow_e82650
+- HP hp_laserjet_flow_e82660
+- HP hp_laserjet_flow_e82670
+- HP HP_LaserJet_Flow_MFP_5602
+- HP HP_LaserJet_Flow_MFP_6600
+- HP hp_laserjet_flow_mfp_e52645
+- HP hp_laserjet_flow_mfp_e731
+- HP hp_laserjet_flow_mfp_e826
+- HP hp_laserjet_flow_mfp_m528
+- HP HP_LaserJet_Flow_MFP_x530
+- HP HP_LaserJet_Flow_MFP_x627
+- HP hp_laserjet_m406
+- HP hp_laserjet_m507
+- HP hp_LaserJet_M610_M611_M612
+- HP hp_laserjet_mfp_3001-3008
+- HP HP_LaserJet_MFP_5601
+- HP HP_LaserJet_MFP_5602
+- HP HP_LaserJet_MFP_6600
+- HP hp_laserjet_mfp_e730
+- HP hp_laserjet_mfp_e73025
+- HP hp_laserjet_mfp_e73030
+- HP hp_laserjet_mfp_e731
+- HP hp_laserjet_mfp_e73130
+- HP hp_laserjet_mfp_e73135
+- HP hp_laserjet_mfp_e73140
+- HP HP_LaserJet_MFP_E77822-25-30
+- HP hp_laserjet_mfp_e826
+- HP hp_laserjet_mfp_e82650
+- HP hp_laserjet_mfp_e82660
+- HP hp_laserjet_mfp_e82670
+- HP hp_laserjet_mfp_m634_m635_m636
+- HP HP_LaserJet_MFP_x529
+- HP HP_LaserJet_MFP_x530
+- HP HP_LaserJet_MFP_x627
+- HP hp_laserjet_mfp_x728
+- HP hp_laserjet_pro_4001
+- HP hp_laserjet_pro_4002
+- HP hp_laserjet_pro_4003
+- HP hp_laserjet_pro_4004
+- HP HP_LaserJet_Pro_M203_M206
+- HP hp_laserjet_pro_mfp_3101-3108
+- HP hp_laserjet_pro_mfp_4101
+- HP hp_laserjet_pro_mfp_4102
+- HP hp_laserjet_pro_mfp_4103
+- HP hp_laserjet_pro_mfp_4104
+- HP HP_LaserJet_Pro_MFP_M227-M231
+- HP HP_LaserJet_x503
+- HP HP_LaserJet_x504
+- HP HP_LaserJet_x602
+- HP HP_LaserJet_x603
+- HP hp_pagewide_color_556
+- HP HP_PageWide_Color_E55650
+- HP hp_pagewide_color_flow_mfp_586
+- HP HP_PageWide_Color_MFP_E58650
+- HP HP_PageWide_MFP_P77740-60zs
+- HP HP_PageWide_P75050-60
+- HP HP_PageWide_Pro_750
+- HP HP_PageWide_Pro_MFP_772-777
+- HP LaserJet 100 color MFP M175
+- HP LaserJet 100 colorMFP M175a
+- HP LaserJet 100 colorMFP M175b
+- HP LaserJet 100 colorMFP M175c
+- HP LaserJet 100 colorMFP M175e
+- HP LaserJet 100 colorMFP M175nw
+- HP LaserJet 100 colorMFP M175p
+- HP LaserJet 100 colorMFP M175q
+- HP LaserJet 100 colorMFP M175r
+- HP LaserJet 1200
+- hp laserjet 1200n
+- HP LaserJet 1220
+- hp laserjet 1220se
+- hp LaserJet 1300
+- HP LaserJet 1300 Series
+- hp LaserJet 1300n
+- hp laserjet 1300xi
+- hp laserjet 1320
+- HP LaserJet 1320 series
+- hp laserjet 1320n
+- hp laserjet 1320nw
+- hp laserjet 1320tn
+- HP LaserJet 200 color M251
+- HP LaserJet 200 color M251b
+- HP LaserJet 200 color M251e
+- HP LaserJet 200 color M251g
+- HP LaserJet 200 color M251j
+- HP LaserJet 200 color M251k
+- HP LaserJet 200 color M251n
+- HP LaserJet 200 color M251nw
+- HP LaserJet 200 color M251p
+- HP LaserJet 200 color M251q
+- HP LaserJet 200 color M251r
+- HP LaserJet 200 color M251u
+- HP LaserJet 200 color M251v
+- HP LaserJet 200 color MFP M275
+- HP LaserJet 200 color MFP M276
+- HP LaserJet 200 colorMFP M275nw
+- HP LaserJet 200 colorMFP M275s
+- HP LaserJet 200 colorMFP M275t
+- HP LaserJet 200 colorMFP M275u
+- HP LaserJet 200 colorMFP M276b
+- HP LaserJet 200 colorMFP M276e
+- HP LaserJet 200 colorMFP M276g
+- HP LaserJet 200 colorMFP M276j
+- HP LaserJet 200 colorMFP M276k
+- HP LaserJet 200 colorMFP M276n
+- HP LaserJet 200 colorMFP M276nw
+- HP LaserJet 200 colorMFP M276p
+- HP LaserJet 200 colorMFP M276q
+- HP LaserJet 200 colorMFP M276r
+- HP LaserJet 200 colorMFP M276u
+- HP LaserJet 200 colorMFP M276v
+- hp laserjet 2100
+- HP LaserJet 2100 Series
+- HP LaserJet 2200
+- hp laserjet 2200 series
+- HP LaserJet 2300
+- hp LaserJet 2300 series
+- hp LaserJet 2300L
+- HP LaserJet 2410
+- HP LaserJet 2420
+- HP LaserJet 2430
+- HP LaserJet 300 color M351a
+- HP LaserJet 300 colorMFP M375nw
+- HP LaserJet 3015
+- hp LaserJet 3020
+- HP LaserJet 3020 3030
+- hp LaserJet 3030
+- HP LaserJet 3050
+- HP LaserJet 3052
+- HP LaserJet 3055
+- HP LaserJet 3200m
+- hp laserjet 3300 3310 3320
+- HP LaserJet 3300 Series
+- HP LaserJet 3300/3310/3320
+- HP LaserJet 3330
+- HP LaserJet 3380
+- HP LaserJet 3390
+- HP LaserJet 4
+- HP LaserJet 4 Plus
+- HP LaserJet 4 PostScript 600DPI
+- HP LaserJet 400 color M451dn
+- HP LaserJet 400 color M451dw
+- HP LaserJet 400 color M451nw
+- HP LaserJet 400 colorMFP M475dn
+- HP LaserJet 400 colorMFP M475dw
+- HP LaserJet 400 M401
+- HP LaserJet 400 M401a
+- HP LaserJet 400 M401d
+- HP LaserJet 400 M401dn
+- HP LaserJet 400 M401dne
+- HP LaserJet 400 M401dw
+- HP LaserJet 400 M401n
+- HP LaserJet 400 MFP M425
+- HP LaserJet 400 MFP M425dn
+- HP LaserJet 400 MFP M425dw
+- HP LaserJet 4000 Series
+- HP LaserJet 4050 Series
+- HP LaserJet 4100 MFP
+- HP LaserJet 4100 Series
+- hp LaserJet 4200
+- HP LaserJet 4200 Series
+- hp LaserJet 4200L
+- HP LaserJet 4240
+- hp LaserJet 4240N
+- HP LaserJet 4250
+- hp LaserJet 4250L
+- hp LaserJet 4300
+- HP LaserJet 4300 Series
+- HP LaserJet 4345 MFP
+- HP LaserJet 4350
+- hp LaserJet 4350L
+- HP LaserJet 4ML
+- HP LaserJet 4MP
+- HP LaserJet 4Si
+- HP LaserJet 4Si/4Si MX 600 dpi
+- HP LaserJet 4V
+- HP LaserJet 4V/4MV
+- HP LaserJet 500 color M551
+- HP LaserJet 500 color MFP M570
+- HP LaserJet 500 color MFP M575
+- HP LaserJet 500 colorMFP M570dn
+- HP LaserJet 500 colorMFP M570dw
+- HP LaserJet 500 MFP M525
+- hp laserjet 5000
+- HP LaserJet 5000 Series
+- HP LaserJet 5100 Series
+- HP LaserJet 5200
+- HP LaserJet 5200L
+- HP LaserJet 5200LX
+- HP LaserJet 5501
+- HP LaserJet 5502
+- hp laserjet 5mp
+- HP LaserJet 5P
+- HP LaserJet 5Si
+- hp laserjet 5si mopier
+- HP LaserJet 5Si Mopier PS
+- HP LaserJet 600 M601
+- HP LaserJet 600 M601 M602 M603
+- HP LaserJet 600 M602
+- HP LaserJet 600 M603
+- HP LaserJet 6500
+- HP LaserJet 6501
+- hp laserjet 6mp
+- HP LaserJet 6P
+- HP LaserJet 6P/6MP
+- HP LaserJet 700 color MFP M775
+- HP LaserJet 700 M712
+- hp laserjet 8000
+- HP LaserJet 8000 Series
+- hp laserjet 8100 mfp
+- HP LaserJet 8100 Series
+- hp laserjet 8150 mfp
+- HP LaserJet 8150 Series
+- HP LaserJet 8501
+- HP LaserJet 9000 MFP
+- HP LaserJet 9000 Series
+- HP LaserJet 9000L MFP
+- HP LaserJet 9040
+- HP LaserJet 9040 9050 MFP
+- hp LaserJet 9040 MFP
+- HP LaserJet 9050
+- hp LaserJet 9050 MFP
+- HP LaserJet 9055 9065 MFP
+- hp LaserJet 9055mfp
+- hp LaserJet 9065mfp
+- HP LaserJet CM1410 Series
+- HP LaserJet CM1411fn
+- HP LaserJet CM1412fn
+- HP LaserJet CM1413fn
+- HP LaserJet CM1415fn
+- HP LaserJet CM1415fnw
+- HP LaserJet CM1416fnw
+- HP LaserJet CM1417fnw
+- HP LaserJet CM1418fnw
+- HP LaserJet color flow MFP M575
+- HP LaserJet CP1520 Series
+- HP LaserJet CP1521n
+- HP LaserJet CP1522n
+- HP LaserJet CP1523n
+- HP LaserJet CP1525N
+- HP LaserJet CP1525nw
+- HP LaserJet CP1526nw
+- HP LaserJet CP1527nw
+- HP LaserJet CP1528nw
+- HP LaserJet E40040
+- HP LaserJet E50145
+- HP LaserJet E60055
+- HP LaserJet E60055 E60075
+- HP LaserJet E60055-E60075
+- HP LaserJet E60065
+- HP LaserJet E60075
+- HP LaserJet E60155
+- HP LaserJet E60165
+- HP LaserJet E60175
+- HP LaserJet E62555-E62575
+- HP LaserJet E62655-E62675
+- HP LaserJet Flow 8601
+- HP LaserJet Flow E73130
+- HP LaserJet Flow E73135
+- HP LaserJet Flow E73140
+- HP LaserJet Flow E82650
+- HP LaserJet Flow E82660
+- HP LaserJet Flow E82670
+- HP LaserJet Flow MFP 5602
+- HP LaserJet Flow MFP 6600
+- HP LaserJet Flow MFP E52645
+- HP LaserJet Flow MFP E62565
+- HP LaserJet Flow MFP E62575
+- HP LaserJet Flow MFP E62665
+- HP LaserJet Flow MFP E62675
+- HP LaserJet Flow MFP E72525
+- HP LaserJet Flow MFP E72530
+- HP LaserJet Flow MFP E72535
+- HP LaserJet Flow MFP E731
+- HP LaserJet Flow MFP E82540
+- HP LaserJet Flow MFP E82550
+- HP LaserJet Flow MFP E82560
+- HP LaserJet Flow MFP E826
+- HP LaserJet flow MFP M525
+- HP LaserJet Flow MFP M528
+- HP LaserJet Flow MFP M630
+- HP LaserJet Flow MFP M631
+- HP LaserJet Flow MFP M632
+- HP LaserJet Flow MFP M633
+- HP LaserJet Flow MFP M634
+- HP LaserJet Flow MFP M635
+- HP LaserJet Flow MFP M636
+- HP LaserJet flow MFP M830
+- HP LaserJet Flow MFP x530
+- HP LaserJet Flow MFP x627
+- hp laserjet m1522 mfp
+- HP LaserJet M1522 MFP Series
+- HP LaserJet M1522n MFP
+- HP LaserJet M1522nf MFP
+- HP LaserJet M1536dnf MFP
+- HP LaserJet M1537dnf MFP
+- HP LaserJet M1538dnf MFP
+- HP LaserJet M1539dnf MFP
+- HP LaserJet M203-M206
+- hp laserjet m2727 mfp
+- HP LaserJet M2727 MFP Series
+- HP LaserJet M2727nf MFP
+- HP LaserJet M2727nfs MFP
+- HP LaserJet M3027 MFP
+- HP LaserJet M3035 MFP
+- hp laserjet m402 m403
+- hp laserjet m402 m403 n
+- HP LaserJet M402d
+- HP LaserJet M402dn
+- HP LaserJet M402dw
+- HP LaserJet M402n
+- HP LaserJet M403d
+- HP LaserJet M403dn
+- HP LaserJet M403dw
+- HP LaserJet M403n
+- HP LaserJet M406
+- HP LaserJet M407
+- HP LaserJet M4345 MFP
+- HP LaserJet M4349 MFP
+- HP LaserJet M4555 MFP
+- HP LaserJet M5025 MFP
+- HP LaserJet M5035 MFP
+- HP LaserJet M506
+- HP LaserJet M507
+- HP LaserJet M604
+- HP Laserjet M604 M605 M606
+- HP LaserJet M605
+- HP LaserJet M606
+- HP LaserJet M607
+- HP LaserJet M607 M608 M609
+- HP LaserJet M608
+- HP LaserJet M609
+- HP LaserJet M610
+- HP LaserJet M610 M611 M612
+- HP LaserJet M611
+- HP LaserJet M612
+- HP LaserJet M806
+- HP LaserJet M9040 M9050 MFP
+- HP LaserJet M9040 MFP
+- HP LaserJet M9050 MFP
+- HP LaserJet M9059 MFP
+- HP LaserJet Managed MFP E826-50-60-70
+- HP LaserJet Managed MFP E82650-60-70
+- HP LaserJet MFP 5601
+- HP LaserJet MFP 5602
+- HP LaserJet MFP 6600
+- HP LaserJet MFP 8601
+- HP LaserJet MFP E42540
+- HP LaserJet MFP E62555
+- HP LaserJet MFP E62565
+- HP LaserJet MFP E62655
+- HP LaserJet MFP E62665
+- HP LaserJet MFP E72425
+- HP LaserJet MFP E72430
+- HP LaserJet MFP E72525
+- HP LaserJet MFP E72525-25-30-35
+- HP LaserJet MFP E72525-30-35
+- HP LaserJet MFP E72530
+- HP LaserJet MFP E72535
+- HP LaserJet MFP E730
+- HP LaserJet MFP E73025
+- HP LaserJet MFP E73030
+- HP LaserJet MFP E731
+- HP LaserJet MFP E731-30-35-40
+- HP LaserJet MFP E73130
+- HP LaserJet MFP E73130-35-40
+- HP LaserJet MFP E73135
+- HP LaserJet MFP E73140
+- HP LaserJet MFP E77822-25-30
+- HP LaserJet MFP E82540
+- HP LaserJet MFP E82540-50-60
+- HP LaserJet MFP E82550
+- HP LaserJet MFP E82560
+- HP LaserJet MFP E826
+- HP LaserJet MFP E82650
+- HP LaserJet MFP E82660
+- HP LaserJet MFP E82670
+- HP LaserJet MFP E87640-50-60
+- HP LaserJet MFP M227-M231
+- HP laserjet MFP M426 M427
+- HP LaserJet MFP M426dw
+- HP LaserJet MFP M426fdn
+- HP LaserJet MFP M426fdw
+- HP LaserJet MFP M427dw
+- HP LaserJet MFP M427fdn
+- HP LaserJet MFP M427fdw
+- HP LaserJet MFP M430
+- HP LaserJet MFP M431
+- HP LaserJet MFP M527
+- HP LaserJet MFP M630
+- HP LaserJet MFP M631
+- HP LaserJet MFP M631 M632 M633
+- HP LaserJet MFP M632
+- HP LaserJet MFP M633
+- HP LaserJet MFP M634
+- HP LaserJet MFP M634 M635 M636
+- HP LaserJet MFP M635
+- HP LaserJet MFP M636
+- HP LaserJet MFP M725
+- HP LaserJet MFP x529
+- HP LaserJet MFP x530
+- HP LaserJet MFP x627
+- HP LaserJet MFP X728
+- HP LaserJet P2015 Series
+- HP LaserJet P2055
+- HP LaserJet P2055 Series
+- HP LaserJet P2055d
+- HP LaserJet P2055dn
+- HP LaserJet P2055n
+- HP LaserJet P2055x
+- HP LaserJet P3004
+- HP LaserJet P3005
+- HP LaserJet P3010 Series
+- HP LaserJet P3011
+- HP LaserJet P3015
+- HP LaserJet P4010 Series
+- HP LaserJet P4014
+- hp laserjet p4014dn
+- HP LaserJet P4015
+- HP LaserJet P4515
+- HP LaserJet Pro 3001-3008
+- HP LaserJet Pro 4001
+- HP LaserJet Pro 4002
+- HP LaserJet Pro 4003
+- HP LaserJet Pro 4004
+- HP LaserJet Pro M118-M119
+- HP LaserJet Pro M148-M149
+- HP LaserJet Pro M148f-M149f
+- HP LaserJet Pro M201-M202
+- HP LaserJet Pro M201c1
+- HP LaserJet Pro M201c10
+- HP LaserJet Pro M201c2
+- HP LaserJet Pro M201c3
+- HP LaserJet Pro M201c4
+- HP LaserJet Pro M201c5
+- HP LaserJet Pro M201c6
+- HP LaserJet Pro M201c7
+- HP LaserJet Pro M201c8
+- HP LaserJet Pro M201c9
+- HP LaserJet Pro M201dw
+- HP LaserJet Pro M201n
+- HP LaserJet Pro M202dw
+- HP LaserJet Pro M202n
+- HP LaserJet Pro M203-M206
+- HP LaserJet Pro M304-M305
+- HP LaserJet Pro M329
+- HP LaserJet Pro M402-M403
+- HP LaserJet Pro M402-M403n
+- HP LaserJet Pro M404-M405
+- HP LaserJet Pro M428-M429
+- HP LaserJet Pro M428f-M429f
+- HP LaserJet Pro M501
+- HP LaserJet Pro M501dn
+- HP LaserJet Pro M501n
+- HP LaserJet Pro M701
+- HP LaserJet Pro M701a
+- HP LaserJet Pro M701n
+- HP LaserJet Pro M706
+- HP LaserJet Pro M706n
+- HP LaserJet Pro MFP 3101-3108
+- HP LaserJet Pro MFP 4101
+- HP LaserJet Pro MFP 4102
+- HP LaserJet Pro MFP 4103
+- HP LaserJet Pro MFP 4104
+- HP LaserJet Pro MFP M225-M226
+- HP LaserJet Pro MFP M225c1
+- HP LaserJet Pro MFP M225c2
+- HP LaserJet Pro MFP M225c3
+- HP LaserJet Pro MFP M225c4
+- HP LaserJet Pro MFP M225c5
+- HP LaserJet Pro MFP M225c6
+- HP LaserJet Pro MFP M225c7
+- HP LaserJet Pro MFP M225c8
+- HP LaserJet Pro MFP M225dn
+- HP LaserJet Pro MFP M225dw
+- HP LaserJet Pro MFP M225rdn
+- HP LaserJet Pro MFP M226dn
+- HP LaserJet Pro MFP M226dw
+- HP LaserJet Pro MFP M227-M231
+- HP LaserJet Pro MFP M329
+- HP LaserJet Pro MFP M426-M427
+- HP LaserJet Pro MFP M435
+- HP LaserJet Pro MFP M435nw
+- HP LaserJet Pro MFP M521
+- HP LaserJet Pro MFP M521dn
+- HP LaserJet Pro MFP M521dw
+- HP LaserJet Pro MFP M521dx
+- HP LaserJet Pro MFP M521dz
+- HP LaserJet x503
+- HP LaserJet x504
+- HP LaserJet x602
+- HP LaserJet x603
+- HP LJ 300-400 color M351-M451
+- HP LJ 300-400 color MFP M375-M475
+- HP MFP D53052
+- HP Mopier 240
+- HP Mopier 320
+- HP Officejet Color FlowMFP X585
+- HP Officejet Color MFP X585
+- HP Officejet Color X555
+- HP Officejet Pro 251dw Printer
+- HP Officejet Pro 276dw MFP
+- HP Officejet Pro 8000 A811a
+- HP Officejet Pro 8000 Enterprise A811a
+- HP OfficeJet Pro 8210
+- HP OfficeJet Pro 8730
+- HP OfficeJet Pro 8732M
+- HP OfficeJet Pro 8740
+- HP Officejet Pro X451-X551 Printer
+- HP Officejet Pro X451dn Printer
+- HP Officejet Pro X451dw Printer
+- HP Officejet Pro X476-X576 MFP
+- HP Officejet Pro X476dn MFP
+- HP Officejet Pro X476dw MFP
+- HP Officejet Pro X551dw Printer
+- HP Officejet Pro X576dw MFP
+- HP PageWide Color 556
+- HP PageWide Color 755
+- HP PageWide Color 765
+- HP PageWide Color E55650
+- HP PageWide Color E75160
+- HP PageWide Color E77650-E77660
+- HP PageWide Color Flow MFP 586
+- HP PageWide Color Flow MFP 785
+- HP PageWide Color MFP 586
+- HP PageWide Color MFP 774
+- HP PageWide Color MFP 774 779
+- HP PageWide Color MFP 779
+- HP PageWide Color MFP 780
+- HP PageWide Color MFP 780-785
+- HP PageWide Color MFP E58650
+- HP PageWide Color MFP E77650
+- HP PageWide Color MFP E77660
+- HP PageWide Color MFP P77440
+- HP PageWide Color MFP P77940
+- HP PageWide Color MFP P77950
+- HP PageWide Color MFP P77960
+- HP PageWide Color P75250
+- HP PageWide Flow MFP E77650
+- HP PageWide Flow MFP E77660
+- HP PageWide MFP P57750
+- HP PageWide MFP P77740-60zs
+- HP PageWide P55250
+- HP PageWide P75050-60
+- HP PageWide P77440 P77940-60
+- HP PageWide Pro 352 Printer
+- HP PageWide Pro 352dn Printer
+- HP PageWide Pro 352dw Printer
+- HP PageWide Pro 377 MFP
+- HP PageWide Pro 377dn MFP
+- HP PageWide Pro 377dw MFP
+- HP PageWide Pro 452 Printer
+- HP PageWide Pro 452dn Printer
+- HP PageWide Pro 452dw Printer
+- HP PageWide Pro 477 MFP
+- HP PageWide Pro 477dn MFP
+- HP PageWide Pro 477dw MFP
+- HP PageWide Pro 552 Printer
+- HP PageWide Pro 577 MFP
+- HP PageWide Pro 750
+- HP PageWide Pro MFP 772-777
+- HP PageWide XL 3900PS MFP
+- HP PageWide XL 3900PS MFP PS3
+- HP PageWide XL 3920 PS MFP
+- HP PageWide XL 3920 PS MFP (40'' sized)
+- HP PageWide XL 4000PS
+- HP PageWide XL 4000PS (40'' sized)
+- HP PageWide XL 4000PS MFP
+- HP PageWide XL 4000PS MFP (40'' sized)
+- HP PageWide XL 4100PS
+- HP PageWide XL 4100PS MFP
+- HP PageWide XL 4100PS MFP PS3
+- HP PageWide XL 4100PS PS3
+- HP PageWide XL 4200 PS MFP series
+- HP PageWide XL 4200 PS MFP series (40'' sized)
+- HP PageWide XL 4200 PS series
+- HP PageWide XL 4200 PS series (40'' sized)
+- HP PageWide XL 4500PS
+- HP PageWide XL 4500PS (40'' sized)
+- HP PageWide XL 4500PS MFP
+- HP PageWide XL 4500PS MFP (40'' sized)
+- HP PageWide XL 4600PS
+- HP PageWide XL 4600PS MFP
+- HP PageWide XL 4600PS MFP PS3
+- HP PageWide XL 4600PS PS3
+- HP PageWide XL 4700 PS MFP series
+- HP PageWide XL 4700 PS MFP series (40'' sized)
+- HP PageWide XL 4700 PS series
+- HP PageWide XL 4700 PS series (40'' sized)
+- HP PageWide XL 5000PS
+- HP PageWide XL 5000PS (40'' sized)
+- HP PageWide XL 5000PS Blueprinter
+- HP PageWide XL 5000PS Blueprinter (40'' sized)
+- HP PageWide XL 5000PS MFP
+- HP PageWide XL 5000PS MFP (40'' sized)
+- HP PageWide XL 5100PS
+- HP PageWide XL 5100PS (40'' sized)
+- HP PageWide XL 5100PS MFP
+- HP PageWide XL 5100PS MFP (40'' sized)
+- HP PageWide XL 5100PS MFP Blueprinter
+- HP PageWide XL 5100PS MFP Blueprinter (40'' sized)
+- HP PageWide XL 5200 PS MFP series
+- HP PageWide XL 5200 PS MFP series (40'' sized)
+- HP PageWide XL 5200 PS series
+- HP PageWide XL 5200 PS series (40'' sized)
+- HP PageWide XL 6000PS
+- HP PageWide XL 6000PS (40'' sized)
+- HP PageWide XL 6000PS MFP
+- HP PageWide XL 6000PS MFP (40'' sized)
+- HP PageWide XL 8000PS
+- HP PageWide XL 8000PS (40'' sized)
+- HP PageWide XL 8000PS Blueprinter
+- HP PageWide XL 8000PS Blueprinter (40'' sized)
+- HP PageWide XL 8200 PS series
+- HP PageWide XL 8200 PS series (40'' sized)
+- HP PageWide XL Pro 5200 PS MFP series
+- HP PageWide XL Pro 5200 PS MFP series (40'' sized)
+- HP PageWide XL Pro 8200 PS MFP series
+- HP PageWide XL Pro 8200 PS MFP series (40'' sized)
+- HP POSTSCRIPT INKJET DEVICES
+- HP POSTSCRIPT LASERJET DEVICES
+- HP POSTSCRIPT LASERJET PRO DEVICES
+
