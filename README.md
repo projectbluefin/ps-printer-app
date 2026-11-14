@@ -20,6 +20,45 @@ here](https://github.com/projectbluefin/common/blob/main/docs/skills/label-workf
 for what happens after an issue or pull request is opened.
 
 
+## Supported printers
+
+This application supports any printer that accepts PostScript natively or via emulation, using the **Generic PostScript Printer** driver or bundled manufacturer PPDs (**7,186 searchable model names and aliases** across Foomatic and HPLIP sources).
+This represents driver-declared support, not hardware-tested verification. Scanning and fax are not supported.
+
+The complete searchable directory of model names, aliases, and provenance details is in [**SUPPORTED-PRINTERS.md**](SUPPORTED-PRINTERS.md).
+
+### Table of Contents by Manufacturer
+
+- [Generic PostScript Printer](SUPPORTED-PRINTERS.md#generic-postscript-driver)
+- **Foomatic Manufacturer PPDs**:
+  - [Brother](SUPPORTED-PRINTERS.md#foomatic-brother)
+  - [Canon](SUPPORTED-PRINTERS.md#foomatic-canon)
+  - [Epson](SUPPORTED-PRINTERS.md#foomatic-epson)
+  - [Gestetner](SUPPORTED-PRINTERS.md#foomatic-gestetner)
+  - [HP](SUPPORTED-PRINTERS.md#foomatic-hp)
+  - [Imagistics](SUPPORTED-PRINTERS.md#foomatic-imagistics)
+  - [InfoPrint](SUPPORTED-PRINTERS.md#foomatic-infoprint)
+  - [Infotec](SUPPORTED-PRINTERS.md#foomatic-infotec)
+  - [KONICA MINOLTA](SUPPORTED-PRINTERS.md#foomatic-konica-minolta)
+  - [Kyocera](SUPPORTED-PRINTERS.md#foomatic-kyocera)
+  - [Kyocera Mita](SUPPORTED-PRINTERS.md#foomatic-kyocera-mita)
+  - [Lanier](SUPPORTED-PRINTERS.md#foomatic-lanier)
+  - [Lexmark](SUPPORTED-PRINTERS.md#foomatic-lexmark)
+  - [NRG](SUPPORTED-PRINTERS.md#foomatic-nrg)
+  - [Oce](SUPPORTED-PRINTERS.md#foomatic-oce)
+  - [Oki](SUPPORTED-PRINTERS.md#foomatic-oki)
+  - [Ricoh](SUPPORTED-PRINTERS.md#foomatic-ricoh)
+  - [Samsung](SUPPORTED-PRINTERS.md#foomatic-samsung)
+  - [Savin](SUPPORTED-PRINTERS.md#foomatic-savin)
+  - [Sharp](SUPPORTED-PRINTERS.md#foomatic-sharp)
+  - [TOSHIBA](SUPPORTED-PRINTERS.md#foomatic-toshiba)
+  - [TOSHIBA TEC Corp.](SUPPORTED-PRINTERS.md#foomatic-toshiba-tec-corp)
+  - [UTAX](SUPPORTED-PRINTERS.md#foomatic-utax)
+  - [UTAX/TA](SUPPORTED-PRINTERS.md#foomatic-utaxta)
+  - [UTAX_TA](SUPPORTED-PRINTERS.md#foomatic-utax_ta)
+- **HPLIP PostScript PPDs**:
+  - [HP](SUPPORTED-PRINTERS.md#hplip-hp)
+
 ### This Printer Application is a working model for
 
 - A non-raster Printer Application: Destination format is PostScript,
