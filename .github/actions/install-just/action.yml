@@ -1,0 +1,19 @@
+name: Install just
+description: Install just with taiki-e/install-action, retrying once after a pause when the release download fails (transient GitHub 403/5xx).
+runs:
+  using: composite
+  steps:
+    - id: first
+      continue-on-error: true
+      uses: taiki-e/install-action@ab49d3c64680143e184118bed66a46419fc15519 # v2
+      with:
+        tool: just
+    - name: Wait before retrying just install
+      if: steps.first.outcome == 'failure'
+      shell: bash
+      run: sleep 60
+    - name: Retry just install
+      if: steps.first.outcome == 'failure'
+      uses: taiki-e/install-action@ab49d3c64680143e184118bed66a46419fc15519 # v2
+      with:
+        tool: just
