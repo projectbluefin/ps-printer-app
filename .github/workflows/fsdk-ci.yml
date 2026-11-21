@@ -67,10 +67,8 @@ jobs:
         if: needs.prerequisites.outputs.available != 'true'
         run: |
           echo "FSDK image build skipped: bootstrap prerequisites pending."
-      - uses: taiki-e/install-action@ab49d3c64680143e184118bed66a46419fc15519 # v2
+      - uses: ./.github/actions/install-just
         if: needs.prerequisites.outputs.available == 'true'
-        with:
-          tool: just
       - name: Install host dependencies
         if: needs.prerequisites.outputs.available == 'true'
         run: sudo apt-get update && sudo apt-get install --yes fuse3 podman skopeo jq
