@@ -84,9 +84,7 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
-      - uses: taiki-e/install-action@ab49d3c64680143e184118bed66a46419fc15519 # v2
-        with:
-          tool: just
+      - uses: ./.github/actions/install-just
       - name: Install host dependencies
         run: sudo apt-get update && sudo apt-get install --yes fuse3 podman skopeo jq
       - name: Compute BuildStream cache key
