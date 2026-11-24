@@ -8,7 +8,10 @@
 #
 # The real library is sourced. Only the steps that need the image or root
 # (state preparation, CUPS seeding, mkdir under /run, the supervisor) are
-# replaced by recorders, after the library has defined them.
+# replaced by recorders, after the library has defined them. The optional
+# countme hook is pinned too: COUNTME=1 stands in for a library that defines
+# printer_app_start_countme, and otherwise the hook is removed, so both sides of
+# the entrypoint's guard run whatever the pinned library ships.
 set -euo pipefail
 
 script_dir="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
@@ -44,6 +47,11 @@ printer_app_validate() { record validate "$@"; real_printer_app_validate "$@"; }
 printer_app_prepare_state() { record prepare_state "$@"; }
 printer_app_seed_cups() { record seed_cups "$@"; }
 mkdir() { record mkdir "$@"; }
+if [[ "${COUNTME:-0}" == 1 ]]; then
+  printer_app_start_countme() { record start_countme "$@"; }
+else
+  unset -f printer_app_start_countme
+fi
 printer_app_supervise() {
   record supervise "$@"
   local name
@@ -112,6 +120,17 @@ supervise /run ps-printer-app -o log-file=$state/ps-printer-app.log -o server-po
 $(printf "$app_env" /srv/ppd)"
 [[ "$output" != *NOTICE* ]] || fail "options: NOTICE with the web interface off (output: $output)"
 
+# When the library provides the countme hook, reporting starts once, after the
+# state and /run are prepared and before the supervisor, with this appliance's
+# state directory and name; the app's options and environment are unchanged.
+run_entrypoint COUNTME=1
+[[ "$status" == 0 ]] || fail "countme: exit status $status (output: $output)"
+# shellcheck disable=SC2059
+expect_calls 'countme: hook starts after /run, before the supervisor' "$startup
+start_countme $state ps-printer-app
+supervise /run ps-printer-app -o log-file=$state/ps-printer-app.log server
+$(printf "$app_env" "/usr/share/ppd/:$state/ppd/")"
+
 # Refusals must stop the wrapper before it touches state or starts anything.
 expect_refusal() {
   local want_status="$1" want_message="$2"
@@ -129,6 +148,7 @@ expect_refusal 64 'PRINTER_APP_INSTANCE must contain' PRINTER_APP_INSTANCE='-!-'
 expect_refusal 64 "unsupported option 'no-tls'" PRINTER_APP_SERVER_OPTIONS=no-tls
 expect_refusal 78 'cannot be honoured' PRINTER_APP_AUTH_SERVICE=cups
 expect_refusal 78 'requires PRINTER_APP_AUTH_SERVICE' PRINTER_APP_ADMIN_GROUP=wheel
+expect_refusal 64 'PORT must be numeric' PORT=invalid COUNTME=1
 
 if ((failures > 0)); then
   printf 'FAIL: %d entrypoint wiring check(s) failed\n' "$failures" >&2
