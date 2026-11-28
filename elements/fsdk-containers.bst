@@ -8,7 +8,7 @@ sources:
   - kind: git_repo
     url: github:projectbluefin/fsdk-containers.git
     track: main
-    ref: e5dc9b52ce8ed9d6e6729c62e1a6d8170eb1c938
+    ref: d975081729a2118387edd84d860cc5904c86704a
 
   # The producer generates this gitignored include from its FSDK junction
   # before invoking bst; junction consumers must stage the same value.
