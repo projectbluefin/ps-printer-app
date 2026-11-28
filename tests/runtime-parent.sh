@@ -38,7 +38,9 @@ if bash "$tmp/project/scripts/fetch-runtime-parent.sh"; then
   echo 'unverified parent accepted' >&2; exit 1
 fi
 [[ -f "$tmp/project/runtime-parent/old" ]]
-! grep -q '^skopeo copy ' "$LOG"
+if grep -q '^skopeo copy ' "$LOG"; then
+  echo 'unverified parent was downloaded' >&2; exit 1
+fi
 export FAIL_VERIFY=0
 bash "$tmp/project/scripts/fetch-runtime-parent.sh"
 [[ ! -e "$tmp/project/runtime-parent/old" ]]
