@@ -274,10 +274,12 @@ podman run -d --name ps-printer-app-a --network host \
   ghcr.io/projectbluefin/ps-printer-app:<version>
 ```
 
-PAPPL serves IPP and the web interface on one port, so on the host network the
-web administration pages are reachable by every client that can reach the IPP
-port; the entrypoint prints a `NOTICE` saying so whenever the web interface is
-enabled. Three variables control web administration:
+PAPPL serves IPP and the web interface on one port. IPP printing and DNS-SD
+remain available to network clients, but PAPPL 1.4 restricts the web
+administration and log pages to the host itself: requests from other machines
+receive `403 Forbidden`. The entrypoint prints a `NOTICE` describing this
+whenever the web interface is enabled. Three variables control web
+administration:
 
 | Variable | Forwarded as | Accepted values |
 | --- | --- | --- |
@@ -290,8 +292,8 @@ pappl-retrofit's `/addppd` PPD upload and per-printer `/<printer>/device` pages,
 while IPP printing and DNS-SD keep working; manage printers from inside the container with
 `podman exec ps-printer-app-a ps-printer-app -u ipp://127.0.0.1:18080/ipp/system … add`.
 `PRINTER_APP_AUTH_SERVICE` is refused outright because the shared printing base
-builds PAPPL with `--disable-libpam`, so forwarding it would answer every
-administration request with `401`. An unlisted server option (such as `no-tls`
+builds PAPPL with `--disable-libpam`; authenticated remote administration
+requires a PAPPL build with PAM support. An unlisted server option (such as `no-tls`
 or `none`), a malformed name, a group the image cannot resolve, or a group
 without an auth service exits `64` (malformed) or `78` (cannot be honoured).
 `tests/entrypoint-validation.sh` covers those rejections on the host.

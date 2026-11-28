@@ -108,8 +108,10 @@ run_entrypoint
 expect_calls 'defaults: library steps in order, app paths exported' "$startup
 supervise /run ps-printer-app -o log-file=$state/ps-printer-app.log server
 $(printf "$app_env" "/usr/share/ppd/:$state/ppd/")"
-[[ "$output" == *'NOTICE: web administration is reachable'* ]] \
+[[ "$output" == *'NOTICE: web administration is available only from the host itself'* ]] \
   || fail "defaults: no web-administration NOTICE (output: $output)"
+[[ "$output" != *'reachable by every client'* ]] \
+  || fail "defaults: stale network-wide web-administration NOTICE (output: $output)"
 
 run_entrypoint PORT=018020 PRINTER_APP_SERVER_OPTIONS=no-web-interface \
   PRINTER_APP_INSTANCE='office 1' PPD_PATHS=/srv/ppd

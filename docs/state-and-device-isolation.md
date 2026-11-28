@@ -133,9 +133,11 @@ DNS-SD backend to `_pdl-datastream._tcp`. That is about what the appliance
 ## Securing or disabling web administration
 
 The web admin interface shares the host-network port with IPP (see "Several
-instances on one host" above), so anything that can reach the port can reach
-it. The entrypoint validates three environment variables before any daemon
-starts (see the README for the full contract):
+instances on one host" above). IPP printing and DNS-SD are available to network
+clients, but PAPPL 1.4 restricts the administration and log pages to loopback;
+requests from other machines receive `403 Forbidden`. The entrypoint validates
+three environment variables before any daemon starts (see the README for the
+full contract):
 
 - `PRINTER_APP_SERVER_OPTIONS=no-web-interface` turns the web interface off,
   including pappl-retrofit's `/addppd` PPD upload and per-printer
@@ -143,7 +145,8 @@ starts (see the README for the full contract):
   web interface is off. IPP printing is unaffected. It is the only allow-listed
   server option; anything else exits 64.
 - `PRINTER_APP_AUTH_SERVICE=<name>` exits 78: PAPPL is built without PAM in
-  this image, so an auth service would lock every administrator out.
+  this image, so authenticated remote administration requires a PAPPL build
+  with PAM support.
 - `PRINTER_APP_ADMIN_GROUP=<group>` requires an auth service and a group in
   the image's `/etc/group`, so it also exits 78 today.
 

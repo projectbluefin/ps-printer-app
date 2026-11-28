@@ -18,6 +18,7 @@ depends:
   - fsdk-containers.bst:freedesktop-sdk.bst:components/catatonit.bst
   - fsdk-containers.bst:freedesktop-sdk.bst:components/dbus.bst
   - fsdk-containers.bst:freedesktop-sdk.bst:components/grep.bst
+  - fsdk-containers.bst:freedesktop-sdk.bst:components/sed.bst
   - fsdk-containers.bst:freedesktop-sdk.bst:components/python3.bst
   - fsdk-containers.bst:freedesktop-sdk.bst:components/tzdata.bst
   - fsdk-containers.bst:freedesktop-sdk.bst:components/xz.bst
