@@ -17,8 +17,24 @@ source /usr/libexec/printer-app/entrypoint-common.sh
 
 # Validate PORT, the web-administration knobs and the instance name before any
 # state is touched. The library refuses a malformed value with 64 and a setting
-# this image cannot honour with 78.
-printer_app_validate 'PostScript Printer Application'
+# this image cannot honour with 78. Older shared-library revisions emit a
+# network-wide administration notice, so rewrite that exact line to match
+# PAPPL 1.4's loopback-only behavior while preserving all other diagnostics.
+validation_stderr="$(mktemp)"
+exec {validation_output_fd}>&2
+rewrite_validation_notice() {
+  local status=$?
+  sed '/^NOTICE: web administration /c\NOTICE: web administration is available only from the host itself; set PRINTER_APP_SERVER_OPTIONS=no-web-interface to disable it' \
+    "$validation_stderr" >&"$validation_output_fd"
+  rm -f "$validation_stderr"
+  exec {validation_output_fd}>&-
+  trap - EXIT
+  return "$status"
+}
+trap rewrite_validation_notice EXIT
+printer_app_validate 'PostScript Printer Application' 2>"$validation_stderr"
+trap - EXIT
+rewrite_validation_notice
 
 # Prepare and secure the state volume, then seed the packaged CUPS defaults.
 printer_app_prepare_state "$state" "$app"
